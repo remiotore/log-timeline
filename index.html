@@ -884,6 +884,7 @@ function render() {
 
   const W = 1400, LABEL = 200, PAD = 40, TOP = 72, LH = 26, PTR = 34;
   const span = Math.max(t1 - t0, 60), rows = DATA.groups;
+  const maxCnt = Math.max(...rows.map(g => DATA.analysis.groups.find(v => v.g === g)?.count || 0), 1);
   const H = TOP + rows.length * LH + PTR;
   const x = t => PAD + LABEL + (t - t0) / span * (W - PAD - LABEL - 40);
   let s = `<svg width="${W}" height="${H}" xmlns='http://www.w3.org/2000/svg' font-family='monospace'>`;
@@ -904,8 +905,9 @@ function render() {
       `opacity="${evs.length ? 1 : 0.35}">${esc(g)}</text>`;
     if (evs.length) {
       const xs = evs.map(e => x(e.t));
-      s += `<rect x="${Math.min(...xs)}" y="${y - 7}" width="${Math.max(1, Math.max(...xs) - Math.min(...xs))}" ` +
-        `height="14" rx="3" fill="hsl(${hue},60%,70%)" opacity="0.5"/>`;
+      const bh = 6 + 16 * (g.count / maxCnt);
+      s += `<rect x="${Math.min(...xs)}" y="${y - bh / 2}" width="${Math.max(1, Math.max(...xs) - Math.min(...xs))}" ` +
+        `height="${bh.toFixed(1)}" rx="3" fill="hsl(${hue},60%,70%)" opacity="0.5"/>`;
     }
     evs.forEach(e => {
       const hx = x(e.t);
