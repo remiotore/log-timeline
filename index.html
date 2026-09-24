@@ -972,19 +972,14 @@ const traceHtml = DATA.ruleTrace.map(t =>
       `<div class="tracebody">${traceHtml}</div></details>`
     : "";
 $("rules").innerHTML = DATA.rules.length
-    ? `<b>Rules:</b> ${html}<span class="rule" data-i="-1">clear</span>${detailsOpen}`
+    ? `<b>Rules:</b> ${html}${detailsOpen}`
     : rulesText
       ? "<b>Rules:</b> no Wazuh rules in the loaded ruleset matched these events" +
         " (level-0 groupings don't alert; try a ruleset that covers this log type)"
       : "<b>Rules:</b> ruleset not loaded (serve over HTTP, not file://)";
     
-  $("rules").querySelectorAll(".rule").forEach(el =>
-    el.addEventListener("click", () => {
-      const i = +el.dataset.i;
-      if (i === -1) { ruleSel.clear(); }
-      else { ruleSel.has(i) ? ruleSel.delete(i) : ruleSel.add(i); }
-      render();
-    }));
+  // ponytail: no manual rule picking — every rule is evaluated against every event;
+  // the collapsible below surfaces which rule "found" (matched) them.
 }
 
 const SVG = 'xmlns="http://www.w3.org/2000/svg"';
@@ -1055,7 +1050,7 @@ function renderAnalysis() {
 }
 
 function ruleMatch(e) {
-  return !ruleSel.size || e.r.some(i => ruleSel.has(i));
+  return true;
 }
 
 function render() {
