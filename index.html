@@ -90,6 +90,16 @@
 
   .error { color: var(--warn); margin: 10px 0; font-size: 13px; white-space: pre-wrap; }
 
+  #samplesPanel { margin-bottom: 6px; }
+  .srow { display: flex; align-items: center; gap: 12px; padding: 6px 2px; border-bottom: 1px solid var(--line);
+          font-size: 13px; cursor: pointer; }
+  .srow:last-child { border-bottom: 0; }
+  .srow:hover { background: var(--pv-bg); }
+  .sname { flex: 1; font-family: ui-monospace, Menlo, monospace; word-break: break-all; }
+  a.sdown { text-decoration: none; color: var(--accent); border: 1px solid var(--line); padding: 3px 10px;
+            border-radius: 8px; font-size: 12px; flex: none; }
+  a.sdown:hover { background: var(--chip); }
+
   .results { margin-top: 26px; }
   #analysis { margin-bottom: 16px; }
   #analysis .sum { list-style: none; padding: 0; margin: 0 0 12px; }
@@ -151,9 +161,15 @@
     <input type="text" id="group" placeholder="group regex (default: first IPv4)">
     <input type="number" id="year" placeholder="year for syslog timestamps">
     <label class="switch" title="match events against a custom Wazuh rules XML"><input type="checkbox" id="rulesMode"><span class="track"></span>Custom rules</label>
+    <button class="sec" id="samplesBtn">Samples</button>
     <button class="primary" id="build" disabled>Build timeline</button>
   </div>
   <div class="error" id="error"></div>
+
+  <section class="card" id="samplesPanel" hidden>
+    <h3>Sample logs <span style="text-transform:none">— scripted attack / device logs, click one to load</span></h3>
+    <div id="samplesList"></div>
+  </section>
 
   <div id="cols">
     <section class="card">
@@ -513,12 +529,18 @@ if (typeof document !== "undefined" && location.hash === "#selftest") {
   catch (e) { document.body.textContent = e.message; }
 }
 </script>
+
+
 <script>
 const $ = id => document.getElementById(id);
 const esc = s => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 const timeFmt = ts => new Date(ts * 1000).toLocaleString();
 const shortTime = ts => new Date(ts * 1000).toLocaleTimeString("en-GB", { hour12: false });
 let logFile = null, logText = null, rulesText = null, DATA = null, hidden = new Set(), ruleSel = new Set();
+const FILES = [
+  "apache-error-attacks.log", "apache-error.log", "arpwatch.log",
+  "cisco-ios-ids-dos.log", "openssh-bruteforce.log", "sshd-bruteforce.log",
+];
 
 // ---- theme (default dark) ----
 function applyTheme(t) {
@@ -580,6 +602,43 @@ function showMeta(data, f) {
     `<span class="pv-l">${esc(e.l)}</span></div>`).join("") ||
     `<div class="pv-row pv-l">no events</div>`;
 }
+
+async function loadSample(name) {
+  try {
+    const res = await fetch(`./samples/${encodeURIComponent(name)}`);
+    if (!res.ok) throw new Error(res.statusText);
+    logText = await res.text();
+  } catch (err) {
+    $("error").textContent = "couldn't reach ./samples/" + name +
+      " — serve the folder over HTTP (or GitHub Pages), not file://";
+    return;
+  }
+  const f = { name };
+  logFile = f;
+  try {
+    DATA = parseAll(logText, name, $("rulesMode").checked ? rulesText : null,
+                    $("group").value.trim(), $("year").value.trim());
+    markDrop($("dropLog"), true, "<b>Sample loaded:</b> " + esc(name));
+    showMeta(DATA, f);
+    $("build").disabled = false;
+    build();
+  } catch (err) { $("error").textContent = err.message; }
+}
+
+$("samplesBtn").addEventListener("click", () => {
+  const panel = $("samplesPanel");
+  panel.hidden = !panel.hidden;
+  if (!panel.dataset.loaded && !panel.hidden) {
+    $("samplesList").innerHTML = FILES.map((n, i) =>
+      `<div class="srow" data-name="${esc(n)}">` +
+      `<span class="sname">${esc(n)}</span>` +
+      `<span class="chip ok" data-load="${i}">load</span>` +
+      `<a class="sdown" href="./samples/${encodeURIComponent(n)}" download>download</a></div>`).join("");
+    panel.dataset.loaded = "1";
+    $("samplesList").querySelectorAll("[data-load]").forEach(el =>
+      el.addEventListener("click", () => loadSample(FILES[+el.dataset.load])));
+  }
+});
 
 setUpDrop("dropLog", "logInput", f => {
   logFile = f;

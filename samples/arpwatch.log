@@ -18,3 +18,106 @@ Sep 20 15:40:55 ipfire arpwatch: new station 192.168.65.22 00:0c:29:cb:65:c4
 Sep 20 15:40:56 ipfire arpwatch: new station 192.168.65.24 00:80:a3:d3:02:3d
 Sep 20 15:44:12 ipfire arpwatch: new station 192.168.65.9 00:23:04:63:00:dc
 Sep 20 15:44:13 ipfire arpwatch: bogon 192.168.200.5 00:0a:14:80:8f:7d
+Sep 20 16:00:00 ipfire ipfire arpwatch: new station 45.133.9.215 02:00:5e:0b:16:21
+Sep 20 16:00:01 ipfire ipfire arpwatch: new station 45.133.9.215 02:00:5e:0b:16:21
+Sep 20 16:00:02 ipfire ipfire arpwatch: new station 45.133.9.215 02:00:5e:0b:16:21
+Sep 20 16:00:03 ipfire ipfire arpwatch: new station 45.133.9.215 02:00:5e:0b:16:21
+Sep 20 16:00:04 ipfire ipfire arpwatch: new station 45.133.9.215 02:00:5e:0b:16:21
+Sep 20 16:00:06 ipfire ipfire arpwatch: new station 45.133.9.215 02:00:5e:0b:16:21
+Sep 20 16:00:07 ipfire ipfire arpwatch: new station 45.133.9.215 02:00:5e:0b:16:21
+Sep 20 16:00:08 ipfire ipfire arpwatch: new station 45.133.9.215 02:00:5e:0b:16:21
+Sep 20 16:00:09 ipfire ipfire arpwatch: new station 45.133.9.215 02:00:5e:0b:16:21
+Sep 20 16:00:10 ipfire ipfire arpwatch: new station 45.133.9.215 02:00:5e:0b:16:21
+Sep 20 16:00:12 ipfire ipfire arpwatch: new station 45.133.9.215 02:00:5e:0b:16:21
+Sep 20 16:00:13 ipfire ipfire arpwatch: new station 45.133.9.215 02:00:5e:0b:16:21
+Sep 20 16:00:14 ipfire ipfire arpwatch: new station 45.133.9.215 02:00:5e:0b:16:21
+Sep 20 16:00:15 ipfire ipfire arpwatch: new station 45.133.9.215 02:00:5e:0b:16:21
+Sep 20 16:00:16 ipfire ipfire arpwatch: new station 45.133.9.215 02:00:5e:0b:16:21
+Sep 20 16:00:18 ipfire ipfire arpwatch: new station 45.133.9.215 02:00:5e:0b:16:21
+Sep 20 16:00:19 ipfire ipfire arpwatch: new station 45.133.9.215 02:00:5e:0b:16:21
+Sep 20 16:00:20 ipfire ipfire arpwatch: new station 45.133.9.215 02:00:5e:0b:16:21
+Sep 20 16:00:21 ipfire ipfire arpwatch: new station 45.133.9.215 02:00:5e:0b:16:21
+Sep 20 16:00:22 ipfire ipfire arpwatch: new station 45.133.9.215 02:00:5e:0b:16:21
+Sep 20 16:00:24 ipfire ipfire arpwatch: new station 45.133.9.215 02:00:5e:0b:16:21
+Sep 20 16:00:25 ipfire ipfire arpwatch: new station 45.133.9.215 02:00:5e:0b:16:21
+Sep 20 16:00:26 ipfire ipfire arpwatch: new station 45.133.9.215 02:00:5e:0b:16:21
+Sep 20 16:00:27 ipfire ipfire arpwatch: new station 45.133.9.215 02:00:5e:0b:16:21
+Sep 20 16:00:28 ipfire ipfire arpwatch: new station 45.133.9.215 02:00:5e:0b:16:21
+Sep 20 16:00:30 ipfire ipfire arpwatch: new station 45.133.9.215 02:00:5e:0b:16:21
+Sep 20 16:00:31 ipfire ipfire arpwatch: new station 45.133.9.215 02:00:5e:0b:16:21
+Sep 20 16:00:32 ipfire ipfire arpwatch: new station 45.133.9.215 02:00:5e:0b:16:21
+Sep 20 16:00:33 ipfire ipfire arpwatch: new station 45.133.9.215 02:00:5e:0b:16:21
+Sep 20 16:00:34 ipfire ipfire arpwatch: new station 45.133.9.215 02:00:5e:0b:16:21
+Sep 20 16:00:36 ipfire ipfire arpwatch: new station 45.133.9.215 02:00:5e:0b:16:21
+Sep 20 16:00:37 ipfire ipfire arpwatch: new station 45.133.9.215 02:00:5e:0b:16:21
+Sep 20 16:00:38 ipfire ipfire arpwatch: new station 45.133.9.215 02:00:5e:0b:16:21
+Sep 20 16:00:39 ipfire ipfire arpwatch: new station 45.133.9.215 02:00:5e:0b:16:21
+Sep 20 16:00:40 ipfire ipfire arpwatch: new station 45.133.9.215 02:00:5e:0b:16:21
+Sep 20 16:00:42 ipfire ipfire arpwatch: new station 45.133.9.215 02:00:5e:0b:16:21
+Sep 20 16:00:43 ipfire ipfire arpwatch: new station 45.133.9.215 02:00:5e:0b:16:21
+Sep 20 16:00:44 ipfire ipfire arpwatch: new station 45.133.9.215 02:00:5e:0b:16:21
+Sep 20 16:00:45 ipfire ipfire arpwatch: new station 45.133.9.215 02:00:5e:0b:16:21
+Sep 20 16:00:46 ipfire ipfire arpwatch: new station 45.133.9.215 02:00:5e:0b:16:21
+Sep 20 16:00:48 ipfire ipfire arpwatch: new station 45.133.9.215 02:00:5e:0b:16:21
+Sep 20 16:00:49 ipfire ipfire arpwatch: new station 45.133.9.215 02:00:5e:0b:16:21
+Sep 20 16:00:50 ipfire ipfire arpwatch: new station 45.133.9.215 02:00:5e:0b:16:21
+Sep 20 16:00:51 ipfire ipfire arpwatch: new station 45.133.9.215 02:00:5e:0b:16:21
+Sep 20 16:00:52 ipfire ipfire arpwatch: new station 45.133.9.215 02:00:5e:0b:16:21
+Sep 20 16:04:00 ipfire ipfire arpwatch: new station 89.248.174.201 02:00:5e:0b:16:21
+Sep 20 16:04:02 ipfire ipfire arpwatch: new station 89.248.174.201 02:00:5e:0b:16:21
+Sep 20 16:04:04 ipfire ipfire arpwatch: new station 89.248.174.201 02:00:5e:0b:16:21
+Sep 20 16:04:07 ipfire ipfire arpwatch: new station 89.248.174.201 02:00:5e:0b:16:21
+Sep 20 16:04:09 ipfire ipfire arpwatch: new station 89.248.174.201 02:00:5e:0b:16:21
+Sep 20 16:04:12 ipfire ipfire arpwatch: new station 89.248.174.201 02:00:5e:0b:16:21
+Sep 20 16:04:14 ipfire ipfire arpwatch: new station 89.248.174.201 02:00:5e:0b:16:21
+Sep 20 16:04:16 ipfire ipfire arpwatch: new station 89.248.174.201 02:00:5e:0b:16:21
+Sep 20 16:04:19 ipfire ipfire arpwatch: new station 89.248.174.201 02:00:5e:0b:16:21
+Sep 20 16:04:21 ipfire ipfire arpwatch: new station 89.248.174.201 02:00:5e:0b:16:21
+Sep 20 16:04:24 ipfire ipfire arpwatch: new station 89.248.174.201 02:00:5e:0b:16:21
+Sep 20 16:04:26 ipfire ipfire arpwatch: new station 89.248.174.201 02:00:5e:0b:16:21
+Sep 20 16:04:28 ipfire ipfire arpwatch: new station 89.248.174.201 02:00:5e:0b:16:21
+Sep 20 16:04:31 ipfire ipfire arpwatch: new station 89.248.174.201 02:00:5e:0b:16:21
+Sep 20 16:04:33 ipfire ipfire arpwatch: new station 89.248.174.201 02:00:5e:0b:16:21
+Sep 20 16:04:36 ipfire ipfire arpwatch: new station 89.248.174.201 02:00:5e:0b:16:21
+Sep 20 16:04:38 ipfire ipfire arpwatch: new station 89.248.174.201 02:00:5e:0b:16:21
+Sep 20 16:04:40 ipfire ipfire arpwatch: new station 89.248.174.201 02:00:5e:0b:16:21
+Sep 20 16:04:43 ipfire ipfire arpwatch: new station 89.248.174.201 02:00:5e:0b:16:21
+Sep 20 16:04:45 ipfire ipfire arpwatch: new station 89.248.174.201 02:00:5e:0b:16:21
+Sep 20 16:04:48 ipfire ipfire arpwatch: new station 89.248.174.201 02:00:5e:0b:16:21
+Sep 20 16:04:50 ipfire ipfire arpwatch: new station 89.248.174.201 02:00:5e:0b:16:21
+Sep 20 16:04:52 ipfire ipfire arpwatch: new station 89.248.174.201 02:00:5e:0b:16:21
+Sep 20 16:04:55 ipfire ipfire arpwatch: new station 89.248.174.201 02:00:5e:0b:16:21
+Sep 20 16:04:57 ipfire ipfire arpwatch: new station 89.248.174.201 02:00:5e:0b:16:21
+Sep 20 16:05:00 ipfire ipfire arpwatch: new station 89.248.174.201 02:00:5e:0b:16:21
+Sep 20 16:05:02 ipfire ipfire arpwatch: new station 89.248.174.201 02:00:5e:0b:16:21
+Sep 20 16:05:04 ipfire ipfire arpwatch: new station 89.248.174.201 02:00:5e:0b:16:21
+Sep 20 16:05:07 ipfire ipfire arpwatch: new station 89.248.174.201 02:00:5e:0b:16:21
+Sep 20 16:05:09 ipfire ipfire arpwatch: new station 89.248.174.201 02:00:5e:0b:16:21
+Sep 20 16:05:12 ipfire ipfire arpwatch: new station 89.248.174.201 02:00:5e:0b:16:21
+Sep 20 16:05:14 ipfire ipfire arpwatch: new station 89.248.174.201 02:00:5e:0b:16:21
+Sep 20 16:08:00 ipfire ipfire arpwatch: new station 192.168.65.245 02:00:5e:9a:7b:cd
+Sep 20 16:11:00 ipfire ipfire arpwatch: new station 192.168.65.245 00:50:56:44:33:22
+Sep 20 16:14:00 ipfire ipfire arpwatch: new station 192.168.65.245 00:0c:29:11:22:33
+Sep 20 16:17:00 ipfire ipfire arpwatch: bogon 192.168.65.245 00:0a:14:80:8f:7d
+Sep 20 16:20:00 ipfire ipfire arpwatch: bogon 192.168.65.245 00:02:b3:d6:e5:68
+Sep 20 16:23:00 ipfire ipfire arpwatch: bogon 192.168.65.245 00:5e:4a:11:22:33
+Sep 20 16:26:00 ipfire ipfire arpwatch: flip flop 192.168.65.245 00:14:c1:9a:45:8d (d8:d5:9e:2b:8a:4f)
+Sep 20 16:29:00 ipfire ipfire arpwatch: changed station 192.168.65.245 00:1b:21:c1:3e:51 (00:12:34:56:78:90)
+Sep 20 16:32:00 ipfire ipfire arpwatch: reused old ethernet address 192.168.65.245 00:23:04:63:00:dc (02:00:5e:aa:bb:cc)
+Sep 20 16:35:00 ipfire ipfire arpwatch: ip broadcast 192.168.65.245 ff:ff:ff:ff:ff:ff
+Sep 20 16:38:00 ipfire ipfire arpwatch: ethernet broadcast 192.168.65.245 ff:ff:ff:ff:ff:ff
+Sep 20 16:41:00 ipfire ipfire arpwatch: suspect subnet mismatch 192.168.65.245 00:11:22:33:44:55
+Sep 20 16:44:00 ipfire ipfire arpwatch: offered ethernet address 192.168.65.245 00:50:56:aa:11:22
+Sep 20 16:47:00 ipfire ipfire arpwatch: new activity 192.168.65.245 00:04:23:c1:28:20
+Sep 20 16:50:00 ipfire ipfire arpwatch: ring: netscan 192.168.65.245 02:00:5e:12:34:56
+Sep 20 16:53:00 ipfire ipfire arpwatch: puppet client 192.168.65.245 00:0c:29:77:88:99
+Sep 20 16:56:00 ipfire ipfire arpwatch: gratuitous arp flood 192.168.65.245 00:1a:2b:3c:4d:5e
+Sep 20 16:59:00 ipfire ipfire arpwatch: mac spoof attempt 192.168.65.245 02:00:5e:de:ad:be
+Sep 20 17:02:00 ipfire ipfire arpwatch: malicious mac 192.168.65.245 ac:de:48:00:11:22
+Sep 20 17:05:00 ipfire ipfire arpwatch: dhcp server spoof 192.168.65.245 00:0d:87:ca:bb:da
+Sep 20 17:08:00 ipfire ipfire arpwatch: new station 192.168.65.245 02:00:5e:9a:7b:cd
+Sep 20 17:11:00 ipfire ipfire arpwatch: new station 192.168.65.245 00:50:56:44:33:22
+Sep 20 17:14:00 ipfire ipfire arpwatch: new station 192.168.65.245 00:0c:29:11:22:33
+Sep 20 17:17:00 ipfire ipfire arpwatch: bogon 192.168.65.245 00:0a:14:80:8f:7d
+Sep 20 17:20:00 ipfire ipfire arpwatch: bogon 192.168.65.245 00:02:b3:d6:e5:68
+Sep 20 17:23:00 ipfire ipfire arpwatch: bogon 192.168.65.245 00:5e:4a:11:22:33

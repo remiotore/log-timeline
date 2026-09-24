@@ -20,11 +20,11 @@ who hammered your box, when, how hard, and what your rules say about it.
 ## How to use it
 
 1. Open `index.html` in any browser (double-click, that's it).
-2. Drop a log file on the left, flip **Custom rules** and drop a `rules.xml`
-   (like the ones in `ruleset/`).
-3. Hit **Build timeline** and read the story of your attack.
+2. Hit **Samples** and click `sshd-bruteforce.log` — instant story of a login
+   brute-force — or drop your own log file on the left.
+3. Flip **Custom rules**, drop a `rules.xml` (like the ones in `ruleset/`),
+   build again to see matches highlighted by severity.
 
 Everything runs locally in your browser — no server to spin up, no data leaves
-your machine.
-
-Try it first with a real-set: `samples/` has `sshd-bruteforce.log` and friends.
+your machine. Six attack log samples live in `samples/` next to the page: hit
+**Samples** to load or download any of them.
