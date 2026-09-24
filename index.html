@@ -960,6 +960,12 @@ function renderRules() {
       `title="groups: ${esc(r.groups.join(", ") || "—")}">#${r.id} <b class="lv">L${r.level}</b> ` +
       `${esc(r.description)} (${r.count})</span>`;
   });
+const traceHtml = DATA.ruleTrace.map(t =>
+    `<div><code>trying ${t.id} rule</code> ${t.matched ? `<span class="ok">-> <b>Matched</b></span>` : `<span class="ko">-> Discarded</span>`}` +
+    ` <span class="dim">(${t.tried} evaluated)</span>` +
+    (t.matched ? ` <b class="lv">L${t.level}</b> ${esc(t.description)}` +
+               ` <span class="dim">groups: ${esc(t.groups.join(", ") || "—")}</span>` : ``) +
+    `</div>`).join("");
   const detailsOpen = DATA.ruleTrace.length
     ? `<details id="ruleTrace"><summary>&#9656; Rule trace: trying each rule per event — ${
         DATA.ruleTrace.length} evaluated, ${DATA.ruleTrace.filter(t => t.matched).length} matched</summary>` +
@@ -971,12 +977,7 @@ $("rules").innerHTML = DATA.rules.length
       ? "<b>Rules:</b> no Wazuh rules in the loaded ruleset matched these events" +
         " (level-0 groupings don't alert; try a ruleset that covers this log type)"
       : "<b>Rules:</b> ruleset not loaded (serve over HTTP, not file://)";
-    const traceHtml = DATA.ruleTrace.map(t =>
-    `<div><code>trying ${t.id} rule</code> ${t.matched ? `<span class="ok">-> <b>Matched</b></span>` : `<span class="ko">-> Discarded</span>`}` +
-    ` <span class="dim">(${t.tried} evaluated)</span>` +
-    (t.matched ? ` <b class="lv">L${t.level}</b> ${esc(t.description)}` +
-               ` <span class="dim">groups: ${esc(t.groups.join(", ") || "—")}</span>` : ``) +
-    `</div>`).join("");
+    
   $("rules").querySelectorAll(".rule").forEach(el =>
     el.addEventListener("click", () => {
       const i = +el.dataset.i;
