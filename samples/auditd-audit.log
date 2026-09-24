@@ -1,6 +1,0 @@
-type=DAEMON_START msg=audit(1470096000.130:1): auditd start, ver=2.5 format=raw kernel=4.4.0-21-generic auid=4294967295 pid=891 res=success
-type=USER_LOGIN msg=audit(1470096010.212:301): pid=1194 uid=0 auid=4294967295 ses=4294967295 msg='op=PAM:authentication grant_acct="dsmith" exe="/usr/sbin/sshd" hostname=10.0.0.7 addr=10.0.0.7 terminal=/dev/pts/0 res=success'
-type=USER_ERR msg=audit(1470096012:328): pid=1211 uid=0 auid=4294967295 ses=4294967295 msg='op=PAM:accounting acct="root" exe="/usr/sbin/sshd" hostname=45.227.255.84 addr=45.227.255.84 terminal=? res=failed'
-type=ANOM_ABEND msg=audit(1470096012.498:339): auid=4294967295 uid=0 gid=7 ses=4294967295 subj=system_u:system_r:httpd_t:s0 pid=1220 comm="httpd" sig=11
-type=ANOM_PROMISCUOUS msg=audit(1470096013.575:344): dev=eth0 prom=256 old_prom=0 auid=4294967295 uid=0 gid=0 ses=4294967295
-type=ANOM_EXEC msg=audit(1470096014.102:377): user pid=1266 uid=0 auid=0 ses=3 msg='op=PAM:unix_chkpwd acct="root" exe="/sbin/unix_chkpwd" (hostname=?, addr=?, terminal=pts/1 res=failed)'

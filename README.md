@@ -26,5 +26,7 @@ who hammered your box, when, how hard, and what your rules say about it.
    build again to see matches highlighted by severity.
 
 Everything runs locally in your browser — no server to spin up, no data leaves
-your machine. Six attack log samples live in `samples/` next to the page: hit
-**Samples** to load or download any of them.
+your machine. Six curated attack samples live in `samples/` (SSH brute-force,
+web exploitation scan, HTTP flood, auditd host compromise, coordinated Cisco
+DoS, Windows account spray) — each drops into its matching ruleset to light up
+the timeline: hit **Samples** to load or download any of them.

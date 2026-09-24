@@ -317,39 +317,16 @@ function compileRe(p) {
 }
 
 function buildMatcher(rules) {
-  const single = new Map();
   const multi = [];
   for (const r of rules) {
-    if (r.matchers.length === 1) {
-      if (!single.has(r.matchers[0])) single.set(r.matchers[0], []);
-      single.get(r.matchers[0]).push(r.id);
-    } else if (r.matchers.length > 1) {
-      multi.push([r, r.matchers.map(compileRe)]);
-    }
+    const rexes = r.matchers.map(compileRe);
+    if (rexes.length) multi.push([r, rexes]);
   }
-  let fast = null;
-  const pats = [...single.keys()];
-  if (pats.length) {
-    fast = {
-      re: new RegExp(pats.map((p, i) => `(?<p${i}>${p})`).join("|"), "gu"),
-      groups: pats.map(p => single.get(p)),
-    };
-  }
-  return [fast, multi];
+  return [null, multi];
 }
 
-function matchRuleIds(line, fast, multi) {
+function matchRuleIds(line, _fast, multi) {
   const ids = new Set();
-  if (fast) {
-    fast.re.lastIndex = 0;
-    let m;
-    while ((m = fast.re.exec(line))) {
-      if (m.index === fast.re.lastIndex) fast.re.lastIndex++;
-      for (const [k, v] of Object.entries(m.groups)) {
-        if (v != null) for (const id of fast.groups[+k.slice(1)]) ids.add(id);
-      }
-    }
-  }
   for (const [r, rexes] of multi) {
     if (rexes.every(rx => rx.test(line))) ids.add(r.id);
   }
@@ -553,8 +530,12 @@ const timeFmt = ts => new Date(ts * 1000).toLocaleString();
 const shortTime = ts => new Date(ts * 1000).toLocaleTimeString("en-GB", { hour12: false });
 let logFile = null, logText = null, rulesText = null, DATA = null, hidden = new Set(), ruleSel = new Set();
 const FILES = [
-  "apache-error-attacks.log", "apache-error.log", "arpwatch.log",
-  "cisco-ios-ids-dos.log", "openssh-bruteforce.log", "sshd-bruteforce.log",
+  "apache-exploitation.log",
+  "auditd-host-compromise.log",
+  "cisco-edge-dos.log",
+  "sshd-bruteforce.log",
+  "web-flood.log",
+  "windows-account-spray.log",
 ];
 
 // ponytail: baked from `ls ruleset/rules/*.xml`; regenerate when the ruleset submodule is updated

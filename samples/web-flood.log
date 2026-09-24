@@ -1,0 +1,64 @@
+[Fri Jan 03 09:02:00 2026] [error] [client 203.0.113.17] Connection reset by peer: mod_ssl: error:1408F10B:SSL routines:ssl3_get_record:wrong version number
+[Fri Jan 03 09:02:01 2026] [error] [client 203.0.113.17] client sent HTTP/1.1 request without Host header, client: 203.0.113.17, num_conns 1
+[Fri Jan 03 09:02:01 2026] [error] [client 203.0.113.17] Timeout when reading response headers from 203.0.113.17:52411
+[Fri Jan 03 09:02:02 2026] [error] [client 203.0.113.17] Connection reset by peer: mod_ssl: error:1408F10B:SSL routines:ssl3_get_record:wrong version number
+[Fri Jan 03 09:02:03 2026] [error] [client 203.0.113.17] client sent HTTP/1.1 request without Host header, client: 203.0.113.17, num_conns 1
+[Fri Jan 03 09:02:04 2026] [error] [client 203.0.113.17] Timeout when reading response headers from 203.0.113.17:52411
+[Fri Jan 03 09:02:05 2026] [error] [client 203.0.113.17] Connection reset by peer: mod_ssl: error:1408F10B:SSL routines:ssl3_get_record:wrong version number
+[Fri Jan 03 09:02:06 2026] [error] [client 203.0.113.17] client sent HTTP/1.1 request without Host header, client: 203.0.113.17, num_conns 1
+[Fri Jan 03 09:02:07 2026] [error] [client 203.0.113.17] Timeout when reading response headers from 203.0.113.17:52411
+[Fri Jan 03 09:02:08 2026] [error] [client 203.0.113.17] Connection reset by peer: mod_ssl: error:1408F10B:SSL routines:ssl3_get_record:wrong version number
+[Fri Jan 03 09:02:09 2026] [error] [client 203.0.113.17] client sent HTTP/1.1 request without Host header, client: 203.0.113.17, num_conns 1
+[Fri Jan 03 09:02:10 2026] [error] [client 203.0.113.17] Timeout when reading response headers from 203.0.113.17:52411
+[Fri Jan 03 09:02:11 2026] [error] [client 203.0.113.17] Connection reset by peer: mod_ssl: error:1408F10B:SSL routines:ssl3_get_record:wrong version number
+[Fri Jan 03 09:02:12 2026] [error] [client 203.0.113.17] client sent HTTP/1.1 request without Host header, client: 203.0.113.17, num_conns 1
+[Fri Jan 03 09:02:13 2026] [error] [client 203.0.113.17] Timeout when reading response headers from 203.0.113.17:52411
+[Fri Jan 03 09:02:14 2026] [error] [client 203.0.113.17] Connection reset by peer: mod_ssl: error:1408F10B:SSL routines:ssl3_get_record:wrong version number
+[Fri Jan 03 09:02:15 2026] [error] [client 203.0.113.17] client sent HTTP/1.1 request without Host header, client: 203.0.113.17, num_conns 1
+[Fri Jan 03 09:02:16 2026] [error] [client 203.0.113.17] Timeout when reading response headers from 203.0.113.17:52411
+[Fri Jan 03 09:02:17 2026] [error] [client 203.0.113.17] Connection reset by peer: mod_ssl: error:1408F10B:SSL routines:ssl3_get_record:wrong version number
+[Fri Jan 03 09:02:18 2026] [error] [client 203.0.113.17] client sent HTTP/1.1 request without Host header, client: 203.0.113.17, num_conns 1
+[Fri Jan 03 09:02:19 2026] [error] [client 203.0.113.17] Timeout when reading response headers from 203.0.113.17:52411
+[Fri Jan 03 09:02:20 2026] [error] [client 203.0.113.17] Connection reset by peer: mod_ssl: error:1408F10B:SSL routines:ssl3_get_record:wrong version number
+[Fri Jan 03 09:02:21 2026] [error] [client 203.0.113.17] client sent HTTP/1.1 request without Host header, client: 203.0.113.17, num_conns 1
+[Fri Jan 03 09:02:22 2026] [error] [client 203.0.113.17] Timeout when reading response headers from 203.0.113.17:52411
+[Fri Jan 03 09:02:23 2026] [error] [client 203.0.113.17] Connection reset by peer: mod_ssl: error:1408F10B:SSL routines:ssl3_get_record:wrong version number
+[Fri Jan 03 09:02:24 2026] [error] [client 203.0.113.17] client sent HTTP/1.1 request without Host header, client: 203.0.113.17, num_conns 1
+[Fri Jan 03 09:02:25 2026] [error] [client 203.0.113.17] Timeout when reading response headers from 203.0.113.17:52411
+[Fri Jan 03 09:02:26 2026] [error] [client 203.0.113.17] Connection reset by peer: mod_ssl: error:1408F10B:SSL routines:ssl3_get_record:wrong version number
+[Fri Jan 03 09:02:27 2026] [error] [client 203.0.113.17] client sent HTTP/1.1 request without Host header, client: 203.0.113.17, num_conns 1
+[Fri Jan 03 09:02:28 2026] [error] [client 203.0.113.17] Timeout when reading response headers from 203.0.113.17:52411
+[Fri Jan 03 09:02:29 2026] [error] [client 203.0.113.17] Connection reset by peer: mod_ssl: error:1408F10B:SSL routines:ssl3_get_record:wrong version number
+[Fri Jan 03 09:02:30 2026] [error] [client 203.0.113.17] client sent HTTP/1.1 request without Host header, client: 203.0.113.17, num_conns 1
+[Fri Jan 03 09:02:31 2026] [error] [client 203.0.113.17] Timeout when reading response headers from 203.0.113.17:52411
+[Fri Jan 03 09:02:32 2026] [error] [client 203.0.113.17] Connection reset by peer: mod_ssl: error:1408F10B:SSL routines:ssl3_get_record:wrong version number
+[Fri Jan 03 09:02:33 2026] [error] [client 203.0.113.17] client sent HTTP/1.1 request without Host header, client: 203.0.113.17, num_conns 1
+[Fri Jan 03 09:02:34 2026] [error] [client 203.0.113.17] Timeout when reading response headers from 203.0.113.17:52411
+[Fri Jan 03 09:02:35 2026] [error] [client 203.0.113.17] Connection reset by peer: mod_ssl: error:1408F10B:SSL routines:ssl3_get_record:wrong version number
+[Fri Jan 03 09:02:36 2026] [error] [client 203.0.113.17] client sent HTTP/1.1 request without Host header, client: 203.0.113.17, num_conns 1
+[Fri Jan 03 09:02:37 2026] [error] [client 203.0.113.17] Timeout when reading response headers from 203.0.113.17:52411
+[Fri Jan 03 09:02:38 2026] [error] [client 203.0.113.17] Connection reset by peer: mod_ssl: error:1408F10B:SSL routines:ssl3_get_record:wrong version number
+[Fri Jan 03 09:02:39 2026] [error] [client 203.0.113.17] client sent HTTP/1.1 request without Host header, client: 203.0.113.17, num_conns 1
+[Fri Jan 03 09:02:40 2026] [error] [client 203.0.113.17] Timeout when reading response headers from 203.0.113.17:52411
+[Fri Jan 03 09:02:41 2026] [error] [client 203.0.113.17] Connection reset by peer: mod_ssl: error:1408F10B:SSL routines:ssl3_get_record:wrong version number
+[Fri Jan 03 09:02:42 2026] [error] [client 203.0.113.17] client sent HTTP/1.1 request without Host header, client: 203.0.113.17, num_conns 1
+[Fri Jan 03 09:02:43 2026] [error] [client 203.0.113.17] Timeout when reading response headers from 203.0.113.17:52411
+[Fri Jan 03 09:02:44 2026] [error] [client 203.0.113.17] Connection reset by peer: mod_ssl: error:1408F10B:SSL routines:ssl3_get_record:wrong version number
+[Fri Jan 03 09:02:45 2026] [error] [client 203.0.113.17] client sent HTTP/1.1 request without Host header, client: 203.0.113.17, num_conns 1
+[Fri Jan 03 09:02:46 2026] [error] [client 203.0.113.17] Timeout when reading response headers from 203.0.113.17:52411
+[Fri Jan 03 09:02:47 2026] [error] [client 203.0.113.17] Connection reset by peer: mod_ssl: error:1408F10B:SSL routines:ssl3_get_record:wrong version number
+[Fri Jan 03 09:02:48 2026] [error] [client 203.0.113.17] client sent HTTP/1.1 request without Host header, client: 203.0.113.17, num_conns 1
+[Fri Jan 03 09:02:49 2026] [error] [client 203.0.113.17] Timeout when reading response headers from 203.0.113.17:52411
+[Fri Jan 03 09:02:50 2026] [error] [client 203.0.113.17] Connection reset by peer: mod_ssl: error:1408F10B:SSL routines:ssl3_get_record:wrong version number
+[Fri Jan 03 09:02:51 2026] [error] [client 203.0.113.17] client sent HTTP/1.1 request without Host header, client: 203.0.113.17, num_conns 1
+[Fri Jan 03 09:02:52 2026] [error] [client 203.0.113.17] Timeout when reading response headers from 203.0.113.17:52411
+[Fri Jan 03 09:02:53 2026] [error] [client 203.0.113.17] Connection reset by peer: mod_ssl: error:1408F10B:SSL routines:ssl3_get_record:wrong version number
+[Fri Jan 03 09:02:54 2026] [error] [client 203.0.113.17] client sent HTTP/1.1 request without Host header, client: 203.0.113.17, num_conns 1
+[Fri Jan 03 09:02:55 2026] [error] [client 203.0.113.17] Timeout when reading response headers from 203.0.113.17:52411
+[Fri Jan 03 09:02:56 2026] [error] [client 203.0.113.17] Connection reset by peer: mod_ssl: error:1408F10B:SSL routines:ssl3_get_record:wrong version number
+[Fri Jan 03 09:02:57 2026] [error] [client 203.0.113.17] client sent HTTP/1.1 request without Host header, client: 203.0.113.17, num_conns 1
+[Fri Jan 03 09:02:58 2026] [error] [client 203.0.113.17] Timeout when reading response headers from 203.0.113.17:52411
+[Fri Jan 03 09:02:59 2026] [error] [client 203.0.113.17] Connection reset by peer: mod_ssl: error:1408F10B:SSL routines:ssl3_get_record:wrong version number
+[Fri Jan 03 09:02:60 2026] [error] [client 203.0.113.17] client sent HTTP/1.1 request without Host header, client: 203.0.113.17, num_conns 1
+[Fri Jan 03 09:02:61 2026] [error] [client 203.0.113.17] Timeout when reading response headers from 203.0.113.17:52411
+[Fri Jan 03 09:02:62 2026] [error] [client 203.0.113.17] Connection reset by peer: mod_ssl: error:1408F10B:SSL routines:ssl3_get_record:wrong version number
