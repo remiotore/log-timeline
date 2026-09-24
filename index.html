@@ -162,7 +162,7 @@
   <div class="toolbar">
     <input type="text" id="group" placeholder="group regex (default: first IPv4)">
     <input type="number" id="year" placeholder="year for syslog timestamps">
-    <label class="switch" title="match events against a custom Wazuh rules XML"><input type="checkbox" id="rulesMode"><span class="track"></span>Custom rules</label>
+    <label class="switch" title="show/hide the Wazuh ruleset panel (rules apply to every build)"><input type="checkbox" id="rulesMode"><span class="track"></span>Rules</label>
     <button class="sec" id="samplesBtn">Samples</button>
     <button class="primary" id="build" disabled>Build timeline</button>
   </div>
@@ -282,55 +282,193 @@ function capRows(events) {
   return [...new Set(events.map(e => e[1]))];
 }
 
-// ---- Wazuh custom rules matching (ported from app.py) ----
-function loadRules(xmlText) {
-  let doc = new DOMParser().parseFromString(xmlText, "application/xml");
-  if (doc.getElementsByTagName("parsererror").length)
-    // ponytail: legacy ruleset files have multiple <group> roots and stray '&'; lenient HTML parse keeps the elements
-    doc = new DOMParser().parseFromString(xmlText, "text/html");
-  const rules = [];
-  for (const r of doc.getElementsByTagNameNS("*", "rule")) {
-    const rid = r.getAttribute("id");
-    if (!rid) continue;
-    const matchers = [];
-    for (const tag of ["match", "regex", "include", "program_name", "srcip", "dstip"]) {
-      const el = r.getElementsByTagNameNS("*", tag)[0];
-      const v = el && el.textContent;
-      if (v && v.trim()) matchers.push(v.trim());
-    }
-    const g = r.getElementsByTagNameNS("*", "group")[0];
-    rules.push({
-      id: rid,
-      level: parseInt(r.getAttribute("level") || "0", 10),
-      description: (r.getElementsByTagNameNS("*", "description")[0]?.textContent) || "",
-      groups: (g && g.textContent ? g.textContent.split(",") : []).map(x => x.trim()).filter(Boolean),
-      matchers,
-    });
-  }
-  return rules;
-}
-
+// ---- Wazuh rule engine (parses all rules, applies inheritance & sampling the way analysisd does) ----
 const reEscape = p => p.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-
 function compileRe(p) {
   try { return new RegExp(p, "u"); } catch { return new RegExp(reEscape(p), "u"); }
 }
 
-function buildMatcher(rules) {
-  const multi = [];
-  for (const r of rules) {
-    const rexes = r.matchers.map(compileRe);
-    if (rexes.length) multi.push([r, rexes]);
+// parse all <rule> blocks (any number of <group> roots, stray '&', <var> definitions —
+// regex walk keeps it tolerant of the legacy files; DOMParser XML would choke)
+function parseRules(text) {
+  const vars = {};
+  const rules = [];
+  const openRe = /(<var\b[\s\S]*?<\/var>)|(<group\b[^>]*name="([^"]*)"[^>]*>)|(<\/group>)|(<rule\b[^>]*>[\s\S]*?<\/rule>)/gi;
+  let m, stack = [];
+  openRe.lastIndex = 0;
+  while ((m = openRe.exec(text))) {
+    if (m[1]) { const v = /<var\s+name="(\w+)"\s*>([\s\S]*?)<\/var>/.exec(m[1]); if (v) vars[v[1]] = v[2].trim(); }
+    else if (m[2]) stack.push(m[3].split(",").map(s => s.trim()).filter(Boolean));
+    else if (m[4]) stack.pop();
+    else if (m[5]) {
+      const parents = [...new Set(stack.flat() || [])];
+      const r = parseRule(m[5], parents);
+      if (r) rules.push(r);
+    }
   }
-  return [null, multi];
+  const exp = s => (s || "").replace(/\$\((\w+)\)/g, (_, k) => (k in vars) ? vars[k] : "");
+  for (const r of rules) {
+    r.frequency = r.frequency != null ? +exp(String(r.frequency)) : 0;
+    r.timeframe = r.timeframe != null ? +exp(String(r.timeframe)) : 0;
+    r.decodedAs = r.decodedAs ? exp(r.decodedAs) : null;
+    r.text = exp(r.text);
+    r.ifSid = r.ifSid.map(exp); r.ifMatchedSid = r.ifMatchedSid.map(exp);
+    r.ifGroup = r.ifGroup.map(exp); r.ifMatchedGroup = r.ifMatchedGroup.map(exp);
+  }
+  return rules;
 }
 
-function matchRuleIds(line, _fast, multi) {
-  const ids = new Set();
-  for (const [r, rexes] of multi) {
-    if (rexes.every(rx => rx.test(line))) ids.add(r.id);
+function parseRule(block, parents) {
+  // MITRE / info blocks are metadata, not conditions
+  block = block.replace(/<mitre>[\s\S]*?<\/mitre>/gi, "").replace(/<info[^>]*>[\s\S]*?<\/info>/gi, "");
+  const open = /^<rule\b([^>]*)>/.exec(block)[1];
+  const attr = n => { const mm = new RegExp("\\b" + n + '="([^"]*)"').exec(open); return mm ? mm[1] : null; };
+  const txt = tag => { const mm = new RegExp("<" + tag + "\\b[^>]*>([\\s\\S]*?)<\\/" + tag + ">").exec(block); return mm ? mm[1].trim() : null; };
+  const all = tag => { const out = []; for (const mm of block.matchAll(new RegExp("<" + tag + "\\b[^>]*>([\\s\\S]*?)<\\/" + tag + ">", "g"))) out.push(mm[1].trim()); return out; };
+  const id = attr("id");
+  if (!id) return null;
+  const groups = [...new Set([...parents, ...((txt("group") || "").split(",").map(s => s.trim()).filter(Boolean))])];
+  // Wazuh treats every <match>/<regex> as alternatives: each string is one arm of a big alternation
+  // (arms self-delimit with a trailing '|', which we strip so an empty arm can't match everything)
+  let text = [...all("match"), ...all("regex")].join("|").replace(/\|+/g, "|").replace(/(^\||\|$)/g, "");
+  const fields = [];
+  for (const mm of block.matchAll(/<field\s+name="([^"]+)"[^>]*>([\s\S]*?)<\/field>/g))
+    fields.push([mm[1], mm[2].trim()]);
+  const sp = t => { const v = txt(t); return v ? v.split("|").map(s => s.trim()).filter(Boolean) : []; };
+  return {
+    id, level: +(attr("level") || "0"),
+    frequency: attr("frequency"), timeframe: attr("timeframe"),
+    noalert: ["yes", "1", "true"].includes(attr("noalert")),
+    list: /<list\b/.test(block),
+    sameSrc: /<same_source_ip\b/.test(block),
+    description: txt("description") || "",
+    groups, text,
+    decodedAs: txt("decoded_as"),
+    ids: all("id"),
+    ifSid: sp("if_sid"), ifMatchedSid: sp("if_matched_sid"),
+    ifGroup: sp("if_group"), ifMatchedGroup: sp("if_matched_group"),
+    fields,
+  };
+}
+
+// light decoders: extract the fields the rules look at (program_name, srcip, id, decoded_as, ...)
+// from the handful of log formats we parse. Unknown formats keep decoded_as null so gated rules stay silent.
+function decodeFields(line, group, t) {
+  const f = { line, msg: line, t, srcip: null, program_name: null, url: null, user: null, id: null, decoded_as: null, group };
+  const ip = (line.match(/\b\d{1,3}(?:\.\d{1,3}){3}\b/) || [])[0];
+  if (ip) f.srcip = ip;
+  let m;
+  if ((m = /^\[[A-Za-z]{3} [A-Za-z]{3} \d{1,2} \d\d:\d\d:\d\d(?:\.\d+)? \d{4}\] (\[[\w:]+\]) (.*)$/.exec(line))) {
+    f.decoded_as = "apache-errorlog";
+    const level = m[1], rest = m[2];
+    f.msg = level + " " + rest;
+    const c = /\[client ([0-9.]+)\]/.exec(rest);
+    if (c) f.srcip = c[1];
+    const idd = /^\[client [^\]]+\] (\S+?):\s/.exec(rest);
+    if (idd) f.id = idd[1];
+    // Wazuh's modsecurity decoder rewrites the message prefix this way
+    const ms = /^\[client [^\]]+\] mod_security: (.*)$/.exec(rest);
+    if (ms) { f.msg = "mod_security-message: " + ms[1]; f.id = "mod_security"; }
+    const u = line.match(/ (GET|POST|HEAD|PUT|OPTIONS|DELETE) (\S+) HTTP\//);
+    if (u) f.url = u[2];
+  } else if ((m = /^type=(\w+) msg=audit\(/.exec(line))) {
+    f.decoded_as = "auditd";
+    f["audit.type"] = m[1];
+    const r = /\bres=(\w+)/.exec(line);
+    if (r) f["audit.res"] = r[1];
+    const a = line.match(/addr=([0-9.]+)/);
+    if (a) f.srcip = a[1];
+    const u = line.match(/acct="?([^"\s]+)/);
+    if (u) f.user = u[1];
+  } else if ((m = /^[A-Za-z]{3}\s+\d{1,2} \d\d:\d\d:\d\d\s+\S+\s+(%[\S]+):\s?(.*)$/.exec(line))) {
+    f.decoded_as = "cisco-ios";
+    f.id = m[1]; f.program_name = m[1]; f.msg = m[2];
+  } else if ((m = /^[A-Za-z]{3}\s+\d{1,2} \d\d:\d\d:\d\d\s+\S+\s+(\S+)\[\d+\]: (.*)$/.exec(line))) {
+    f.decoded_as = "syslog";
+    f.program_name = m[1]; f.msg = m[2];
+    if (/sshd/.test(m[1])) f.decoded_as = "sshd";
+    else if (/^(postfix|sendmail|named|vsftpd|ftpd|pam|sudo|telnetd|su|cron|kernel)$/.test(m[1])) f.decoded_as = m[1];
+    const u = f.msg.match(/user\s+(\w+)/);
+    if (u) f.user = u[1];
+  } else if ((m = /^\[\d{4}-\d{2}-\d{2}T[\d:.]+(?:\.\d+)?\]\s+\S+\s+([\w-]+)\/(\d+)\s+(\d+):\s?(.*)$/.exec(line))) {
+    f.decoded_as = "windows_eventchannel";
+    f.program_name = m[1];
+    f.id = m[2];
+    f.msg = m[4];
+    f["win.system.providerName"] = m[1];
+    f["win.system.eventID"] = m[2];
+    f["win.system.channel"] = "Security";
+    f["win.system.severityValue"] = m[2] === "4625" ? "failure" : "success";
+    const a = line.match(/Source Network Address:\s*([0-9.]+)/);
+    if (a) f.srcip = a[1];
+    const u = line.match(/Account Name:\s*(\S+)/);
+    if (u) f.user = u[1];
   }
-  return ids;
+  return f;
+}
+
+// compile all rules once, order parents before children, then evaluate every event against ALL rules
+// in one pass (frequency/timeframe rules count per source when same_source_ip is set).
+function makeEngine(rulesText) {
+  const rules = parseRules(rulesText);
+  const ann = rules.map(r => ({
+    r,
+    re: r.text ? compileRe(r.text) : null,
+    // ponytail: Wazuh writes bare `\.+` to mean "any provider name"; honour the intent
+    field: r.fields.map(([n, p]) => [n, compileRe(p.replace(/\\\.\+/g, ".*"))]),
+    idsRe: r.ids.map(compileRe),
+    dead: !r.text && !r.fields.length && !r.list && !r.decodedAs && !r.ids.length &&
+          !r.ifSid.length && !r.ifMatchedSid.length && !r.ifGroup.length && !r.ifMatchedGroup.length,
+  }));
+  const act = ann.filter(a => !a.dead), ids = new Set(act.map(a => a.r.id));
+  const order = [], seen = new Set();
+  const visit = a => {
+    if (seen.has(a.r.id)) return;
+    seen.add(a.r.id);
+    for (const d of [...a.r.ifSid, ...a.r.ifMatchedSid]) if (ids.has(d)) { const p = act.find(x => x.r.id === d); if (p) visit(p); }
+    order.push(a);
+  };
+  for (const a of act) visit(a);
+  const byId = new Map(act.map(a => [a.r.id, a]));
+
+  function evalEvent(fields, ctx) {
+    const fired = new Set(), groups = new Set();
+    const pass = a => {
+      const { r, re } = a;
+      if (re && !(re.test(fields.line) || re.test(fields.msg))) return false;
+      if (r.decodedAs && r.decodedAs !== fields.decoded_as) return false;
+      for (const [n, re2] of a.field) {
+        const v = fields[n];
+        if (v == null || !re2.test(v)) return false;
+      }
+      if (r.ids.length) { if (fields.id == null || !a.idsRe.some(re => re.test(fields.id))) return false; }
+      if (r.list || r.dead) return false;
+      if (r.ifSid.length && !r.ifSid.some(id => fired.has(id))) return false;
+      if (r.ifMatchedSid.length && !r.ifMatchedSid.some(id => fired.has(id))) return false;
+      if (r.ifGroup.length && !r.ifGroup.some(g => groups.has(g))) return false;
+      if (r.ifMatchedGroup.length && !r.ifMatchedGroup.some(g => groups.has(g))) return false;
+      return true;
+    };
+    const fire = a => {
+      fired.add(a.r.id);
+      for (const g of a.r.groups) groups.add(g);
+    };
+    for (const a of order) {
+      if (!pass(a)) continue;
+      if (a.r.frequency) {
+        const key = a.r.sameSrc ? a.r.id + "@" + (fields.srcip || fields.group) : a.r.id;
+        let win = ctx.get(key);
+        if (!win) ctx.set(key, win = []);
+        win.push(fields.t);
+        while (win.length > a.r.frequency) win.shift();
+        // ponytail: keeps firing while the window stays full, so the timeline lights up for the whole flood
+        if (!(win.length >= a.r.frequency && fields.t - win[0] <= a.r.timeframe)) continue;
+      }
+      fire(a);
+    }
+    return { fired: [...fired], groups: [...groups] };
+  }
+  return { byId, evalEvent, rules: act.map(a => a.r) };
 }
 
 // ---- generic forensic analysis (ported from app.py) ----
@@ -439,18 +577,18 @@ function parseAll(logText, fileName, rulesText, groupStr, yearStr) {
   events.sort((a, b) => a[0] - b[0]);
   const groups = capRows(events);
 
-  let rules = [], rulesInfo = [], matchI = new Map(), idLevel = null;
-  if (rulesText) {
-    rules = loadRules(rulesText);
-    const [fast, multi] = buildMatcher(rules);
-    idLevel = new Map(rules.map(r => [r.id, r.level]));
-    const counts = new Map();
+  let rulesInfo = [], matchI = new Map(), idLevel = null;
+  if (rulesText && rulesText.trim()) {
+    const eng = makeEngine(rulesText);
+    idLevel = new Map(eng.rules.map(r => [r.id, r.level]));
+    const counts = new Map(), ctx = new Map();
     for (const e of events) {
-      const ids = matchRuleIds(e[2], fast, multi);
-      for (const id of ids) counts.set(id, (counts.get(id) || 0) + 1);
-      e.push([...ids].sort((a, b) => (idLevel.get(b) - idLevel.get(a)) || (a < b ? -1 : 1)));
+      const fields = decodeFields(e[2], e[1], e[0]);
+      const { fired } = eng.evalEvent(fields, ctx);
+      for (const id of fired) counts.set(id, (counts.get(id) || 0) + 1);
+      e.push([...fired].sort((a, b) => (idLevel.get(b) - idLevel.get(a)) || (a < b ? -1 : 1)));
     }
-    const matched = rules.filter(r => (counts.get(r.id) || 0) > 0);
+    const matched = eng.rules.filter(r => (counts.get(r.id) || 0) > 0);
     matched.sort((a, b) => (counts.get(b.id) - counts.get(a.id)) || (b.level - a.level));
     rulesInfo = matched.map(r => ({ id: r.id, level: r.level, description: r.description,
                                     groups: r.groups, count: counts.get(r.id) }));
@@ -492,25 +630,39 @@ function selftest() {
   assert(analyze(ev).groups[0].verdict === "recurring", "verdict");
   assert(analyze(ev).hist.bucket === 1, "hist bucket");
   assert(JSON.stringify(capRows(ev)) === JSON.stringify(["8.8.8.8"]), "cap rows");
-  const xml = "<group name='t'><rule id='1' level='2'><match>flip flop</match>" +
+  const xml = "<group name='t'><rule id=\"1\" level=\"2\"><match>flip flop</match>" +
     "<description>flip</description></rule>" +
-    "<rule id='2' level='9'><match>someone</match><regex>login fail</regex>" +
+    "<rule id=\"2\" level=\"9\"><match>someone</match><regex>login fail</regex>" +
     "<description>both</description></rule>" +
-    "<rule id='3' level='5'><decoded_as>x</decoded_as><description>no text</description></rule></group>";
-  const rules = loadRules(xml);
-  assert(JSON.stringify(rules.map(r => r.id)) === JSON.stringify(["1", "2", "3"]), "rules ids");
-  const dirty = "<group name='a'><rule id='7' level='3'><match>&block=1&</match>" +
+    "<rule id=\"3\" level=\"5\"><decoded_as>x</decoded_as><description>no text</description></rule></group>";
+  assert(JSON.stringify(parseRules(xml).map(r => r.id)) === JSON.stringify(["1", "2", "3"]), "rules ids");
+  const dirty = "<group name='a'><rule id=\"7\" level=\"3\"><match>&block=1&</match>" +
     "<description>naxsi</description></rule></group>" +
-    "<group name='b'><rule id='8' level='4'><match>raw & text</match>" +
+    "<group name='b'><rule id=\"8\" level=\"4\"><match>raw & text</match>" +
     "<description>owncloud</description></rule></group>";
-  const dr = loadRules(dirty);
-  assert(dr.length === 2 && dr[0].id === "7" && dr[0].matchers[0] === "&block=1&" &&
+  const dr = parseRules(dirty);
+  assert(dr.length === 2 && dr[0].id === "7" && dr[0].text === "&block=1&" &&
          JSON.stringify(dr.map(r => r.id)) === JSON.stringify(["7", "8"]), "tolerant rules parse");
-  assert(rules[2].matchers.length === 0, "no matchers");
-  const [fast, multi] = buildMatcher(rules);
-  assert(matchRuleIds("flip flop seen", fast, multi).has("1"), "match single");
-  assert(matchRuleIds("someone login fail scary", fast, multi).has("2"), "match multi");
-  assert(matchRuleIds("x day", fast, multi).size === 0, "match none");
+  const mkF = s => ({ line: s, msg: s, t: 0, group: null, srcip: null, program_name: null,
+                      url: null, user: null, id: null, decoded_as: null });
+  const eng = makeEngine(xml);
+  const evF = s => eng.evalEvent(mkF(s), new Map()).fired;
+  assert(evF("flip flop seen").includes("1"), "match single");
+  assert(evF("someone login fail scary").includes("2"), "match alt (OR arms)");
+  assert(evF("x day").length === 0, "match none");
+  const inh = "<group name='g'><rule id=\"10\" level=\"0\"><match>base</match></rule>" +
+              "<rule id=\"11\" level=\"7\"><if_sid>10</if_sid><match>child</match></rule></group>";
+  const ie = makeEngine(inh);
+  assert(ie.evalEvent({ ...mkF("base only"), t: 0 }, new Map()).fired.join() === "10", "inheritance parent only");
+  assert(ie.evalEvent({ ...mkF("base child"), t: 1 }, new Map()).fired.includes("11"), "inheritance fires child");
+  const fe = makeEngine("<group name='g'><rule id=\"20\" frequency=\"2\" timeframe=\"100\"><match>flood</match></rule></group>");
+  const ctx = new Map();
+  assert(!fe.evalEvent({ ...mkF("flood"), t: 0 }, ctx).fired.includes("20"), "freq not yet");
+  assert(fe.evalEvent({ ...mkF("flood"), t: 1 }, ctx).fired.includes("20"), "freq fires at 2nd");
+  const dec = decodeFields("[Thu Mar 09 10:12:32.345678 2023] [error] [client 203.0.113.9] File does not exist: /w/x", "g", 0);
+  assert(dec.decoded_as === "apache-errorlog" && dec.srcip === "203.0.113.9" && /^\[error\]/.test(dec.msg), "apache decode");
+  const win = decodeFields("[2026-01-05T09:00:02.1] 2026-01-05T09:00:02.100000Z Microsoft-Windows-Security-Auditing/4740 9: An account was locked out.", "g", 0);
+  assert(win.decoded_as === "windows_eventchannel" && win["win.system.eventID"] === "4740", "win decode");
   const data = parseAll(ev.map(e => e[2]).join("\n"), "test.log", null, "", "2024");
   assert(data.events.length === 3 && data.groups[0] === "8.8.8.8", "parseAll");
   console.log("selftest ok");
@@ -650,8 +802,7 @@ async function loadSample(name) {
   const f = { name };
   logFile = f;
   try {
-    DATA = parseAll(logText, name, $("rulesMode").checked ? rulesText : null,
-                    $("group").value.trim(), $("year").value.trim());
+    DATA = parseAll(logText, name, rulesText, $("group").value.trim(), $("year").value.trim());
     markDrop($("dropLog"), true, "<b>Sample loaded:</b> " + esc(name));
     showMeta(DATA, f);
     $("build").disabled = false;
@@ -681,7 +832,7 @@ setUpDrop("dropLog", "logInput", f => {
   readFile(f).then(text => {
     logText = text;
     try {
-      DATA = parseAll(text, f.name, null, $("group").value.trim(), $("year").value.trim());
+      DATA = parseAll(text, f.name, rulesText, $("group").value.trim(), $("year").value.trim());
       showMeta(DATA, f);
       $("build").disabled = false;
     } catch (err) {
@@ -694,8 +845,11 @@ setUpDrop("dropLog", "logInput", f => {
 document.querySelector("#dropLog").dataset.help = document.querySelector("#dropLog").innerHTML;
 
 setUpDrop("dropRules", "rulesInput", f => {
-  readFile(f).then(text => { rulesText = text; });
-  $("rulesMeta").innerHTML = `<span class="chip ok">${esc(f.name)}</span><span class="chip">matches apply on build</span>`;
+  readFile(f).then(text => {
+    rulesText = text;
+    $("rulesMeta").innerHTML = `<span class="chip ok">${esc(f.name)}</span><span class="chip">matches apply on build</span>`;
+    if (DATA) build();
+  });
 }, () => markDrop($("dropRules"), true, "<b>Rules file loaded.</b>"));
 
 document.querySelector("#dropRules").dataset.help = document.querySelector("#dropRules").innerHTML;
@@ -716,9 +870,10 @@ $("rulesetLoad").addEventListener("click", async () => {
     })));
     rulesText = texts.join("\n");
     $("rulesMeta").innerHTML = `<span class="chip ok">ruleset: ${esc(name === "all" ? "all " + files.length + " files" : name)}</span>` +
-      `<span class="chip">matches apply on build</span>`;
+      `<span class="chip">rules run on every build</span>`;
     markDrop($("dropRules"), true, "<b>Ruleset loaded:</b> " +
       esc(name === "all" ? files.length + " files" : name));
+    if (DATA) build();
   } catch (err) {
     $("rulesMeta").innerHTML = `<span class="chip bad">${esc(err.message)} — serve over HTTP (or GitHub Pages), not file://</span>`;
   } finally {
@@ -726,10 +881,27 @@ $("rulesetLoad").addEventListener("click", async () => {
   }
 });
 
+// ponytail: load the whole Wazuh ruleset once at boot; failing that (file://) we keep going with heuristic verdicts
+(async () => {
+  try {
+    const texts = await Promise.all(RULESET_FILES.map(f => fetch("./ruleset/rules/" + f).then(r => {
+      if (!r.ok) throw new Error("fetch " + f);
+      return r.text();
+    })));
+    rulesText = texts.join("\n");
+    $("rulesMeta").innerHTML = `<span class="chip ok">ruleset: built-in ${RULESET_FILES.length} files</span>` +
+      `<span class="chip">rules run on every build</span>`;
+    markDrop($("dropRules"), true, "<b>Wazuh ruleset loaded</b> (built-in, applied to every build)");
+    if (DATA) build();
+  } catch (err) {
+    $("rulesMeta").innerHTML = `<span class="chip bad">ruleset not loaded — serve over HTTP, not file:// (drop a rules.xml to override)</span>`;
+  }
+})();
+
 $("build").addEventListener("click", () => {
   if (!logFile) return;
   try {
-    DATA = parseAll(logText, logFile.name, $("rulesMode").checked ? rulesText : null,
+    DATA = parseAll(logText, logFile.name, rulesText,
                     $("group").value.trim(), $("year").value.trim());
     build();
   } catch (err) { $("error").textContent = err.message; }
@@ -775,7 +947,10 @@ function renderRules() {
   });
   $("rules").innerHTML = DATA.rules.length
     ? `<b>Rules:</b> ${html}<span class="rule" data-i="-1">clear</span>`
-    : "<b>Rules:</b> none matched (upload a rules.xml to contrast)";
+    : rulesText
+      ? "<b>Rules:</b> no Wazuh rules in the loaded ruleset matched these events" +
+        " (level-0 groupings don't alert; try a ruleset that covers this log type)"
+      : "<b>Rules:</b> ruleset not loaded (serve over HTTP, not file://)";
   $("rules").querySelectorAll(".rule").forEach(el =>
     el.addEventListener("click", () => {
       const i = +el.dataset.i;
