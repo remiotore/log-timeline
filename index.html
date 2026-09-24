@@ -1,0 +1,800 @@
+<!doctype html>
+<html data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Log timeline</title>
+<script>document.documentElement.dataset.theme = localStorage.getItem("theme") || "dark";</script>
+<style>
+  :root {
+    --bg:#0d1219; --card:#151d26; --line:#2a3744; --text:#dce6ee; --muted:#87a0b1;
+    --accent:#5aa2ff; --ok:#43b883; --warn:#ff7b72; --input:#10161e;
+    --chip:#1c2733; --chip-text:#aebfcc; --chip-ok:#1d3a2c; --chip-ok-text:#63d69f; --chip-bad:#3c2322; --chip-bad-text:#ff9b93;
+    --pv-bg:#10161e; --pv-alt:#18222c; --drop-bg:#101820;
+    --svg-title:#dce6ee; --svg-grid:#2c3947; --svg-label:#8ba1b2; --svg-dim:rgba(255,255,255,.06);
+    --rule-bg:#1d2834; --rule-bord:#3a4a5a; --rule-on:#4a3f11; --rule-on-bord:#b9a13a;
+    --btn-sec:#1c2733; --btn-sec-bord:#33424f;
+  }
+  [data-theme="light"] {
+    --bg:#f2f5f7; --card:#fff; --line:#e3e8ec; --text:#22303a; --muted:#5a7380;
+    --accent:#2c7db1; --ok:#2e9e6b; --warn:#b0413e; --input:#fff;
+    --chip:#eef3f6; --chip-text:#446; --chip-ok:#e7f6ee; --chip-ok-text:#1f7a4a; --chip-bad:#fbe9e8; --chip-bad-text:#a13b38;
+    --pv-bg:#fcfdfe; --pv-alt:#f6f8fa; --drop-bg:#fbfdfe;
+    --svg-title:#22303a; --svg-grid:#ddd; --svg-label:#555; --svg-dim:rgba(0,0,0,.05);
+    --rule-bg:#fff; --rule-bord:#b9c6cd; --rule-on:#fff4c2; --rule-on-bord:#d3b63a;
+    --btn-sec:#fff; --btn-sec-bord:#ccc;
+  }
+  * { box-sizing: border-box; }
+  body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; margin: 0;
+         background: var(--bg); color: var(--text); }
+  main { max-width: 1500px; margin: 0 auto; padding: 24px; }
+
+  header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+  h2 { margin: 0; font-size: 22px; letter-spacing: -0.5px; }
+  h2 .sub { color: var(--muted); font-size: 13px; font-weight: normal; letter-spacing: 0; }
+  .headbtns { display: flex; gap: 10px; align-items: center; }
+  #themeBtn { background: var(--btn-sec); border: 1px solid var(--btn-sec-bord); color: var(--text);
+              border-radius: 9px; padding: 7px 11px; cursor: pointer; font-size: 15px; }
+  #themeBtn:hover { filter: brightness(1.08); }
+
+  .switch { display: inline-flex; align-items: center; gap: 9px; cursor: pointer; font-size: 14px; font-weight: 600; }
+  .switch input { display: none; }
+  .track { width: 44px; height: 24px; border-radius: 12px; background: #c4cfd6; position: relative; transition: background .15s; flex: none; }
+  .track::after { content: ""; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%;
+                  background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.25); transition: left .15s; }
+  .switch input:checked + .track { background: var(--ok); }
+  .switch input:checked + .track::after { left: 23px; }
+
+  .toolbar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin: 18px 0 14px; }
+  .toolbar input[type=text], .toolbar input[type=number] {
+    border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; font-size: 13px;
+    background: var(--input); color: var(--text); }
+  #group { flex: 1; min-width: 220px; max-width: 380px; }
+  button.sec { background: var(--btn-sec); border: 1px solid var(--btn-sec-bord); color: var(--text);
+               border-radius: 9px; padding: 8px 12px; font-size: 13px; cursor: pointer; }
+  button.sec:hover { filter: brightness(1.06); }
+
+  #cols { display: grid; grid-template-columns: 1fr; gap: 16px; align-items: start; }
+  #cols.with-rules { grid-template-columns: 1fr 1fr; }
+  @media (max-width: 900px) { #cols.with-rules { grid-template-columns: 1fr; } }
+  section.card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px; }
+  section.card h3 { margin: 0 0 10px; font-size: 14px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+
+  .drop { border: 2px dashed var(--rule-bord); border-radius: 12px; padding: 34px 18px; text-align: center;
+          color: var(--muted); font-size: 14px; cursor: pointer; background: var(--drop-bg); transition: all .12s; }
+  .drop b { color: var(--accent); }
+  .drop.over { border-color: var(--ok); background: var(--chip-ok); color: var(--chip-ok-text);
+               transform: scale(1.01); box-shadow: 0 6px 18px rgba(46,158,107,.15); }
+  .drop.loaded { border-style: solid; border-color: var(--ok); color: var(--chip-ok-text); padding: 16px 18px; }
+  .drop .small { display: block; margin-top: 6px; font-size: 12px; color: var(--muted); }
+
+  .meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; align-items: center; }
+  .chip { background: var(--chip); border: 1px solid var(--line); border-radius: 20px; padding: 3px 10px;
+          font-size: 12px; color: var(--chip-text); }
+  .chip.ok { background: var(--chip-ok); border-color: var(--chip-ok); color: var(--chip-ok-text); }
+  .chip.bad { background: var(--chip-bad); border-color: var(--chip-bad); color: var(--chip-bad-text); }
+  .chip a { color: inherit; }
+
+  .pv { margin-top: 8px; border: 1px solid var(--line); border-radius: 8px; max-height: 300px; overflow: auto;
+        font: 12px/1.5 ui-monospace, Menlo, Consolas, monospace; background: var(--pv-bg); }
+  .pv-row { display: flex; gap: 8px; padding: 2px 8px; }
+  .pv-row:nth-child(odd) { background: var(--pv-alt); }
+  .pv-t { color: var(--muted); flex: none; }
+  .pv-g { color: var(--accent); flex: none; max-width: 170px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .pv-l { flex: 1; word-break: break-all; }
+
+  button.primary { background: var(--accent); color: #fff; border: 0; border-radius: 9px; padding: 10px 22px;
+                   font-size: 14px; font-weight: 600; cursor: pointer; }
+  button.primary:hover { filter: brightness(1.06); }
+  button.primary:disabled { background: var(--chip); color: var(--muted); cursor: not-allowed; filter: none; }
+
+  .error { color: var(--warn); margin: 10px 0; font-size: 13px; white-space: pre-wrap; }
+
+  .results { margin-top: 26px; }
+  #analysis { margin-bottom: 16px; }
+  #analysis .sum { list-style: none; padding: 0; margin: 0 0 12px; }
+  #analysis .sum li { font-size: 13px; border-left: 3px solid var(--accent); padding: 3px 10px; margin: 5px 0;
+                      background: var(--pv-bg); border-radius: 0 8px 8px 0; }
+  #analysis .sum li.warn { border-left-color: var(--warn); }
+  .charts { display: flex; gap: 14px; flex-wrap: wrap; margin: 8px 0 4px; }
+  .chart { background: var(--pv-bg); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
+  .chart h4 { margin: 0 0 6px; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+  .chart svg { display: block; }
+  .chart g.ri { cursor: pointer; }
+  .tbl { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 8px; }
+  .tbl th, .tbl td { text-align: left; padding: 4px 8px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  .tbl th { color: var(--muted); font-weight: 600; text-transform: uppercase; font-size: 10px; letter-spacing: .04em; }
+  .tbl td.tpl { max-width: 380px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: ui-monospace, Menlo, monospace; color: var(--muted); }
+  .tbl .ip { cursor: pointer; color: var(--accent); font-family: ui-monospace, Menlo, monospace; }
+  .tbl .ip:hover { text-decoration: underline; }
+  .vchip { padding: 1px 9px; border-radius: 10px; font-size: 10px; font-weight: 700; letter-spacing: .03em; }
+  .v-flood, .v-brute { background: var(--chip-bad); color: var(--chip-bad-text); }
+  .v-scan { background: var(--chip); color: var(--accent); }
+  .v-single, .v-rec, .v-base { background: var(--chip); color: var(--chip-text); }
+  #stats { color: var(--muted); font-size: 13px; margin-bottom: 8px; }
+  #search { width: 100%; max-width: 340px; border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px;
+            font-size: 13px; background: var(--input); color: var(--text); }
+
+  #legend { display: flex; flex-wrap: wrap; gap: 4px 12px; margin-top: 10px; font-size: 13px; align-items: center; }
+  #legend label { display: inline-flex; gap: 4px; align-items: center; cursor: pointer; }
+  #legend .legend-g { cursor: pointer; text-decoration: underline dotted; }
+
+  #rules { display: flex; flex-wrap: wrap; gap: 4px 8px; margin-top: 10px; }
+  .rule { border: 1px solid var(--rule-bord); background: var(--rule-bg); border-radius: 14px; padding: 2px 9px;
+          cursor: pointer; font-size: 12px; line-height: 1.6; }
+  .rule.on { background: var(--rule-on); border-color: var(--rule-on-bord); }
+  .rule.serious { border-color: var(--warn); color: var(--warn); }
+  .rule b.lv { font-weight: 700; }
+
+  #canvas { margin-top: 10px; }
+  #detail { margin-top: 14px; padding: 12px 14px; border: 1px solid var(--line); background: var(--card);
+            border-radius: 10px; }
+  #detail h3 { margin: 0 0 6px; font-size: 14px; display: flex; gap: 12px; align-items: baseline; }
+  #detail h3 .t { color: var(--muted); font-weight: normal; font-size: 12px; }
+  #detail pre { margin: 0; font-size: 12px; white-space: pre-wrap; word-break: break-all;
+                max-height: 300px; overflow: auto; }
+  #detail .mrule { font-size: 12px; margin: 6px 0 2px; }
+  #detail .mrule b { color: var(--warn); }
+  .ev { cursor: pointer; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h2>Log timeline <span class="sub">upload a log, spot events, match them against your rules</span></h2>
+    <div class="headbtns">
+      <button id="themeBtn" title="Toggle dark/light mode"></button>
+    </div>
+  </header>
+
+  <div class="toolbar">
+    <input type="text" id="group" placeholder="group regex (default: first IPv4)">
+    <input type="number" id="year" placeholder="year for syslog timestamps">
+    <label class="switch" title="match events against a custom Wazuh rules XML"><input type="checkbox" id="rulesMode"><span class="track"></span>Custom rules</label>
+    <button class="primary" id="build" disabled>Build timeline</button>
+  </div>
+  <div class="error" id="error"></div>
+
+  <div id="cols">
+    <section class="card">
+      <h3>Log file</h3>
+      <div class="drop" id="dropLog"><b>Drop the log file</b> here, or click to browse<br>
+        <span class="small">.log / .txt — Apache, syslog, auditd, ISO, epoch timestamps</span>
+        <input type="file" id="logInput" hidden>
+      </div>
+      <div class="meta" id="logMeta"></div>
+      <div class="pv" id="pv"></div>
+    </section>
+
+    <section class="card" id="rulesCard" hidden>
+      <h3>Custom rules</h3>
+      <div class="drop" id="dropRules"><b>Drop your rules.xml</b> here, or click to browse<br>
+        <span class="small">Wazuh rules — only match / regex / srcip / dstip / program_name conditions apply</span>
+        <input type="file" id="rulesInput" hidden>
+      </div>
+      <div class="meta" id="rulesMeta"></div>
+    </section>
+  </div>
+
+  <section class="card results" id="results" hidden>
+    <div id="stats"></div>
+    <div id="analysis"></div>
+    <input id="search" placeholder="filter by IP / text...">
+    <div id="legend"></div>
+    <div id="rules"></div>
+    <div id="canvas"></div>
+    <div id="detail"></div>
+  </section>
+</main>
+
+<script>
+// ---- log parsing (ported from app.py) ----
+const DEFAULT_GROUP = "(\\d{1,3}(?:\\.\\d{1,3}){3})";
+const MONTHS = { Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5,
+                 Jul: 6, Aug: 7, Sep: 8, Oct: 9, Nov: 10, Dec: 11 };
+
+function parseTime(line, year) {
+  let m;
+  if ((m = line.match(/audit\((\d+)(?:\.(\d+))?/)))
+    return (m[2] !== undefined) ? +(m[1] + "." + m[2]) : +m[1];
+  if ((m = line.match(/\[(\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}:\d{2}(?:\.\d+)?)\]/)))
+    return parseISO(m[1].replace(" ", "T"));
+  if ((m = line.match(/\[([A-Za-z]{3} [A-Za-z]{3} \d{1,2} \d{2}:\d{2}:\d{2}(?:\.\d+)? \d{4})\]/)))
+    return parseApache(m[1]);
+  if ((m = line.match(/^([A-Za-z]{3}\s+\d{1,2} \d{2}:\d{2}:\d{2})/)))
+    return parseSyslog(m[1], year);
+  return null;
+}
+
+function parseISO(s) {
+  const [d, t = "00:00:00"] = s.split("T");
+  const [Y, M, D] = d.split("-").map(Number);
+  const [hh, mm, ss] = t.split(":");
+  const [sv, frac] = ss.split(".");
+  return toSec(new Date(Y, M - 1, D, hh, mm, +sv,
+    frac ? Math.round(parseFloat("0." + frac) * 1000) : 0));
+}
+
+function parseApache(s) {
+  const [, mon, day, hms, yr] = s.match(/^\S+ ([A-Za-z]{3}) (\d{1,2}) (\S+) (\d{4})$/);
+  const [hh, mm, ss] = hms.split(":");
+  const [sv, frac] = ss.split(".");
+  return toSec(new Date(+yr, MONTHS[mon], +day, +hh, +mm, +sv,
+    frac ? Math.round(parseFloat("0." + frac) * 1000) : 0));
+}
+
+function parseSyslog(s, year) {
+  const [mon, day, hms] = s.trim().split(/\s+/);
+  const [hh, mm, ss] = hms.split(":");
+  return toSec(new Date(year, MONTHS[mon], +day, +hh, +mm, +ss, 0));
+}
+
+function toSec(d) { return d.getTime() / 1000; }
+
+function groupOf(line, re) {
+  const m = line.match(re);
+  return m ? m[1] : "(other)";
+}
+
+function parseLines(text, year, groupRe) {
+  const events = [];
+  let skipped = 0;
+  for (const line of text.split(/\r?\n/)) {
+    if (!line.trim()) continue;
+    const t = parseTime(line, year);
+    if (t == null) { skipped++; continue; }
+    events.push([t, groupOf(line, groupRe), line]);
+  }
+  return [events, skipped];
+}
+
+// ponytail: cap rows at 200 so huge sets stay readable; rest collapses to "(other)"
+const MAX_ROWS = 200;
+
+function capRows(events) {
+  const rows = [...new Set(events.map(e => e[1]))];
+  if (rows.length <= MAX_ROWS) return rows;
+  const cnt = g => events.reduce((n, e) => n + (e[1] === g), 0);
+  const keep = new Set(rows.slice().sort((a, b) => cnt(b) - cnt(a)).slice(0, MAX_ROWS - 1));
+  for (const e of events) if (!keep.has(e[1])) e[1] = "(other)";
+  return [...new Set(events.map(e => e[1]))];
+}
+
+// ---- Wazuh custom rules matching (ported from app.py) ----
+function loadRules(xmlText) {
+  const doc = new DOMParser().parseFromString(xmlText, "application/xml");
+  if (doc.getElementsByTagName("parsererror").length) throw new Error("bad rules XML");
+  const rules = [];
+  for (const r of doc.getElementsByTagNameNS("*", "rule")) {
+    const rid = r.getAttribute("id");
+    if (!rid) continue;
+    const matchers = [];
+    for (const tag of ["match", "regex", "include", "program_name", "srcip", "dstip"]) {
+      const el = r.getElementsByTagNameNS("*", tag)[0];
+      const v = el && el.textContent;
+      if (v && v.trim()) matchers.push(v.trim());
+    }
+    const g = r.getElementsByTagNameNS("*", "group")[0];
+    rules.push({
+      id: rid,
+      level: parseInt(r.getAttribute("level") || "0", 10),
+      description: (r.getElementsByTagNameNS("*", "description")[0]?.textContent) || "",
+      groups: (g && g.textContent ? g.textContent.split(",") : []).map(x => x.trim()).filter(Boolean),
+      matchers,
+    });
+  }
+  return rules;
+}
+
+const reEscape = p => p.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+function compileRe(p) {
+  try { return new RegExp(p, "u"); } catch { return new RegExp(reEscape(p), "u"); }
+}
+
+function buildMatcher(rules) {
+  const single = new Map();
+  const multi = [];
+  for (const r of rules) {
+    if (r.matchers.length === 1) {
+      if (!single.has(r.matchers[0])) single.set(r.matchers[0], []);
+      single.get(r.matchers[0]).push(r.id);
+    } else if (r.matchers.length > 1) {
+      multi.push([r, r.matchers.map(compileRe)]);
+    }
+  }
+  let fast = null;
+  const pats = [...single.keys()];
+  if (pats.length) {
+    fast = {
+      re: new RegExp(pats.map((p, i) => `(?<p${i}>${p})`).join("|"), "gu"),
+      groups: pats.map(p => single.get(p)),
+    };
+  }
+  return [fast, multi];
+}
+
+function matchRuleIds(line, fast, multi) {
+  const ids = new Set();
+  if (fast) {
+    fast.re.lastIndex = 0;
+    let m;
+    while ((m = fast.re.exec(line))) {
+      if (m.index === fast.re.lastIndex) fast.re.lastIndex++;
+      for (const [k, v] of Object.entries(m.groups)) {
+        if (v != null) for (const id of fast.groups[+k.slice(1)]) ids.add(id);
+      }
+    }
+  }
+  for (const [r, rexes] of multi) {
+    if (rexes.every(rx => rx.test(line))) ids.add(r.id);
+  }
+  return ids;
+}
+
+// ---- generic forensic analysis (ported from app.py) ----
+const IP_RE = /\b\d{1,3}(?:\.\d{1,3}){3}\b|\b[0-9a-fA-F]{2}(?:[:-][0-9a-fA-F]{2}){2,}\b|\d+(?:\.\d+)*/g;
+
+function template(line) {
+  return line.replace(IP_RE, "N").replace(/\s+/g, " ").trim();
+}
+
+function maxBurst(ts, window) {
+  let best = 0, left = 0;
+  for (let right = 0; right < ts.length; right++) {
+    while (ts[right] - ts[left] > window) left++;
+    best = Math.max(best, right - left + 1);
+  }
+  return best;
+}
+
+function verdictOf(count, span, tdiv, burst, rate) {
+  if (count === 1) return "single";
+  if (count >= 30 && burst >= 10 && tdiv < 0.8)
+    return (burst >= 40 || rate >= 2) ? "ddos/flood-like" : "brute-force-like";
+  if (count >= 4 && tdiv >= 0.6) return "scan/exploration";
+  if (count < 5) return "recurring";
+  return "baseline";
+}
+
+function friendlySpan(s) {
+  s = Math.floor(s);
+  const parts = [];
+  for (const [size, name] of [[86400, "d"], [3600, "h"], [60, "m"]]) {
+    const q = Math.floor(s / size); s %= size;
+    if (q) parts.push(q + name);
+  }
+  return (parts.join(" ") || s + "s");
+}
+
+function analyze(events, idLevel) {
+  const t0 = events[0][0], t1 = events[events.length - 1][0];
+  const spanS = (t1 - t0) || 60;
+
+  const per = new Map();
+  for (const e of events) {
+    let d = per.get(e[1]);
+    if (!d) per.set(e[1], d = { count: 0, tpl: new Map(), ts: [], rule: 0, rule_hi: 0 });
+    d.count++;
+    const t = template(e[2]);
+    d.tpl.set(t, (d.tpl.get(t) || 0) + 1);
+    d.ts.push(e[0]);
+    if (idLevel && e.length > 3 && e[3] && e[3].length) {
+      d.rule++;
+      if (idLevel.get(e[3][0]) >= 6) d.rule_hi++;
+    }
+  }
+
+  const groups = [];
+  for (const [g, d] of per) {
+    const spanG = d.ts[d.ts.length - 1] - d.ts[0];
+    const burst = maxBurst(d.ts, 60);
+    const rate = spanG ? d.count / Math.max(spanG, 60) : d.count;
+    const tdiv = d.tpl.size / d.count;
+    groups.push({
+      g, count: d.count, span: Math.floor(spanG),
+      rate: Math.round(rate * 1000) / 1000,
+      diversity: Math.round(tdiv * 100) / 100,
+      burst, peak_rate: Math.round(burst / 60 * 100) / 100,
+      verdict: verdictOf(d.count, spanG, tdiv, burst, rate),
+      rule: d.rule, rule_hi: d.rule_hi,
+      tpl: [...d.tpl.entries()].sort((a, b) => b[1] - a[1]).slice(0, 3)
+        .map(([t, n]) => [t.slice(0, 90), n]),
+    });
+  }
+  groups.sort((a, b) => b.count - a.count);
+  const top = groups[0];
+
+  const BUCKETS = [1, 2, 5, 10, 30, 60, 120, 300, 900, 1800, 3600, 10800, 21600, 43200, 86400,
+                   604800, 1209600, 2592000, 7776000, 31536000];
+  let bucket = BUCKETS.find(b => spanS / b <= 64) ?? 31536000;
+  const counts = new Array(Math.floor(spanS / bucket) + 1).fill(0);
+  for (const e of events) counts[Math.floor((e[0] - t0) / bucket)]++;
+
+  const summary = [`${events.length} events from ${groups.length} sources over ~${friendlySpan(spanS)}; most active ${top.g} (${top.count} events).`];
+  const scan = groups.filter(g => g.verdict === "scan/exploration");
+  if (scan.length) summary.push(`${scan.length} source(s) look like scanning/exploration (many distinct messages).`);
+  const sus = groups.filter(g => ["ddos/flood-like", "brute-force-like"].includes(g.verdict));
+  if (sus.length) summary.push(`${sus.length} source(s) show burst/flood behavior; fastest peak ${Math.max(...sus.map(g => g.peak_rate)).toFixed(2)} req/s in a 60s window.`);
+  if (idLevel) {
+    const rh = groups.reduce((s, g) => s + g.rule, 0);
+    const hi = groups.reduce((s, g) => s + g.rule_hi, 0);
+    summary.push(`${rh} events matched custom rules (${hi} serious, level >= 6).`);
+  }
+  return { t0, t1, hist: { bucket, counts }, groups, summary };
+}
+
+// ---- orchestrator: log text + optional rules text -> DATA (mirrors app.py /api/parse) ----
+function parseAll(logText, fileName, rulesText, groupStr, yearStr) {
+  let groupRe;
+  try { groupRe = new RegExp(groupStr || DEFAULT_GROUP); } catch { throw new Error("bad group regex"); }
+  let year = yearStr ? parseInt(yearStr, 10) : new Date().getFullYear();
+  if (isNaN(year)) throw new Error("bad year");
+
+  let [events, skipped] = parseLines(logText, year, groupRe);
+  if (!events.length)
+    throw new Error("no timestamps parsed (formats: auditd epoch, ISO, Apache [Day Mon dd HH:MM:SS.fff YYYY], syslog Mon dd HH:MM:SS)");
+
+  events.sort((a, b) => a[0] - b[0]);
+  const groups = capRows(events);
+
+  let rules = [], rulesInfo = [], matchI = new Map(), idLevel = null;
+  if (rulesText) {
+    rules = loadRules(rulesText);
+    const [fast, multi] = buildMatcher(rules);
+    idLevel = new Map(rules.map(r => [r.id, r.level]));
+    const counts = new Map();
+    for (const e of events) {
+      const ids = matchRuleIds(e[2], fast, multi);
+      for (const id of ids) counts.set(id, (counts.get(id) || 0) + 1);
+      e.push([...ids].sort((a, b) => (idLevel.get(b) - idLevel.get(a)) || (a < b ? -1 : 1)));
+    }
+    const matched = rules.filter(r => (counts.get(r.id) || 0) > 0);
+    matched.sort((a, b) => (counts.get(b.id) - counts.get(a.id)) || (b.level - a.level));
+    rulesInfo = matched.map(r => ({ id: r.id, level: r.level, description: r.description,
+                                    groups: r.groups, count: counts.get(r.id) }));
+    rulesInfo.forEach((r, i) => matchI.set(r.id, i));
+  }
+
+  const analysis = analyze(events, idLevel);
+  return {
+    title: fileName || "upload",
+    t0: events[0][0],
+    t1: events[events.length - 1][0],
+    skipped,
+    groups,
+    rules: rulesInfo,
+    analysis,
+    events: events.map(e => ({ t: e[0], g: e[1], l: e[2],
+                               r: e.length > 3 ? e[3].map(id => matchI.get(id)) : [] })),
+  };
+}
+
+function assert(cond, msg) { if (!cond) throw new Error("selftest: " + msg); }
+
+function selftest() {
+  const eps = 0.001;
+  assert(Math.abs(parseTime("msg=audit(1479982525.380:50):", 2016) - 1479982525.38) < eps, "epoch");
+  assert(parseTime("[Sun Nov 23 18:49:01.713508 2014]", 2014) !== null &&
+         new Date(parseTime("[Sun Nov 23 18:49:01.713508 2014]", 2014) * 1000).getFullYear() === 2014, "apache");
+  assert(new Date(parseTime("Feb 17 18:00:00 myhost httpd[18660]:", 2014) * 1000).getHours() === 18, "syslog hour");
+  assert(parseTime("[Mon Dec 04 04:47:44 2005] x", 2005) !== null, "apache2");
+  assert(new Date(parseTime("Sep  1 10:24:59 10.10.10.1 %SYS-5", 2020) * 1000).getMonth() === 8, "syslog sep");
+  assert(parseTime("nothing here", 2024) === null, "no time");
+  assert(groupOf("... client 8.8.8.8:443] foo", new RegExp(DEFAULT_GROUP)) === "8.8.8.8", "group");
+  assert(groupOf("zorro", new RegExp(DEFAULT_GROUP)) === "(other)", "group other");
+  const [ev, sk] = parseLines("Feb 17 18:00:00 a [client 8.8.8.8] one\n" +
+    "Feb 17 18:00:05 a [client 8.8.8.8] two\n" +
+    "Feb 17 18:00:10 a [client 8.8.8.8] three\nnope\n", 2024, new RegExp(DEFAULT_GROUP));
+  assert(ev.length === 3 && ev[0][1] === "8.8.8.8" && sk === 1, "parse_lines");
+  assert(maxBurst(ev.map(e => e[0]), 6) === 2, "burst");
+  assert(analyze(ev).groups[0].verdict === "recurring", "verdict");
+  assert(analyze(ev).hist.bucket === 1, "hist bucket");
+  assert(JSON.stringify(capRows(ev)) === JSON.stringify(["8.8.8.8"]), "cap rows");
+  const xml = "<group name='t'><rule id='1' level='2'><match>flip flop</match>" +
+    "<description>flip</description></rule>" +
+    "<rule id='2' level='9'><match>someone</match><regex>login fail</regex>" +
+    "<description>both</description></rule>" +
+    "<rule id='3' level='5'><decoded_as>x</decoded_as><description>no text</description></rule></group>";
+  const rules = loadRules(xml);
+  assert(JSON.stringify(rules.map(r => r.id)) === JSON.stringify(["1", "2", "3"]), "rules ids");
+  assert(rules[2].matchers.length === 0, "no matchers");
+  const [fast, multi] = buildMatcher(rules);
+  assert(matchRuleIds("flip flop seen", fast, multi).has("1"), "match single");
+  assert(matchRuleIds("someone login fail scary", fast, multi).has("2"), "match multi");
+  assert(matchRuleIds("x day", fast, multi).size === 0, "match none");
+  const data = parseAll(ev.map(e => e[2]).join("\n"), "test.log", null, "", "2024");
+  assert(data.events.length === 3 && data.groups[0] === "8.8.8.8", "parseAll");
+  console.log("selftest ok");
+}
+
+if (typeof document !== "undefined" && location.hash === "#selftest") {
+  try { selftest(); document.body.textContent = "selftest ok"; }
+  catch (e) { document.body.textContent = e.message; }
+}
+</script>
+<script>
+const $ = id => document.getElementById(id);
+const esc = s => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+const timeFmt = ts => new Date(ts * 1000).toLocaleString();
+const shortTime = ts => new Date(ts * 1000).toLocaleTimeString("en-GB", { hour12: false });
+let logFile = null, logText = null, rulesText = null, DATA = null, hidden = new Set(), ruleSel = new Set();
+
+// ---- theme (default dark) ----
+function applyTheme(t) {
+  document.documentElement.dataset.theme = t;
+  $("themeBtn").textContent = t === "dark" ? "☀️" : "🌙";
+  localStorage.setItem("theme", t);
+}
+applyTheme(localStorage.getItem("theme") || "dark");
+$("themeBtn").addEventListener("click", () =>
+  applyTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark"));
+
+$("rulesMode").addEventListener("change", () => {
+  $("cols").classList.toggle("with-rules", $("rulesMode").checked);
+  $("rulesCard").hidden = !$("rulesMode").checked;
+});
+
+const readFile = f => new Promise((res, rej) => {
+  const r = new FileReader();
+  r.onload = () => res(r.result);
+  r.onerror = rej;
+  r.readAsText(f);
+});
+
+function setUpDrop(zoneId, inputId, onFile, onLoaded) {
+  const zone = $(zoneId), input = $(inputId);
+  const pick = () => { const f = input.files[0]; if (f) { input.value = ""; onFile(f); } };
+  zone.addEventListener("click", () => input.click());
+  input.addEventListener("change", pick);
+  ["dragenter", "dragover"].forEach(ev => zone.addEventListener(ev, e => {
+    e.preventDefault(); zone.classList.add("over");
+  }));
+  ["dragleave", "drop"].forEach(ev => zone.addEventListener(ev, e => {
+    e.preventDefault(); zone.classList.remove("over");
+  }));
+  zone.addEventListener("drop", e => {
+    const f = e.dataTransfer.files[0];
+    if (f) onFile(f);
+  });
+  if (onLoaded) {
+    const orig = onFile;
+    onFile = f => { orig(f); onLoaded(f); };
+  }
+}
+
+function markDrop(zone, loaded, msg) {
+  zone.classList.toggle("loaded", loaded);
+  zone.innerHTML = loaded
+    ? msg + '<span class="small">drop another file to replace</span>'
+    : zone.dataset.help;
+}
+
+function showMeta(data, f) {
+  $("logMeta").innerHTML = `<span class="chip ok">${esc(f.name)}</span>` +
+    `<span class="chip">${data.events.length} events</span>` +
+    (data.skipped ? `<span class="chip">${data.skipped} skipped</span>` : "") +
+    `<span class="chip">${data.groups.length} groups</span>`;
+  $("pv").innerHTML = data.events.slice(0, 300).map(e =>
+    `<div class="pv-row"><span class="pv-t">${shortTime(e.t)}</span><span class="pv-g">${esc(e.g)}</span>` +
+    `<span class="pv-l">${esc(e.l)}</span></div>`).join("") ||
+    `<div class="pv-row pv-l">no events</div>`;
+}
+
+setUpDrop("dropLog", "logInput", f => {
+  logFile = f;
+  $("pv").innerHTML = "";
+  $("logMeta").innerHTML = "";
+  readFile(f).then(text => {
+    logText = text;
+    try {
+      DATA = parseAll(text, f.name, null, $("group").value.trim(), $("year").value.trim());
+      showMeta(DATA, f);
+      $("build").disabled = false;
+    } catch (err) {
+      $("error").textContent = err.message;
+      $("logMeta").innerHTML = `<span class="chip ok">${esc(f.name)}</span><span class="chip bad">parse failed</span>`;
+    }
+  });
+}, () => markDrop($("dropLog"), true, "<b>Log file loaded.</b> Hit <b>Build timeline</b> to continue."));
+
+document.querySelector("#dropLog").dataset.help = document.querySelector("#dropLog").innerHTML;
+
+setUpDrop("dropRules", "rulesInput", f => {
+  readFile(f).then(text => { rulesText = text; });
+  $("rulesMeta").innerHTML = `<span class="chip ok">${esc(f.name)}</span><span class="chip">matches apply on build</span>`;
+}, () => markDrop($("dropRules"), true, "<b>Rules file loaded.</b>"));
+
+document.querySelector("#dropRules").dataset.help = document.querySelector("#dropRules").innerHTML;
+
+$("build").addEventListener("click", () => {
+  if (!logFile) return;
+  try {
+    DATA = parseAll(logText, logFile.name, $("rulesMode").checked ? rulesText : null,
+                    $("group").value.trim(), $("year").value.trim());
+    build();
+  } catch (err) { $("error").textContent = err.message; }
+});
+
+function build() {
+  $("stats").textContent = `${DATA.title}  |  ${timeFmt(DATA.t0)} → ${timeFmt(DATA.t1)}  |  ` +
+    `${DATA.events.length} events${DATA.skipped ? ` (${DATA.skipped} lines skipped)` : ""}` +
+    `${DATA.rules.length ? `  |  ${DATA.rules.length} rules matched` : ""}`;
+  $("results").hidden = false;
+  $("results").scrollIntoView({ behavior: "smooth" });
+  renderAnalysis();
+  renderLegend();
+  renderRules();
+  render();
+}
+
+function renderLegend() {
+  const counts = {};
+  DATA.events.forEach(e => counts[e.g] = (counts[e.g] || 0) + 1);
+  $("legend").innerHTML = DATA.groups.map((g, i) => {
+    const hue = (i * 47) % 360;
+    return `<label><input type="checkbox" checked data-g="${esc(g)}">` +
+      `<span style="color:hsl(${hue},70%,40%)">■</span> ` +
+      `<span class="legend-g" data-g="${esc(g)}" title="click to filter to this group">${esc(g)}</span> ` +
+      `<b>(${counts[g] || 0})</b></label>`;
+  }).join("");
+  $("legend").querySelectorAll("input[data-g]").forEach(cb =>
+    cb.addEventListener("change", () => {
+      cb.checked ? hidden.delete(cb.dataset.g) : hidden.add(cb.dataset.g);
+      render();
+    }));
+  $("legend").querySelectorAll(".legend-g").forEach(el =>
+    el.addEventListener("click", () => { $("search").value = el.dataset.g; render(); }));
+}
+
+function renderRules() {
+  let html = "";
+  DATA.rules.forEach((r, i) => {
+    html += `<span class="rule ${ruleSel.has(i) ? "on" : ""} ${r.level >= 6 ? "serious" : ""}" data-i="${i}" ` +
+      `title="groups: ${esc(r.groups.join(", ") || "—")}">#${r.id} <b class="lv">L${r.level}</b> ` +
+      `${esc(r.description)} (${r.count})</span>`;
+  });
+  $("rules").innerHTML = DATA.rules.length
+    ? `<b>Rules:</b> ${html}<span class="rule" data-i="-1">clear</span>`
+    : "<b>Rules:</b> none matched (upload a rules.xml to contrast)";
+  $("rules").querySelectorAll(".rule").forEach(el =>
+    el.addEventListener("click", () => {
+      const i = +el.dataset.i;
+      if (i === -1) { ruleSel.clear(); }
+      else { ruleSel.has(i) ? ruleSel.delete(i) : ruleSel.add(i); }
+      render();
+    }));
+}
+
+const SVG = 'xmlns="http://www.w3.org/2000/svg"';
+const VCLS = { "ddos/flood-like": "v-flood", "brute-force-like": "v-brute", "scan/exploration": "v-scan",
+               "recurring": "v-rec", single: "v-single", baseline: "v-base" };
+const VSHORT = { "ddos/flood-like": "FLOOD", "brute-force-like": "BRUTE", "scan/exploration": "SCAN",
+                 recurring: "recurring", single: "single", baseline: "baseline" };
+const spanTxt = s => s < 60 ? `${s}s` : s < 3600 ? `${(s / 60).toFixed(0)}m` : `${(s / 3600).toFixed(1)}h`;
+
+function histChart() {
+  const { bucket, counts } = DATA.analysis.hist, t0 = DATA.t0;
+  const W = 690, H = 170, base = H - 24, max = Math.max(...counts, 1);
+  const bar = (W - 6) / counts.length;
+  let s = `<svg width="${W}" height="${H}" ${SVG}>`;
+  for (let i = 0; i < counts.length; i++) {
+    const c = counts[i], h = Math.max(1, (c / max) * (base - 8));
+    s += `<rect x="${3 + i * bar}" y="${base - h}" width="${Math.max(1, bar - 1)}" height="${h}" ` +
+      `fill="var(--accent)" opacity=".85"><title>${esc(timeFmt(t0 + i * bucket))} → ${c} events</title></rect>`;
+  }
+  const span = DATA.t1 - t0;
+  const every = Math.ceil(counts.length / 6);
+  for (let i = 0; i < counts.length; i += every) {
+    const ts = t0 + i * bucket;
+    const lab = span > 86400
+      ? new Date(ts * 1000).toLocaleDateString("en-GB", { day: "2-digit", month: "short" })
+      : new Date(ts * 1000).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", hour12: false });
+    s += `<text x="${3 + i * bar}" y="${base + 13}" font-size="9" fill="var(--muted)">${esc(lab)}</text>`;
+  }
+  return `<div class="chart"><h4>Events over time</h4>${s}</div>`;
+}
+
+function topChart() {
+  const gs = DATA.analysis.groups.slice(0, 12);
+  const H = gs.length * 20 + 18, W = 470, LBL = 158, max = Math.max(...gs.map(g => g.count), 1);
+  let s = `<svg width="${W}" height="${H}" ${SVG}>`;
+  gs.forEach((g, i) => {
+    const y = 14 + i * 20, w = Math.max(4, (W - LBL - 46) * g.count / max);
+    const fill = g.verdict.includes("flood") || g.verdict.includes("brute") ? "var(--warn)"
+               : g.verdict.includes("scan") ? "var(--accent)" : "var(--muted)";
+    s += `<g class="ri" data-ip="${esc(g.g)}">` +
+      `<text x="${LBL - 6}" y="${y + 10}" font-size="10" fill="var(--muted)" text-anchor="end">${esc(g.g)}</text>` +
+      `<rect x="${LBL}" y="${y}" width="${w.toFixed(1)}" height="13" rx="3" fill="${fill}" opacity=".85">` +
+      `<title>${esc(g.g)}: ${g.count} events, ${g.verdict}</title></rect>` +
+      `<text x="${LBL + 5}" y="${y + 10}" font-size="9" fill="#fff" font-weight="600">${g.count}</text></g>`;
+  });
+  return `<div class="chart"><h4>Top sources (${gs.length}) · click to filter</h4>${s}</div>`;
+}
+
+function renderAnalysis() {
+  const a = DATA.analysis;
+  let html = `<ul class="sum">${a.summary.map(x =>
+    `<li class="${/[Ff]lood|[Bb]rute|[Bb]urst/.test(x) ? "warn" : ""}">${esc(x)}</li>`).join("")}</ul>`;
+  html += `<div class="charts">${histChart()}${topChart()}</div>`;
+  html += `<table class="tbl"><thead><tr><th>Source</th><th>Events</th><th>Span</th><th>avg/s</th>` +
+    `<th>Peak burst</th><th>Top message</th>${DATA.rules.length ? `<th>rules</th>` : ``}<th>Verdict</th></tr></thead><tbody>`;
+  a.groups.slice(0, 40).forEach(g => {
+    const t = g.tpl[0] ? g.tpl[0][0] : "—";
+    html += `<tr><td class="ip" data-ip="${esc(g.g)}">${esc(g.g)}</td>` +
+      `<td>${g.count}</td><td>${spanTxt(g.span)}</td><td>${g.rate.toFixed(2)}</td><td>${g.burst}</td>` +
+      `<td class="tpl" title="${esc(t)}">${esc(t)}</td>` +
+      (DATA.rules.length ? `<td title="high-level (L≥6) events: ${g.rule_hi}">${g.rule || "–"}</td>` : ``) +
+      `<td><span class="vchip ${VCLS[g.verdict] || "v-base"}">${VSHORT[g.verdict] || esc(g.verdict)}</span></td></tr>`;
+  });
+  html += `</tbody></table>`;
+  $("analysis").innerHTML = html;
+  $("analysis").querySelectorAll("[data-ip]").forEach(el =>
+    el.addEventListener("click", () => { $("search").value = el.dataset.ip; render(); }));
+}
+
+function ruleMatch(e) {
+  return !ruleSel.size || e.r.some(i => ruleSel.has(i));
+}
+
+function render() {
+  const { t0, t1, events } = DATA;
+  const q = $("search").value.trim().toLowerCase();
+  const shown = events.filter(e =>
+    (!q || (e.g + " " + e.l).toLowerCase().includes(q)) &&
+    !hidden.has(e.g) && ruleMatch(e));
+
+  const W = 1400, LABEL = 200, PAD = 40, TOP = 72, LH = 26, PTR = 34;
+  const span = Math.max(t1 - t0, 60), rows = DATA.groups;
+  const H = TOP + rows.length * LH + PTR;
+  const x = t => PAD + LABEL + (t - t0) / span * (W - PAD - LABEL - 40);
+  let s = `<svg width="${W}" height="${H}" xmlns='http://www.w3.org/2000/svg' font-family='monospace'>`;
+  s += `<text x="${PAD}" y="24" font-size="16" font-weight="bold" fill="var(--svg-title)">${esc(DATA.title)}  ` +
+    `|  ${timeFmt(t0)} → ${timeFmt(t1)}  |  ${shown.length}/${events.length} events</text>`;
+  const NT = 5;
+  for (let i = 0; i <= NT; i++) {
+    const t = t0 + (t1 - t0) * i / NT, v = x(t);
+    s += `<line x1="${v}" y1="38" x2="${v}" y2="${TOP - 8}" stroke="var(--svg-grid)"/>` +
+      `<text x="${v}" y="52" font-size="11" fill="var(--svg-label)" text-anchor="middle">${esc(timeFmt(t))}</text>`;
+  }
+  rows.forEach((g, i) => {
+    const hue = (i * 47) % 360, y = TOP + i * LH + LH / 2;
+    const evs = shown.filter(e => e.g === g);
+    s += `<rect x="${PAD}" y="${TOP + i * LH}" width="${W - PAD - 20}" height="${LH}" rx="4" ` +
+      `fill="${evs.length ? "var(--svg-dim)" : "none"}"/>`;
+    s += `<text x="${PAD + LABEL - 6}" y="${y + 4}" font-size="12" fill="var(--svg-label)" text-anchor="end" ` +
+      `opacity="${evs.length ? 1 : 0.35}">${esc(g)}</text>`;
+    if (evs.length) {
+      const xs = evs.map(e => x(e.t));
+      s += `<rect x="${Math.min(...xs)}" y="${y - 7}" width="${Math.max(1, Math.max(...xs) - Math.min(...xs))}" ` +
+        `height="14" rx="3" fill="hsl(${hue},60%,70%)" opacity="0.5"/>`;
+    }
+    evs.forEach(e => {
+      const hx = x(e.t);
+      const serious = e.r.some(i => DATA.rules[i].level >= 6);
+      s += `<g class="ev" data-i="${shown.indexOf(e)}"><path d="M${hx},${y} l5,5 l-5,5 l-5,-5 z" ` +
+        `fill="hsl(${hue},70%,45%)"${serious ? ' stroke="var(--warn)" stroke-width="1.5"' : ""}>` +
+        `<title>${esc(e.g)} | ${esc(timeFmt(e.t))} | ${e.r.length} rule(s) | ${esc(e.l)}</title></path></g>`;
+    });
+  });
+  s += "</svg>";
+  $("canvas").innerHTML = s;
+  $("canvas").querySelector("svg").addEventListener("click", ev => {
+    const m = ev.target.closest(".ev");
+    if (!m) return;
+    const e = shown[+m.dataset.i];
+    const rules = e.r.map(i => `<div class="mrule">#${DATA.rules[i].id} ` +
+      `<b>L${DATA.rules[i].level}</b> — ${esc(DATA.rules[i].description)}</div>`).join("");
+    $("detail").innerHTML = `<h3><span style="color:hsl(${(rows.indexOf(e.g) * 47) % 360},70%,40%)">■ ${esc(e.g)}</span>` +
+      `<span class="t">${esc(timeFmt(e.t))}</span></h3><pre>${esc(e.l)}</pre>` +
+      (rules || '<div class="mrule">no rules matched</div>');
+  });
+}
+
+["dragover", "drop"].forEach(ev =>
+  document.addEventListener(ev, e => {
+    if (!e.target.closest(".drop")) e.preventDefault();
+  }));
+</script>
+</body>
+</html>
