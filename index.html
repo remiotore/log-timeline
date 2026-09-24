@@ -453,8 +453,9 @@ function makeEngine(rulesText) {
       fired.add(a.r.id);
       for (const g of a.r.groups) groups.add(g);
     };
+    const trace = [];
     for (const a of order) {
-      if (!pass(a)) continue;
+      if (!pass(a)) { trace.push([a.r.id, "discarded"]); continue; }
       if (a.r.frequency) {
         const key = a.r.sameSrc ? a.r.id + "@" + (fields.srcip || fields.group) : a.r.id;
         let win = ctx.get(key);
@@ -462,11 +463,12 @@ function makeEngine(rulesText) {
         win.push(fields.t);
         while (win.length > a.r.frequency) win.shift();
         // ponytail: keeps firing while the window stays full, so the timeline lights up for the whole flood
-        if (!(win.length >= a.r.frequency && fields.t - win[0] <= a.r.timeframe)) continue;
+        if (!(win.length >= a.r.frequency && fields.t - win[0] <= a.r.timeframe)) { trace.push([a.r.id, "discarded"]); continue; }
       }
       fire(a);
+      trace.push([a.r.id, "matched"]);
     }
-    return { fired: [...fired], groups: [...groups] };
+    return { fired: [...fired], groups: [...groups], trace };
   }
   return { byId, evalEvent, rules: act.map(a => a.r) };
 }
@@ -582,10 +584,17 @@ function parseAll(logText, fileName, rulesText, groupStr, yearStr) {
     const eng = makeEngine(rulesText);
     idLevel = new Map(eng.rules.map(r => [r.id, r.level]));
     const counts = new Map(), ctx = new Map();
+    const tally = new Map(); // rule id -> {tried, matched} across all events
     for (const e of events) {
       const fields = decodeFields(e[2], e[1], e[0]);
-      const { fired } = eng.evalEvent(fields, ctx);
+      const { fired, trace } = eng.evalEvent(fields, ctx);
       for (const id of fired) counts.set(id, (counts.get(id) || 0) + 1);
+      for (const [id, verdict] of trace) {
+        let t = tally.get(id);
+        if (!t) tally.set(id, t = { tried: 0, matched: 0 });
+        t.tried++;
+        if (verdict === "matched") t.matched++;
+      }
       e.push([...fired].sort((a, b) => (idLevel.get(b) - idLevel.get(a)) || (a < b ? -1 : 1)));
     }
     const matched = eng.rules.filter(r => (counts.get(r.id) || 0) > 0);
@@ -593,6 +602,11 @@ function parseAll(logText, fileName, rulesText, groupStr, yearStr) {
     rulesInfo = matched.map(r => ({ id: r.id, level: r.level, description: r.description,
                                     groups: r.groups, count: counts.get(r.id) }));
     rulesInfo.forEach((r, i) => matchI.set(r.id, i));
+    ruleTrace = [...tally].sort((a, b) =>
+      (b[1].matched - a[1].matched) || (a[0] < b[0] ? -1 : 1))
+      .map(([id, t]) => { const r = eng.byId.get(id);
+        return { id, level: r.level, description: r.description, groups: r.groups,
+                 tried: t.tried, matched: t.matched }; });
   }
 
   const analysis = analyze(events, idLevel);
@@ -603,6 +617,7 @@ function parseAll(logText, fileName, rulesText, groupStr, yearStr) {
     skipped,
     groups,
     rules: rulesInfo,
+    ruleTrace,
     analysis,
     events: events.map(e => ({ t: e[0], g: e[1], l: e[2],
                                r: e.length > 3 ? e[3].map(id => matchI.get(id)) : [] })),
@@ -945,12 +960,23 @@ function renderRules() {
       `title="groups: ${esc(r.groups.join(", ") || "—")}">#${r.id} <b class="lv">L${r.level}</b> ` +
       `${esc(r.description)} (${r.count})</span>`;
   });
-  $("rules").innerHTML = DATA.rules.length
-    ? `<b>Rules:</b> ${html}<span class="rule" data-i="-1">clear</span>`
+  const detailsOpen = DATA.ruleTrace.length
+    ? `<details id="ruleTrace"><summary>&#9656; Rule trace: trying each rule per event — ${
+        DATA.ruleTrace.length} evaluated, ${DATA.ruleTrace.filter(t => t.matched).length} matched</summary>` +
+      `<div class="tracebody">${traceHtml}</div></details>`
+    : "";
+$("rules").innerHTML = DATA.rules.length
+    ? `<b>Rules:</b> ${html}<span class="rule" data-i="-1">clear</span>${detailsOpen}`
     : rulesText
       ? "<b>Rules:</b> no Wazuh rules in the loaded ruleset matched these events" +
         " (level-0 groupings don't alert; try a ruleset that covers this log type)"
       : "<b>Rules:</b> ruleset not loaded (serve over HTTP, not file://)";
+    const traceHtml = DATA.ruleTrace.map(t =>
+    `<div><code>trying ${t.id} rule</code> ${t.matched ? `<span class="ok">-> <b>Matched</b></span>` : `<span class="ko">-> Discarded</span>`}` +
+    ` <span class="dim">(${t.tried} evaluated)</span>` +
+    (t.matched ? ` <b class="lv">L${t.level}</b> ${esc(t.description)}` +
+               ` <span class="dim">groups: ${esc(t.groups.join(", ") || "—")}</span>` : ``) +
+    `</div>`).join("");
   $("rules").querySelectorAll(".rule").forEach(el =>
     el.addEventListener("click", () => {
       const i = +el.dataset.i;
