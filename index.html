@@ -891,10 +891,13 @@ function render() {
   s += `<text x="${PAD}" y="24" font-size="16" font-weight="bold" fill="var(--svg-title)">${esc(DATA.title)}  ` +
     `|  ${timeFmt(t0)} → ${timeFmt(t1)}  |  ${shown.length}/${events.length} events</text>`;
   const NT = 5;
+  const tickLab = t => span <= 86400 ? shortTime(t)
+    : span <= 604800 ? new Date(t * 1000).toLocaleDateString("en-GB", { day: "2-digit", month: "2-digit" }) + " " + shortTime(t)
+    : new Date(t * 1000).toLocaleDateString("en-GB", { day: "2-digit", month: "2-digit", year: "2-digit" });
   for (let i = 0; i <= NT; i++) {
     const t = t0 + (t1 - t0) * i / NT, v = x(t);
     s += `<line x1="${v}" y1="38" x2="${v}" y2="${TOP - 8}" stroke="var(--svg-grid)"/>` +
-      `<text x="${v}" y="52" font-size="11" fill="var(--svg-label)" text-anchor="middle">${esc(timeFmt(t))}</text>`;
+      `<text x="${v}" y="52" font-size="11" fill="var(--svg-label)" text-anchor="middle">${esc(tickLab(t))}</text>`;
   }
   rows.forEach((g, i) => {
     const hue = (i * 47) % 360, y = TOP + i * LH + LH / 2;
