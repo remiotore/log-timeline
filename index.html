@@ -1,1121 +1,832 @@
 <!doctype html>
-<html data-theme="dark">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Log timeline</title>
-<script>document.documentElement.dataset.theme = localStorage.getItem("theme") || "dark";</script>
 <style>
-  :root {
-    --bg:#0d1219; --card:#151d26; --line:#2a3744; --text:#dce6ee; --muted:#87a0b1;
-    --accent:#5aa2ff; --ok:#43b883; --warn:#ff7b72; --input:#10161e;
-    --chip:#1c2733; --chip-text:#aebfcc; --chip-ok:#1d3a2c; --chip-ok-text:#63d69f; --chip-bad:#3c2322; --chip-bad-text:#ff9b93;
-    --pv-bg:#10161e; --pv-alt:#18222c; --drop-bg:#101820;
-    --svg-title:#dce6ee; --svg-grid:#2c3947; --svg-label:#8ba1b2; --svg-dim:rgba(255,255,255,.06);
-    --rule-bg:#1d2834; --rule-bord:#3a4a5a; --rule-on:#4a3f11; --rule-on-bord:#b9a13a;
-    --btn-sec:#1c2733; --btn-sec-bord:#33424f;
-  }
-  [data-theme="light"] {
-    --bg:#f2f5f7; --card:#fff; --line:#e3e8ec; --text:#22303a; --muted:#5a7380;
-    --accent:#2c7db1; --ok:#2e9e6b; --warn:#b0413e; --input:#fff;
-    --chip:#eef3f6; --chip-text:#446; --chip-ok:#e7f6ee; --chip-ok-text:#1f7a4a; --chip-bad:#fbe9e8; --chip-bad-text:#a13b38;
-    --pv-bg:#fcfdfe; --pv-alt:#f6f8fa; --drop-bg:#fbfdfe;
-    --svg-title:#22303a; --svg-grid:#ddd; --svg-label:#555; --svg-dim:rgba(0,0,0,.05);
-    --rule-bg:#fff; --rule-bord:#b9c6cd; --rule-on:#fff4c2; --rule-on-bord:#d3b63a;
-    --btn-sec:#fff; --btn-sec-bord:#ccc;
-  }
-  * { box-sizing: border-box; }
-  body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; margin: 0;
-         background: var(--bg); color: var(--text); }
-  main { max-width: 1500px; margin: 0 auto; padding: 24px; }
+:root{
+  --bg:#0d1219;--card:#151d26;--line:#2a3744;--text:#dce6ee;--muted:#87a0b1;
+  --accent:#5aa2ff;--warn:#ff7b72;--ok:#43b883;--chip:#1c2733;--panel:#10161e;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);
+  font:14px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:1180px;margin:0 auto;padding:24px}
+h1{font-size:19px;margin:0 0 16px;letter-spacing:-.3px}
+h1 small{color:var(--muted);font-weight:400;font-size:13px;letter-spacing:0}
+h2{margin:0 0 10px;font-size:12px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+section{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:16px}
 
-  header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
-  h2 { margin: 0; font-size: 22px; letter-spacing: -0.5px; }
-  h2 .sub { color: var(--muted); font-size: 13px; font-weight: normal; letter-spacing: 0; }
-  .headbtns { display: flex; gap: 10px; align-items: center; }
-  #themeBtn { background: var(--btn-sec); border: 1px solid var(--btn-sec-bord); color: var(--text);
-              border-radius: 9px; padding: 7px 11px; cursor: pointer; font-size: 15px; }
-  #themeBtn:hover { filter: brightness(1.08); }
+.drop{border:2px dashed var(--line);border-radius:10px;padding:36px 18px;text-align:center;
+  color:var(--muted);cursor:pointer;transition:.12s}
+.drop:hover,.drop.over{border-color:var(--accent);color:var(--text);background:var(--panel)}
+.drop.over{border-color:var(--ok)}
+.drop b{color:var(--accent)}
+.drop small{display:block;margin-top:6px;font-size:12px;opacity:.8}
+.err{color:var(--warn);font-size:13px;white-space:pre-wrap;margin:10px 0}
 
-  .switch { display: inline-flex; align-items: center; gap: 9px; cursor: pointer; font-size: 14px; font-weight: 600; }
-  .switch input { display: none; }
-  .track { width: 44px; height: 24px; border-radius: 12px; background: #c4cfd6; position: relative; transition: background .15s; flex: none; }
-  .track::after { content: ""; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%;
-                  background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.25); transition: left .15s; }
-  .switch input:checked + .track { background: var(--ok); }
-  .switch input:checked + .track::after { left: 23px; }
+.chips{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px}
+.chip{background:var(--chip);border:1px solid var(--line);border-radius:20px;padding:3px 11px;
+  font-size:12px;color:var(--muted)}
+.chip.ok{color:var(--ok);border-color:#26543f}
+.chip.bad{color:var(--warn);border-color:#5b2f2c}
+.chip.act,.chip.filt{cursor:pointer;color:var(--text);border-color:var(--accent)}
+.chip.act:hover,.chip.filt:hover{background:var(--accent);color:#07121c}
+/* every source name, bar and table row is a drill-down target */
+[data-src]{cursor:pointer}
+[data-src]:hover{filter:brightness(1.35)}
+tbody tr[data-src]:hover{background:#1c2b38}
+tbody tr[data-src].sel{background:#1c2b38;outline:1px solid var(--accent)}
+.scroll div.hit{background:#233a26}
+#hist svg{cursor:crosshair}
 
-  .toolbar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin: 18px 0 14px; }
-  .toolbar input[type=text], .toolbar input[type=number] {
-    border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; font-size: 13px;
-    background: var(--input); color: var(--text); }
-  #rulesetSel { border: 1px solid var(--line); border-radius: 8px; padding: 7px 10px; font-size: 13px;
-                background: var(--input); color: var(--text); width: 100%; }
-  #group { flex: 1; min-width: 220px; max-width: 380px; }
-  button.sec { background: var(--btn-sec); border: 1px solid var(--btn-sec-bord); color: var(--text);
-               border-radius: 9px; padding: 8px 12px; font-size: 13px; cursor: pointer; }
-  button.sec:hover { filter: brightness(1.06); }
+ul.sum{list-style:none;margin:0 0 14px;padding:0}
+ul.sum li{font-size:13px;padding:4px 11px;margin:4px 0;border-left:3px solid var(--accent);
+  background:var(--panel);border-radius:0 8px 8px 0}
+ul.sum li.warn{border-left-color:var(--warn)}
+ul.sum li b{color:var(--text)}
 
-  #cols { display: grid; grid-template-columns: 1fr; gap: 16px; align-items: start; }
-  #cols.with-rules { grid-template-columns: 1fr 1fr; }
-  @media (max-width: 900px) { #cols.with-rules { grid-template-columns: 1fr; } }
-  section.card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px; }
-  section.card h3 { margin: 0 0 10px; font-size: 14px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+.charts{display:flex;gap:16px;flex-wrap:wrap}
+.chart{flex:1 1 460px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.chart.wide{flex:1 1 100%}
+.chart h3{margin:0 0 6px;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+/* max-width, not width:100% -- a viewBox-only svg scales its font-size with the panel
+   width, so "font-size:10" was rendering anywhere from 7px to 14px. Intrinsic size wins. */
+svg{display:block;max-width:100%;height:auto}
+.iocgrp{margin:0 0 10px}
+.iocgrp:last-child{margin:0}
+.iocgrp h4{margin:0 0 2px;font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);opacity:.75}
 
-  .drop { border: 2px dashed var(--rule-bord); border-radius: 12px; padding: 34px 18px; text-align: center;
-          color: var(--muted); font-size: 14px; cursor: pointer; background: var(--drop-bg); transition: all .12s; }
-  .drop b { color: var(--accent); }
-  .drop.over { border-color: var(--ok); background: var(--chip-ok); color: var(--chip-ok-text);
-               transform: scale(1.01); box-shadow: 0 6px 18px rgba(46,158,107,.15); }
-  .drop.loaded { border-style: solid; border-color: var(--ok); color: var(--chip-ok-text); padding: 16px 18px; }
-  .drop .small { display: block; margin-top: 6px; font-size: 12px; color: var(--muted); }
-
-  .meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; align-items: center; }
-  .chip { background: var(--chip); border: 1px solid var(--line); border-radius: 20px; padding: 3px 10px;
-          font-size: 12px; color: var(--chip-text); }
-  .chip.ok { background: var(--chip-ok); border-color: var(--chip-ok); color: var(--chip-ok-text); }
-  .chip.bad { background: var(--chip-bad); border-color: var(--chip-bad); color: var(--chip-bad-text); }
-  .chip a { color: inherit; }
-
-  .pv { margin-top: 8px; border: 1px solid var(--line); border-radius: 8px; max-height: 300px; overflow: auto;
-        font: 12px/1.5 ui-monospace, Menlo, Consolas, monospace; background: var(--pv-bg); }
-  .pv-row { display: flex; gap: 8px; padding: 2px 8px; }
-  .pv-row:nth-child(odd) { background: var(--pv-alt); }
-  .pv-t { color: var(--muted); flex: none; }
-  .pv-g { color: var(--accent); flex: none; max-width: 170px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .pv-l { flex: 1; word-break: break-all; }
-
-  button.primary { background: var(--accent); color: #fff; border: 0; border-radius: 9px; padding: 10px 22px;
-                   font-size: 14px; font-weight: 600; cursor: pointer; }
-  button.primary:hover { filter: brightness(1.06); }
-  button.primary:disabled { background: var(--chip); color: var(--muted); cursor: not-allowed; filter: none; }
-
-  .error { color: var(--warn); margin: 10px 0; font-size: 13px; white-space: pre-wrap; }
-
-  #samplesPanel { margin-bottom: 6px; }
-  .srow { display: flex; align-items: center; gap: 12px; padding: 6px 2px; border-bottom: 1px solid var(--line);
-          font-size: 13px; cursor: pointer; }
-  .srow:last-child { border-bottom: 0; }
-  .srow:hover { background: var(--pv-bg); }
-  .sname { flex: 1; font-family: ui-monospace, Menlo, monospace; word-break: break-all; }
-  a.sdown { text-decoration: none; color: var(--accent); border: 1px solid var(--line); padding: 3px 10px;
-            border-radius: 8px; font-size: 12px; flex: none; }
-  a.sdown:hover { background: var(--chip); }
-
-  .results { margin-top: 26px; }
-  #analysis { margin-bottom: 16px; }
-  #analysis .sum { list-style: none; padding: 0; margin: 0 0 12px; }
-  #analysis .sum li { font-size: 13px; border-left: 3px solid var(--accent); padding: 3px 10px; margin: 5px 0;
-                      background: var(--pv-bg); border-radius: 0 8px 8px 0; }
-  #analysis .sum li.warn { border-left-color: var(--warn); }
-  .charts { display: flex; gap: 14px; flex-wrap: wrap; margin: 8px 0 4px; }
-  .chart { background: var(--pv-bg); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
-  .chart h4 { margin: 0 0 6px; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
-  .chart svg { display: block; }
-  .chart g.ri { cursor: pointer; }
-  .tbl { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 8px; }
-  .tbl th, .tbl td { text-align: left; padding: 4px 8px; border-bottom: 1px solid var(--line); white-space: nowrap; }
-  .tbl th { color: var(--muted); font-weight: 600; text-transform: uppercase; font-size: 10px; letter-spacing: .04em; }
-  .tbl td.tpl { max-width: 380px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: ui-monospace, Menlo, monospace; color: var(--muted); }
-  .tbl .ip { cursor: pointer; color: var(--accent); font-family: ui-monospace, Menlo, monospace; }
-  .tbl .ip:hover { text-decoration: underline; }
-  .vchip { padding: 1px 9px; border-radius: 10px; font-size: 10px; font-weight: 700; letter-spacing: .03em; }
-  .v-flood, .v-brute { background: var(--chip-bad); color: var(--chip-bad-text); }
-  .v-scan { background: var(--chip); color: var(--accent); }
-  .v-single, .v-rec, .v-base { background: var(--chip); color: var(--chip-text); }
-  #stats { color: var(--muted); font-size: 13px; margin-bottom: 8px; }
-  #search { width: 100%; max-width: 340px; border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px;
-            font-size: 13px; background: var(--input); color: var(--text); }
-
-  #legend { display: flex; flex-wrap: wrap; gap: 4px 12px; margin-top: 10px; font-size: 13px; align-items: center; }
-  #legend label { display: inline-flex; gap: 4px; align-items: center; cursor: pointer; }
-  #legend .legend-g { cursor: pointer; text-decoration: underline dotted; }
-
-  #rules { display: flex; flex-wrap: wrap; gap: 4px 8px; margin-top: 10px; }
-  .rule { border: 1px solid var(--rule-bord); background: var(--rule-bg); border-radius: 14px; padding: 2px 9px;
-          cursor: pointer; font-size: 12px; line-height: 1.6; }
-  .rule.on { background: var(--rule-on); border-color: var(--rule-on-bord); }
-  .rule.serious { border-color: var(--warn); color: var(--warn); }
-  .rule b.lv { font-weight: 700; }
-
-  #canvas { margin-top: 10px; }
-  #detail { margin-top: 14px; padding: 12px 14px; border: 1px solid var(--line); background: var(--card);
-            border-radius: 10px; }
-  #detail h3 { margin: 0 0 6px; font-size: 14px; display: flex; gap: 12px; align-items: baseline; }
-  #detail h3 .t { color: var(--muted); font-weight: normal; font-size: 12px; }
-  #detail pre { margin: 0; font-size: 12px; white-space: pre-wrap; word-break: break-all;
-                max-height: 300px; overflow: auto; }
-  #detail .mrule { font-size: 12px; margin: 6px 0 2px; }
-  #detail .mrule b { color: var(--warn); }
-  .ev { cursor: pointer; }
+table{width:100%;border-collapse:collapse;font-size:12px;margin-top:4px}
+th,td{text-align:left;padding:5px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+th{color:var(--muted);font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.05em}
+td.msg{max-width:320px;overflow:hidden;text-overflow:ellipsis;font-family:ui-monospace,Menlo,monospace;color:var(--muted)}
+td.src{font-family:ui-monospace,Menlo,monospace}
+tr:hover td{background:var(--panel)}
+.lv{display:inline-block;min-width:34px;text-align:center;border-radius:9px;padding:1px 7px;
+  font-weight:700;font-size:11px;background:var(--chip);color:var(--muted)}
+.lv.hi{background:#3c2322;color:#ff9b93}
+.lv.mid{background:#3a3320;color:#e8c26a}
+.v{font-size:11px;font-weight:600}
+.v.flood,.v.brute{color:var(--warn)}
+.v.scan{color:var(--accent)}
+.v.single,.v.recurring,.v.baseline{color:var(--muted)}
+.scroll{max-height:340px;overflow:auto;margin-top:8px;font:12px/1.5 ui-monospace,Menlo,monospace;
+  background:var(--panel);border:1px solid var(--line);border-radius:8px}
+.scroll div{padding:1px 8px;display:flex;gap:8px}
+.scroll div:nth-child(odd){background:#18222c}
+.scroll .t{color:var(--muted);flex:none}
+.scroll .g{color:var(--accent);flex:none}
+.scroll .l{flex:1;word-break:break-all}
 </style>
 </head>
 <body>
 <main>
-  <header>
-    <h2>Log timeline <span class="sub">upload a log, spot events, match them against your rules</span></h2>
-    <div class="headbtns">
-      <button id="themeBtn" title="Toggle dark/light mode"></button>
+  <h1>Log timeline <small>drop a log &mdash; detect, parse, analyze, plot</small></h1>
+
+  <section>
+    <div class="drop" id="drop">
+      <b>Drop a log file</b> here, or click to browse<br>
+      <small>any format &mdash; apache, syslog, auditd, cisco-ios, windows, JSON lines, CSV</small>
+      <input type="file" id="file" hidden>
     </div>
-  </header>
-
-  <div class="toolbar">
-    <input type="text" id="group" placeholder="group regex (default: first IPv4)">
-    <input type="number" id="year" placeholder="year for syslog timestamps">
-    <label class="switch" title="show/hide the Wazuh ruleset panel (rules apply to every build)"><input type="checkbox" id="rulesMode"><span class="track"></span>Rules</label>
-    <button class="sec" id="samplesBtn">Samples</button>
-    <button class="primary" id="build" disabled>Build timeline</button>
-  </div>
-  <div class="error" id="error"></div>
-
-  <section class="card" id="samplesPanel" hidden>
-    <h3>Sample logs <span style="text-transform:none">— scripted attack / device logs, click one to load</span></h3>
-    <div id="samplesList"></div>
+    <div class="err" id="err"></div>
+    <div class="chips" id="chips"></div>
+    <div class="scroll" id="preview"></div>
   </section>
 
-  <div id="cols">
-    <section class="card">
-      <h3>Log file</h3>
-      <div class="drop" id="dropLog"><b>Drop the log file</b> here, or click to browse<br>
-        <span class="small">.log / .txt — Apache, syslog, auditd, ISO, epoch timestamps</span>
-        <input type="file" id="logInput" hidden>
-      </div>
-      <div class="meta" id="logMeta"></div>
-      <div class="pv" id="pv"></div>
-    </section>
-
-    <section class="card" id="rulesCard" hidden>
-      <h3>Custom rules</h3>
-      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px">
-        <select id="rulesetSel"></select>
-        <button class="sec" id="rulesetLoad">Load from ruleset</button>
-      </div>
-      <div class="drop" id="dropRules"><b>Drop your rules.xml</b> here, or click to browse<br>
-        <span class="small">Wazuh rules — only match / regex / srcip / dstip / program_name conditions apply</span>
-        <input type="file" id="rulesInput" hidden>
-      </div>
-      <div class="meta" id="rulesMeta"></div>
-    </section>
-  </div>
-
-  <section class="card results" id="results" hidden>
-    <div id="stats"></div>
-    <div id="analysis"></div>
-    <input id="search" placeholder="filter by IP / text...">
-    <div id="legend"></div>
-    <div id="rules"></div>
-    <div id="canvas"></div>
-    <div id="detail"></div>
+  <section id="out" hidden>
+    <h2>Analysis</h2>
+    <ul class="sum" id="sum"></ul>
+    <div class="charts">
+      <div class="chart"><h3>Events over time &mdash; drag to zoom</h3><div id="hist"></div></div>
+      <div class="chart"><h3>Attack classes</h3><div id="cls"></div></div>
+      <div class="chart"><h3>Top sources</h3><div id="top"></div></div>
+      <div class="chart wide"><h3>Activity heatmap &mdash; source &times; time</h3><div id="heat"></div></div>
+      <div class="chart wide"><h3>Source timelines &mdash; first &rarr; last activity, sorted by start</h3><div id="gantt"></div></div>
+      <div class="chart wide"><h3>Indicators of compromise</h3><div id="ioc"></div></div>
+    </div>
+    <h2 style="margin-top:18px">Sources &amp; alerts</h2>
+    <div id="table" style="overflow:auto"></div>
   </section>
 </main>
 
 <script>
-// ---- log parsing (ported from app.py) ----
-const DEFAULT_GROUP = "(\\d{1,3}(?:\\.\\d{1,3}){3})";
-const MONTHS = { Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5,
-                 Jul: 6, Aug: 7, Sep: 8, Oct: 9, Nov: 10, Dec: 11 };
+// ---------------------------------------------------------------------------
+// 1. SNIFF  —  which decoder does a line belong to, and what time is it?
+//    Data-driven: append a family to reteach the tool a log format.
+// ---------------------------------------------------------------------------
+const MONTH = {Jan:0,Feb:1,Mar:2,Apr:3,May:4,Jun:5,Jul:6,Aug:7,Sep:8,Oct:9,Nov:10,Dec:11};
+const sec = d => d.getTime() / 1000;
 
-function parseTime(line, year) {
-  let m;
-  if ((m = line.match(/audit\((\d+)(?:\.(\d+))?/)))
-    return (m[2] !== undefined) ? +(m[1] + "." + m[2]) : +m[1];
-  if ((m = line.match(/\[(\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}:\d{2}(?:\.\d+)?)\]/)))
-    return parseISO(m[1].replace(" ", "T"));
-  if ((m = line.match(/\[([A-Za-z]{3} [A-Za-z]{3} \d{1,2} \d{2}:\d{2}:\d{2}(?:\.\d+)? \d{4})\]/)))
-    return parseApache(m[1]);
-  if ((m = line.match(/^([A-Za-z]{3}\s+\d{1,2} \d{2}:\d{2}:\d{2})/)))
-    return parseSyslog(m[1], year);
+const isoT = s => {                       // 2026-01-05T09:00:02.1
+  const [d, t = "00:00:00"] = s.split("T");
+  const [Y, M, D] = d.split("-").map(Number);
+  const [h, m, s2] = t.split(":");
+  const [v, f] = s2.split(".");
+  return sec(new Date(Y, M - 1, D, h, m, +v, f ? Math.round(+("0." + f) * 1000) : 0));
+};
+const apacheT = s => {                    // Fri Jan  3 08:24:02.123456 2026
+  const [w, mo, d, hms, y] = s.trim().split(/\s+/);   // apache pads single-digit days: "Jan  3"
+  const [h, m, s2] = hms.split(":");
+  const [v, f] = s2.split(".");
+  return sec(new Date(+y, MONTH[mo], +d, +h, +m, +v, f ? Math.round(+("0." + f) * 1000) : 0));
+};
+// ponytail: syslog/cisco carry no year -> assume current. Cosmetic only; a Dec log read in
+// Jan plots 12mo off but burst/rate math is unaffected. Year field added if it ever matters.
+const sysT = s => {
+  const [mo, d, hms] = s.replace(/\s+/g, " ").trim().split(" ");
+  const [h, m, s2] = hms.split(":");
+  return sec(new Date(new Date().getFullYear(), MONTH[mo], +d, +h, +m, +s2.split(".")[0]));
+};
+
+const FAMILIES = [
+  { name: "auditd",    re: /^(?:type|node)=(\w+)\s+msg=audit\(([\d.]+)/, time: m => +m[2] },
+  { name: "apache",    re: /^\[([A-Z][a-z]{2}\s+[A-Z][a-z]{2}\s+\d{1,2}\s+\d\d:\d\d:\d\d(?:\.\d+)?\s+\d{4})\]/, time: m => apacheT(m[1]) },
+  { name: "windows",   re: /^\[(\d{4}-\d\d-\d\dT[\d:.]+)\]/, time: m => isoT(m[1]) },
+  { name: "cisco-ios", re: /^[A-Z][a-z]{2}\s+\d{1,2} (\d\d:\d\d:\d\d)\s+\S+\s+%\w+-/, time: m => sysT(m[0].slice(0, 15)) },
+  { name: "syslog",    re: /^[A-Z][a-z]{2}\s+\d{1,2} (\d\d:\d\d:\d\d)\s/, time: m => sysT(m[0].slice(0, 15)) },
+];
+const JSON_TS_KEYS = ["ts", "timestamp", "time", "@timestamp", "date", "eventTime", "event_time"];
+const JSON_IP_KEYS = ["srcip", "src_ip", "source", "remote_ip", "client_ip", "ip", "src", "attacker"];
+
+// actor = who to attribute the event to. First match wins, then the generic IPv4 fallback.
+const ACTOR = {
+  apache:  /\[client ([\d.]+)\]/,
+  auditd:  /addr=([\d.]+)/,
+  windows: /Source Network Address:\s*([\d.]+)/,
+  cisco:   /[\[(]([\d.]+):\d+/,
+};
+const IPV4 = /\b\d{1,3}(?:\.\d{1,3}){3}\b/;
+
+function sniff(line) {
+  for (const f of FAMILIES) {
+    const m = f.re.exec(line);
+    if (m) return { line, type: f.name, t: f.time(m), o: null };
+  }
+  // json lines: timestamp lives under an obvious key. gate on '{' so plain logs never pay for JSON.parse
+  if (line[0] === "{") {
+    try {
+      const o = JSON.parse(line);
+      for (const k of JSON_TS_KEYS)
+        if (o[k] != null) { const t = Date.parse(o[k]); if (!isNaN(t)) return { line, type: "jsonl", t: t / 1000, o }; }
+      return { line, type: "jsonl", t: null, o };
+    } catch { return null; }
+  }
   return null;
 }
 
-function parseISO(s) {
-  const [d, t = "00:00:00"] = s.split("T");
-  const [Y, M, D] = d.split("-").map(Number);
-  const [hh, mm, ss] = t.split(":");
-  const [sv, frac] = ss.split(".");
-  return toSec(new Date(Y, M - 1, D, hh, mm, +sv,
-    frac ? Math.round(parseFloat("0." + frac) * 1000) : 0));
+function actorOf(s) {
+  const key = s.type === "cisco-ios" ? "cisco" : s.type;
+  if (key !== "jsonl" && ACTOR[key]) { const m = ACTOR[key].exec(s.line); if (m) return m[1]; }
+  for (const k of JSON_IP_KEYS) if (typeof s.o?.[k] === "string" && IPV4.test(s.o[k])) return s.o[k];
+  const m = IPV4.exec(s.line);
+  if (m) return m[0];
+  // no remote IP: this is activity on the host itself (post-exploit commands, cron, sudo).
+  // Attribute it to the program that logged it, else every local line collapses into one
+  // bogus "attacker" and reads as a scan. syslog = "Mon dd HH:MM:SS host prog[pid]:"
+  const prog = /^\S+\s+\S+\s+\S+\s+\S+\s+([\w.\-\/]+)\[\d+\]:/.exec(s.line);
+  return prog ? prog[1] : "(unknown)";
 }
 
-function parseApache(s) {
-  const [, mon, day, hms, yr] = s.match(/^\S+ ([A-Za-z]{3}) (\d{1,2}) (\S+) (\d{4})$/);
-  const [hh, mm, ss] = hms.split(":");
-  const [sv, frac] = ss.split(".");
-  return toSec(new Date(+yr, MONTHS[mon], +day, +hh, +mm, +sv,
-    frac ? Math.round(parseFloat("0." + frac) * 1000) : 0));
-}
+// ---------------------------------------------------------------------------
+// 2. TRANSFORM  —  raw text -> sorted, normalised events
+// ---------------------------------------------------------------------------
+const MAX_SOURCES = 150;   // ponytail: cap plotted rows; the tail folds into "(other)"
 
-function parseSyslog(s, year) {
-  const [mon, day, hms] = s.trim().split(/\s+/);
-  const [hh, mm, ss] = hms.split(":");
-  return toSec(new Date(year, MONTHS[mon], +day, +hh, +mm, +ss, 0));
-}
-
-function toSec(d) { return d.getTime() / 1000; }
-
-function groupOf(line, re) {
-  const m = line.match(re);
-  return m ? m[1] : "(other)";
-}
-
-function parseLines(text, year, groupRe) {
+function parse(text) {
   const events = [];
+  const types = {};
   let skipped = 0;
   for (const line of text.split(/\r?\n/)) {
     if (!line.trim()) continue;
-    const t = parseTime(line, year);
-    if (t == null) { skipped++; continue; }
-    events.push([t, groupOf(line, groupRe), line]);
+    const s = sniff(line);
+    if (!s || s.t == null || isNaN(s.t)) { skipped++; continue; }
+    types[s.type] = (types[s.type] || 0) + 1;
+    events.push({ t: s.t, src: actorOf(s), line });
   }
-  return [events, skipped];
+  if (!events.length)
+    throw new Error("no timestamps found.\nTried: auditd epoch, ISO, " +
+      "apache [Day Mon dd HH:MM:SS YYYY], syslog/cisco 'Mon dd HH:MM:SS', " +
+      "json lines with a ts/timestamp/time key.");
+  events.sort((a, b) => a.t - b.t);
+  capSources(events);
+  return { events, types, skipped };
 }
 
-// ponytail: cap rows at 200 so huge sets stay readable; rest collapses to "(other)"
-const MAX_ROWS = 200;
-
-function capRows(events) {
-  const rows = [...new Set(events.map(e => e[1]))];
-  if (rows.length <= MAX_ROWS) return rows;
-  const cnt = g => events.reduce((n, e) => n + (e[1] === g), 0);
-  const keep = new Set(rows.slice().sort((a, b) => cnt(b) - cnt(a)).slice(0, MAX_ROWS - 1));
-  for (const e of events) if (!keep.has(e[1])) e[1] = "(other)";
-  return [...new Set(events.map(e => e[1]))];
+function capSources(events) {
+  if (new Set(events.map(e => e.src)).size <= MAX_SOURCES) return;
+  const n = new Map();
+  for (const e of events) n.set(e.src, (n.get(e.src) || 0) + 1);
+  const keep = new Set([...n].sort((a, b) => b[1] - a[1]).slice(0, MAX_SOURCES).map(x => x[0]));
+  for (const e of events) if (!keep.has(e.src)) e.src = "(other)";
 }
 
-// ---- Wazuh rule engine (parses all rules, applies inheritance & sampling the way analysisd does) ----
-const reEscape = p => p.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-function compileRe(p) {
-  try { return new RegExp(p, "u"); } catch { return new RegExp(reEscape(p), "u"); }
-}
+// ---------------------------------------------------------------------------
+// 3. ANALYZE  —  per-source behaviour -> verdict -> alert level
+// ---------------------------------------------------------------------------
+const IPV4G = /\b\d{1,3}(?:\.\d{1,3}){3}\b/g;
+// mask IPs first, then every other number (ports, pids, uids, lengths, event ids) so that
+// "same attack, different port/user/pid" collapses to one shape. Diversity == how few shapes.
+const shape = l => l.replace(IPV4G, "N").replace(/\d+/g, "N").replace(/\s+/g, " ").trim();
 
-// parse all <rule> blocks (any number of <group> roots, stray '&', <var> definitions —
-// regex walk keeps it tolerant of the legacy files; DOMParser XML would choke)
-function parseRules(text) {
-  const vars = {};
-  const rules = [];
-  const openRe = /(<var\b[\s\S]*?<\/var>)|(<group\b[^>]*name="([^"]*)"[^>]*>)|(<\/group>)|(<rule\b[^>]*>[\s\S]*?<\/rule>)/gi;
-  let m, stack = [];
-  openRe.lastIndex = 0;
-  while ((m = openRe.exec(text))) {
-    if (m[1]) { const v = /<var\s+name="(\w+)"\s*>([\s\S]*?)<\/var>/.exec(m[1]); if (v) vars[v[1]] = v[2].trim(); }
-    else if (m[2]) stack.push(m[3].split(",").map(s => s.trim()).filter(Boolean));
-    else if (m[4]) stack.pop();
-    else if (m[5]) {
-      const parents = [...new Set(stack.flat() || [])];
-      const r = parseRule(m[5], parents);
-      if (r) rules.push(r);
-    }
-  }
-  const exp = s => (s || "").replace(/\$\((\w+)\)/g, (_, k) => (k in vars) ? vars[k] : "");
-  for (const r of rules) {
-    r.frequency = r.frequency != null ? +exp(String(r.frequency)) : 0;
-    r.timeframe = r.timeframe != null ? +exp(String(r.timeframe)) : 0;
-    r.decodedAs = r.decodedAs ? exp(r.decodedAs) : null;
-    r.text = exp(r.text);
-    r.ifSid = r.ifSid.map(exp); r.ifMatchedSid = r.ifMatchedSid.map(exp);
-    r.ifGroup = r.ifGroup.map(exp); r.ifMatchedGroup = r.ifMatchedGroup.map(exp);
-  }
-  return rules;
-}
-
-function parseRule(block, parents) {
-  // MITRE / info blocks are metadata, not conditions
-  block = block.replace(/<mitre>[\s\S]*?<\/mitre>/gi, "").replace(/<info[^>]*>[\s\S]*?<\/info>/gi, "");
-  const open = /^<rule\b([^>]*)>/.exec(block)[1];
-  const attr = n => { const mm = new RegExp("\\b" + n + '="([^"]*)"').exec(open); return mm ? mm[1] : null; };
-  const txt = tag => { const mm = new RegExp("<" + tag + "\\b[^>]*>([\\s\\S]*?)<\\/" + tag + ">").exec(block); return mm ? mm[1].trim() : null; };
-  const all = tag => { const out = []; for (const mm of block.matchAll(new RegExp("<" + tag + "\\b[^>]*>([\\s\\S]*?)<\\/" + tag + ">", "g"))) out.push(mm[1].trim()); return out; };
-  const id = attr("id");
-  if (!id) return null;
-  const groups = [...new Set([...parents, ...((txt("group") || "").split(",").map(s => s.trim()).filter(Boolean))])];
-  // Wazuh treats every <match>/<regex> as alternatives: each string is one arm of a big alternation
-  // (arms self-delimit with a trailing '|', which we strip so an empty arm can't match everything)
-  let text = [...all("match"), ...all("regex")].join("|").replace(/\|+/g, "|").replace(/(^\||\|$)/g, "");
-  const fields = [];
-  for (const mm of block.matchAll(/<field\s+name="([^"]+)"[^>]*>([\s\S]*?)<\/field>/g))
-    fields.push([mm[1], mm[2].trim()]);
-  const sp = t => { const v = txt(t); return v ? v.split("|").map(s => s.trim()).filter(Boolean) : []; };
-  return {
-    id, level: +(attr("level") || "0"),
-    frequency: attr("frequency"), timeframe: attr("timeframe"),
-    noalert: ["yes", "1", "true"].includes(attr("noalert")),
-    list: /<list\b/.test(block),
-    sameSrc: /<same_source_ip\b/.test(block),
-    description: txt("description") || "",
-    groups, text,
-    decodedAs: txt("decoded_as"),
-    ids: all("id"),
-    ifSid: sp("if_sid"), ifMatchedSid: sp("if_matched_sid"),
-    ifGroup: sp("if_group"), ifMatchedGroup: sp("if_matched_group"),
-    fields,
-  };
-}
-
-// light decoders: extract the fields the rules look at (program_name, srcip, id, decoded_as, ...)
-// from the handful of log formats we parse. Unknown formats keep decoded_as null so gated rules stay silent.
-function decodeFields(line, group, t) {
-  const f = { line, msg: line, t, srcip: null, program_name: null, url: null, user: null, id: null, decoded_as: null, group };
-  const ip = (line.match(/\b\d{1,3}(?:\.\d{1,3}){3}\b/) || [])[0];
-  if (ip) f.srcip = ip;
-  let m;
-  if ((m = /^\[[A-Za-z]{3} [A-Za-z]{3} \d{1,2} \d\d:\d\d:\d\d(?:\.\d+)? \d{4}\] (\[[\w:]+\]) (.*)$/.exec(line))) {
-    f.decoded_as = "apache-errorlog";
-    const level = m[1], rest = m[2];
-    f.msg = level + " " + rest;
-    const c = /\[client ([0-9.]+)\]/.exec(rest);
-    if (c) f.srcip = c[1];
-    const idd = /^\[client [^\]]+\] (\S+?):\s/.exec(rest);
-    if (idd) f.id = idd[1];
-    // Wazuh's modsecurity decoder rewrites the message prefix this way
-    const ms = /^\[client [^\]]+\] mod_security: (.*)$/.exec(rest);
-    if (ms) { f.msg = "mod_security-message: " + ms[1]; f.id = "mod_security"; }
-    const u = line.match(/ (GET|POST|HEAD|PUT|OPTIONS|DELETE) (\S+) HTTP\//);
-    if (u) f.url = u[2];
-  } else if ((m = /^type=(\w+) msg=audit\(/.exec(line))) {
-    f.decoded_as = "auditd";
-    f["audit.type"] = m[1];
-    const r = /\bres=(\w+)/.exec(line);
-    if (r) f["audit.res"] = r[1];
-    const a = line.match(/addr=([0-9.]+)/);
-    if (a) f.srcip = a[1];
-    const u = line.match(/acct="?([^"\s]+)/);
-    if (u) f.user = u[1];
-  } else if ((m = /^[A-Za-z]{3}\s+\d{1,2} \d\d:\d\d:\d\d\s+\S+\s+(%[\S]+):\s?(.*)$/.exec(line))) {
-    f.decoded_as = "cisco-ios";
-    f.id = m[1]; f.program_name = m[1]; f.msg = m[2];
-  } else if ((m = /^[A-Za-z]{3}\s+\d{1,2} \d\d:\d\d:\d\d\s+\S+\s+(\S+)\[\d+\]: (.*)$/.exec(line))) {
-    f.decoded_as = "syslog";
-    f.program_name = m[1]; f.msg = m[2];
-    if (/sshd/.test(m[1])) f.decoded_as = "sshd";
-    else if (/^(postfix|sendmail|named|vsftpd|ftpd|pam|sudo|telnetd|su|cron|kernel)$/.test(m[1])) f.decoded_as = m[1];
-    const u = f.msg.match(/user\s+(\w+)/);
-    if (u) f.user = u[1];
-  } else if ((m = /^\[\d{4}-\d{2}-\d{2}T[\d:.]+(?:\.\d+)?\]\s+\S+\s+([\w-]+)\/(\d+)\s+(\d+):\s?(.*)$/.exec(line))) {
-    f.decoded_as = "windows_eventchannel";
-    f.program_name = m[1];
-    f.id = m[2];
-    f.msg = m[4];
-    f["win.system.providerName"] = m[1];
-    f["win.system.eventID"] = m[2];
-    f["win.system.channel"] = "Security";
-    f["win.system.severityValue"] = m[2] === "4625" ? "failure" : "success";
-    const a = line.match(/Source Network Address:\s*([0-9.]+)/);
-    if (a) f.srcip = a[1];
-    const u = line.match(/Account Name:\s*(\S+)/);
-    if (u) f.user = u[1];
-  }
-  return f;
-}
-
-// compile all rules once, order parents before children, then evaluate every event against ALL rules
-// in one pass (frequency/timeframe rules count per source when same_source_ip is set).
-function makeEngine(rulesText) {
-  const rules = parseRules(rulesText);
-  const ann = rules.map(r => ({
-    r,
-    re: r.text ? compileRe(r.text) : null,
-    // ponytail: Wazuh writes bare `\.+` to mean "any provider name"; honour the intent
-    field: r.fields.map(([n, p]) => [n, compileRe(p.replace(/\\\.\+/g, ".*"))]),
-    idsRe: r.ids.map(compileRe),
-    dead: !r.text && !r.fields.length && !r.list && !r.decodedAs && !r.ids.length &&
-          !r.ifSid.length && !r.ifMatchedSid.length && !r.ifGroup.length && !r.ifMatchedGroup.length,
-  }));
-  const act = ann.filter(a => !a.dead), ids = new Set(act.map(a => a.r.id));
-  const order = [], seen = new Set();
-  const visit = a => {
-    if (seen.has(a.r.id)) return;
-    seen.add(a.r.id);
-    for (const d of [...a.r.ifSid, ...a.r.ifMatchedSid]) if (ids.has(d)) { const p = act.find(x => x.r.id === d); if (p) visit(p); }
-    order.push(a);
-  };
-  for (const a of act) visit(a);
-  const byId = new Map(act.map(a => [a.r.id, a]));
-
-  function evalEvent(fields, ctx) {
-    const fired = new Set(), groups = new Set();
-    const pass = a => {
-      const { r, re } = a;
-      if (re && !(re.test(fields.line) || re.test(fields.msg))) return false;
-      if (r.decodedAs && r.decodedAs !== fields.decoded_as) return false;
-      for (const [n, re2] of a.field) {
-        const v = fields[n];
-        if (v == null || !re2.test(v)) return false;
-      }
-      if (r.ids.length) { if (fields.id == null || !a.idsRe.some(re => re.test(fields.id))) return false; }
-      if (r.list || r.dead) return false;
-      if (r.ifSid.length && !r.ifSid.some(id => fired.has(id))) return false;
-      if (r.ifMatchedSid.length && !r.ifMatchedSid.some(id => fired.has(id))) return false;
-      if (r.ifGroup.length && !r.ifGroup.some(g => groups.has(g))) return false;
-      if (r.ifMatchedGroup.length && !r.ifMatchedGroup.some(g => groups.has(g))) return false;
-      return true;
-    };
-    const fire = a => {
-      fired.add(a.r.id);
-      for (const g of a.r.groups) groups.add(g);
-    };
-    const trace = [];
-    for (const a of order) {
-      if (!pass(a)) { trace.push([a.r.id, "discarded"]); continue; }
-      if (a.r.frequency) {
-        const key = a.r.sameSrc ? a.r.id + "@" + (fields.srcip || fields.group) : a.r.id;
-        let win = ctx.get(key);
-        if (!win) ctx.set(key, win = []);
-        win.push(fields.t);
-        while (win.length > a.r.frequency) win.shift();
-        // ponytail: keeps firing while the window stays full, so the timeline lights up for the whole flood
-        if (!(win.length >= a.r.frequency && fields.t - win[0] <= a.r.timeframe)) { trace.push([a.r.id, "discarded"]); continue; }
-      }
-      fire(a);
-      trace.push([a.r.id, "matched"]);
-    }
-    return { fired: [...fired], groups: [...groups], trace };
-  }
-  return { byId, evalEvent, rules: act.map(a => a.r) };
-}
-
-// ---- generic forensic analysis (ported from app.py) ----
-const IP_RE = /\b\d{1,3}(?:\.\d{1,3}){3}\b|\b[0-9a-fA-F]{2}(?:[:-][0-9a-fA-F]{2}){2,}\b|\d+(?:\.\d+)*/g;
-
-function template(line) {
-  return line.replace(IP_RE, "N").replace(/\s+/g, " ").trim();
-}
-
-function maxBurst(ts, window) {
+// worst number of events from one source inside any `win`-second window
+function maxBurst(ts, win) {
   let best = 0, left = 0;
   for (let right = 0; right < ts.length; right++) {
-    while (ts[right] - ts[left] > window) left++;
-    best = Math.max(best, right - left + 1);
+    while (ts[right] - ts[left] > win) left++;
+    if (right - left + 1 > best) best = right - left + 1;
   }
   return best;
 }
 
-function verdictOf(count, span, tdiv, burst, rate) {
-  if (count === 1) return "single";
-  if (count >= 30 && burst >= 10 && tdiv < 0.8)
-    return (burst >= 40 || rate >= 2) ? "ddos/flood-like" : "brute-force-like";
-  if (count >= 4 && tdiv >= 0.6) return "scan/exploration";
-  if (count < 5) return "recurring";
+// ---- IoC extraction: the WHAT of an attack — accounts, paths, ports.
+// One regex per indicator kind; the first non-empty capture group wins so a
+// single pattern can cover several log dialects.
+const firstG = m => { for (let i = 1; i < m.length; i++) if (m[i]) return m[i]; };
+const IOC_KINDS = [
+  { key: "user", label: "Targeted accounts", min: 1,
+    re: /(?:invalid user |for invalid user |user |Account Name:\s*|ruser=|acct="?|USER_ACCT=|name=)(\w[\w.\\-]{0,31})/ },
+  { key: "ip", label: "Remote IPs", min: 1,
+    re: /(?:from|src(?:ip)?=|remote(?:_ip)?=|client\s+|addr=|origin=|host=)\s*([0-9]{1,3}(?:\.[0-9]{1,3}){3})/i },
+  { key: "url", label: "URLs / domains", min: 1,
+    re: /(?:https?:\/\/|www\.)?([A-Za-z0-9.-]+\.[A-Za-z]{2,}(?:[/:?#][^\s]*)?)/i },
+  { key: "hash", label: "File hashes", min: 1,
+    re: /(?:md5|sha1|sha256|hash)[:=]\s*([A-Fa-f0-9]{8,64})\b|(?<![A-Fa-f0-9])([A-Fa-f0-9]{32}|[A-Fa-f0-9]{40}|[A-Fa-f0-9]{64})(?![A-Fa-f0-9])/i },
+  { key: "path", label: "Requested paths / payloads", min: 1,
+    re: /(?:GET|POST|HEAD|PUT|OPTIONS|DELETE|TRACE) (\S+)|exist: (\S+)|URI in request \S+ (\S+)|File does not exist: (\S+)/ },
+  // ponytail: a port only means something if it repeats — a single-hit port is almost always an
+  // ephemeral client port (sshd "port 51xxx"), which is noise. min:3 keeps real service targeting.
+  { key: "port", label: "Targeted service ports", min: 3,
+    re: /\bport (\d{2,5})\b/ },
+];
+// boilerplate that would otherwise top every chart and tell you nothing.
+// Apache reports the full path ("/var/www/html/favicon.ico"), so match on suffix.
+// Only path-shaped values are filtered: bare "0"/"-" would suffix-match ports like "51000".
+const IOC_NOISE = ["/", "/index.html", "/index.htm", "/index.php", "/favicon.ico", "127.0.0.1", "0.0.0.0", "localhost"];
+const isNoise = g => {
+  if (IOC_NOISE.includes(g)) return true;
+  if (g.includes("/") && IOC_NOISE.some(n => g === n || g.endsWith(n))) return true;
+  return false;
+};
+
+function extractIocs(events) {
+  const out = {};
+  for (const k of IOC_KINDS) out[k.key] = new Map();
+  for (const e of events) {
+    for (const k of IOC_KINDS) {
+      const m = k.re.exec(e.line);
+      if (!m) continue;
+      const g = firstG(m);
+      if (!g || g.length < 2 || isNoise(g)) continue;
+      out[k.key].set(g, (out[k.key].get(g) || 0) + 1);
+    }
+  }
+  return out;
+}
+
+const VERDICTS = {
+  flood:     { level: 12, label: "flood / DDoS" },
+  brute:     { level: 10, label: "brute force" },
+  scan:      { level: 7,  label: "scan / probe" },
+  recurring: { level: 4,  label: "recurring" },
+  baseline:  { level: 2,  label: "baseline" },
+  single:    { level: 0,  label: "one-off" },
+};
+
+function judge(s) {
+  if (s.count === 1) return "single";
+  if (s.count >= 30 && s.burst >= 10 && s.div < 0.8) return s.burst >= 40 || s.rate >= 2 ? "flood" : "brute";
+  if (s.count >= 4 && s.div >= 0.6) return "scan";
+  if (s.count < 5) return "recurring";
   return "baseline";
 }
 
-function friendlySpan(s) {
-  s = Math.floor(s);
-  const parts = [];
-  for (const [size, name] of [[86400, "d"], [3600, "h"], [60, "m"]]) {
-    const q = Math.floor(s / size); s %= size;
-    if (q) parts.push(q + name);
-  }
-  return (parts.join(" ") || s + "s");
-}
+const STEPS = [1, 2, 5, 10, 30, 60, 120, 300, 600, 900, 1800, 3600, 7200, 21600, 43200, 86400, 604800, 2592000];
+const spanTxt = s => s < 90 ? `${s.toFixed(0)}s` : s < 5400 ? `${(s / 60).toFixed(0)}m` : `${(s / 3600).toFixed(1)}h`;
 
-function analyze(events, idLevel) {
-  const t0 = events[0][0], t1 = events[events.length - 1][0];
-  const spanS = (t1 - t0) || 60;
-
+function analyze(events) {
+  const t0 = events[0].t, t1 = events[events.length - 1].t, span = (t1 - t0) || 60;
   const per = new Map();
   for (const e of events) {
-    let d = per.get(e[1]);
-    if (!d) per.set(e[1], d = { count: 0, tpl: new Map(), ts: [], rule: 0, rule_hi: 0 });
-    d.count++;
-    const t = template(e[2]);
-    d.tpl.set(t, (d.tpl.get(t) || 0) + 1);
-    d.ts.push(e[0]);
-    if (idLevel && e.length > 3 && e[3] && e[3].length) {
-      d.rule++;
-      if (idLevel.get(e[3][0]) >= 6) d.rule_hi++;
-    }
+    let d = per.get(e.src);
+    if (!d) per.set(e.src, d = { count: 0, ts: [], shapes: new Map() });
+    d.count++; d.ts.push(e.t);
+    const k = shape(e.line);
+    d.shapes.set(k, (d.shapes.get(k) || 0) + 1);
   }
-
-  const groups = [];
-  for (const [g, d] of per) {
-    const spanG = d.ts[d.ts.length - 1] - d.ts[0];
+  const sources = [...per].map(([src, d]) => {
+    const s = d.ts[d.ts.length - 1] - d.ts[0];
     const burst = maxBurst(d.ts, 60);
-    const rate = spanG ? d.count / Math.max(spanG, 60) : d.count;
-    const tdiv = d.tpl.size / d.count;
-    groups.push({
-      g, count: d.count, span: Math.floor(spanG),
-      rate: Math.round(rate * 1000) / 1000,
-      diversity: Math.round(tdiv * 100) / 100,
-      burst, peak_rate: Math.round(burst / 60 * 100) / 100,
-      verdict: verdictOf(d.count, spanG, tdiv, burst, rate),
-      rule: d.rule, rule_hi: d.rule_hi,
-      tpl: [...d.tpl.entries()].sort((a, b) => b[1] - a[1]).slice(0, 3)
-        .map(([t, n]) => [t.slice(0, 90), n]),
-    });
+    const rec = {
+      src, count: d.count, span: Math.floor(s), t0: d.ts[0], t1: d.ts[d.ts.length - 1],
+      rate: +(d.count / Math.max(s, 60)).toFixed(2),
+      peak: +(burst / 60).toFixed(2),
+      burst, div: +(d.shapes.size / d.count).toFixed(2),
+      top: [...d.shapes].sort((a, b) => b[1] - a[1])[0],
+    };
+    rec.verdict = judge(rec);
+    rec.level = VERDICTS[rec.verdict].level;
+    return rec;
+  }).sort((a, b) => b.level - a.level || b.count - a.count);
+
+  const bucket = STEPS.find(s => span / s <= 64) ?? 31536000;
+  const hist = new Array(Math.floor(span / bucket) + 1).fill(0);
+  for (const e of events) hist[Math.floor((e.t - t0) / bucket)]++;
+
+  const n = k => sources.filter(s => s.verdict === k).length;
+  const alerts = sources.filter(s => s.level >= 7);
+  const iocs = extractIocs(events);
+  const sum = [`<b>${events.length}</b> events from <b>${sources.length}</b> source(s) over <b>${spanTxt(span)}</b>.`];
+  if (alerts.length) {
+    const top = alerts[0];
+    sum.push(`<b>${alerts.length}</b> source(s) raised a level &ge;7 alert. ` +
+      `Worst: <b>${esc(top.src)}</b> (level ${top.level}, ${esc(VERDICTS[top.verdict].label)}) &mdash; ` +
+      `${top.burst} events in 60s.`);
+  } else {
+    sum.push("No source reached level 7. Traffic looks unremarkable.");
   }
-  groups.sort((a, b) => b.count - a.count);
-  const top = groups[0];
-
-  const BUCKETS = [1, 2, 5, 10, 30, 60, 120, 300, 900, 1800, 3600, 10800, 21600, 43200, 86400,
-                   604800, 1209600, 2592000, 7776000, 31536000];
-  let bucket = BUCKETS.find(b => spanS / b <= 64) ?? 31536000;
-  const counts = new Array(Math.floor(spanS / bucket) + 1).fill(0);
-  for (const e of events) counts[Math.floor((e[0] - t0) / bucket)]++;
-
-  const summary = [`${events.length} events from ${groups.length} sources over ~${friendlySpan(spanS)}; most active ${top.g} (${top.count} events).`];
-  const scan = groups.filter(g => g.verdict === "scan/exploration");
-  if (scan.length) summary.push(`${scan.length} source(s) look like scanning/exploration (many distinct messages).`);
-  const sus = groups.filter(g => ["ddos/flood-like", "brute-force-like"].includes(g.verdict));
-  if (sus.length) summary.push(`${sus.length} source(s) show burst/flood behavior; fastest peak ${Math.max(...sus.map(g => g.peak_rate)).toFixed(2)} req/s in a 60s window.`);
-  if (idLevel) {
-    const rh = groups.reduce((s, g) => s + g.rule, 0);
-    const hi = groups.reduce((s, g) => s + g.rule_hi, 0);
-    summary.push(`${rh} events matched custom rules (${hi} serious, level >= 6).`);
+  if (n("flood") + n("brute")) sum.push(`Burst behaviour (flood/brute force) from <b>${n("flood") + n("brute")}</b> source(s).`);
+  if (n("scan")) sum.push(`<b>${n("scan")}</b> source(s) probing many distinct endpoints &mdash; enumeration, not exploitation.`);
+  // hand the top indicators to the summary: these are the artefacts to block/hunt on
+  const topIoc = Object.entries(iocs)
+    .map(([k, m]) => [k, [...m].sort((a, b) => b[1] - a[1])[0]])
+    .filter(([, v]) => v && v[1] >= 3)
+    .sort((a, b) => b[1][1] - a[1][1])[0];
+  if (topIoc) {
+    const kind = IOC_KINDS.find(k => k.key === topIoc[0]);
+    sum.push(`Most-repeated indicator: <b>${esc(topIoc[1][0].slice(0, 48))}</b> ` +
+      `(${esc(kind.label.toLowerCase())}, ${topIoc[1][1]} hits).`);
   }
-  return { t0, t1, hist: { bucket, counts }, groups, summary };
+  return { t0, t1, span, bucket, hist, sources, sum, iocs };
 }
 
-// ---- orchestrator: log text + optional rules text -> DATA (mirrors app.py /api/parse) ----
-function parseAll(logText, fileName, rulesText, groupStr, yearStr) {
-  let groupRe;
-  try { groupRe = new RegExp(groupStr || DEFAULT_GROUP); } catch { throw new Error("bad group regex"); }
-  let year = yearStr ? parseInt(yearStr, 10) : new Date().getFullYear();
-  if (isNaN(year)) throw new Error("bad year");
+const esc = s => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+const clock = t => new Date(t * 1000).toLocaleTimeString("en-GB", { hour12: false });
+const when  = t => new Date(t * 1000).toLocaleString();
 
-  let [events, skipped] = parseLines(logText, year, groupRe);
-  if (!events.length)
-    throw new Error("no timestamps parsed (formats: auditd epoch, ISO, Apache [Day Mon dd HH:MM:SS.fff YYYY], syslog Mon dd HH:MM:SS)");
+// ---------------------------------------------------------------------------
+// 4. PLOT  —  hand-rolled SVG. No chart lib, no CDN, no build step.
+// ---------------------------------------------------------------------------
+const SVG = 'xmlns="http://www.w3.org/2000/svg"';
 
-  events.sort((a, b) => a[0] - b[0]);
-  const groups = capRows(events);
-
-  let rulesInfo = [], matchI = new Map(), idLevel = null;
-  if (rulesText && rulesText.trim()) {
-    const eng = makeEngine(rulesText);
-    idLevel = new Map(eng.rules.map(r => [r.id, r.level]));
-    const counts = new Map(), ctx = new Map();
-    const tally = new Map(); // rule id -> {tried, matched} across all events
-    for (const e of events) {
-      const fields = decodeFields(e[2], e[1], e[0]);
-      const { fired, trace } = eng.evalEvent(fields, ctx);
-      for (const id of fired) counts.set(id, (counts.get(id) || 0) + 1);
-      for (const [id, verdict] of trace) {
-        let t = tally.get(id);
-        if (!t) tally.set(id, t = { tried: 0, matched: 0 });
-        t.tried++;
-        if (verdict === "matched") t.matched++;
-      }
-      e.push([...fired].sort((a, b) => (idLevel.get(b) - idLevel.get(a)) || (a < b ? -1 : 1)));
-    }
-    const matched = eng.rules.filter(r => (counts.get(r.id) || 0) > 0);
-    matched.sort((a, b) => (counts.get(b.id) - counts.get(a.id)) || (b.level - a.level));
-    rulesInfo = matched.map(r => ({ id: r.id, level: r.level, description: r.description,
-                                    groups: r.groups, count: counts.get(r.id) }));
-    rulesInfo.forEach((r, i) => matchI.set(r.id, i));
-    ruleTrace = [...tally].sort((a, b) =>
-      (b[1].matched - a[1].matched) || (a[0] < b[0] ? -1 : 1))
-      .map(([id, t]) => { const r = eng.byId.get(id);
-        return { id, level: r.level, description: r.description, groups: r.groups,
-                 tried: t.tried, matched: t.matched }; });
-  }
-
-  const analysis = analyze(events, idLevel);
-  return {
-    title: fileName || "upload",
-    t0: events[0][0],
-    t1: events[events.length - 1][0],
-    skipped,
-    groups,
-    rules: rulesInfo,
-    ruleTrace,
-    analysis,
-    events: events.map(e => ({ t: e[0], g: e[1], l: e[2],
-                               r: e.length > 3 ? e[3].map(id => matchI.get(id)) : [] })),
-  };
-}
-
-function assert(cond, msg) { if (!cond) throw new Error("selftest: " + msg); }
-
-function selftest() {
-  const eps = 0.001;
-  assert(Math.abs(parseTime("msg=audit(1479982525.380:50):", 2016) - 1479982525.38) < eps, "epoch");
-  assert(parseTime("[Sun Nov 23 18:49:01.713508 2014]", 2014) !== null &&
-         new Date(parseTime("[Sun Nov 23 18:49:01.713508 2014]", 2014) * 1000).getFullYear() === 2014, "apache");
-  assert(new Date(parseTime("Feb 17 18:00:00 myhost httpd[18660]:", 2014) * 1000).getHours() === 18, "syslog hour");
-  assert(parseTime("[Mon Dec 04 04:47:44 2005] x", 2005) !== null, "apache2");
-  assert(new Date(parseTime("Sep  1 10:24:59 10.10.10.1 %SYS-5", 2020) * 1000).getMonth() === 8, "syslog sep");
-  assert(parseTime("nothing here", 2024) === null, "no time");
-  assert(groupOf("... client 8.8.8.8:443] foo", new RegExp(DEFAULT_GROUP)) === "8.8.8.8", "group");
-  assert(groupOf("zorro", new RegExp(DEFAULT_GROUP)) === "(other)", "group other");
-  const [ev, sk] = parseLines("Feb 17 18:00:00 a [client 8.8.8.8] one\n" +
-    "Feb 17 18:00:05 a [client 8.8.8.8] two\n" +
-    "Feb 17 18:00:10 a [client 8.8.8.8] three\nnope\n", 2024, new RegExp(DEFAULT_GROUP));
-  assert(ev.length === 3 && ev[0][1] === "8.8.8.8" && sk === 1, "parse_lines");
-  assert(maxBurst(ev.map(e => e[0]), 6) === 2, "burst");
-  assert(analyze(ev).groups[0].verdict === "recurring", "verdict");
-  assert(analyze(ev).hist.bucket === 1, "hist bucket");
-  assert(JSON.stringify(capRows(ev)) === JSON.stringify(["8.8.8.8"]), "cap rows");
-  const xml = "<group name='t'><rule id=\"1\" level=\"2\"><match>flip flop</match>" +
-    "<description>flip</description></rule>" +
-    "<rule id=\"2\" level=\"9\"><match>someone</match><regex>login fail</regex>" +
-    "<description>both</description></rule>" +
-    "<rule id=\"3\" level=\"5\"><decoded_as>x</decoded_as><description>no text</description></rule></group>";
-  assert(JSON.stringify(parseRules(xml).map(r => r.id)) === JSON.stringify(["1", "2", "3"]), "rules ids");
-  const dirty = "<group name='a'><rule id=\"7\" level=\"3\"><match>&block=1&</match>" +
-    "<description>naxsi</description></rule></group>" +
-    "<group name='b'><rule id=\"8\" level=\"4\"><match>raw & text</match>" +
-    "<description>owncloud</description></rule></group>";
-  const dr = parseRules(dirty);
-  assert(dr.length === 2 && dr[0].id === "7" && dr[0].text === "&block=1&" &&
-         JSON.stringify(dr.map(r => r.id)) === JSON.stringify(["7", "8"]), "tolerant rules parse");
-  const mkF = s => ({ line: s, msg: s, t: 0, group: null, srcip: null, program_name: null,
-                      url: null, user: null, id: null, decoded_as: null });
-  const eng = makeEngine(xml);
-  const evF = s => eng.evalEvent(mkF(s), new Map()).fired;
-  assert(evF("flip flop seen").includes("1"), "match single");
-  assert(evF("someone login fail scary").includes("2"), "match alt (OR arms)");
-  assert(evF("x day").length === 0, "match none");
-  const inh = "<group name='g'><rule id=\"10\" level=\"0\"><match>base</match></rule>" +
-              "<rule id=\"11\" level=\"7\"><if_sid>10</if_sid><match>child</match></rule></group>";
-  const ie = makeEngine(inh);
-  assert(ie.evalEvent({ ...mkF("base only"), t: 0 }, new Map()).fired.join() === "10", "inheritance parent only");
-  assert(ie.evalEvent({ ...mkF("base child"), t: 1 }, new Map()).fired.includes("11"), "inheritance fires child");
-  const fe = makeEngine("<group name='g'><rule id=\"20\" frequency=\"2\" timeframe=\"100\"><match>flood</match></rule></group>");
-  const ctx = new Map();
-  assert(!fe.evalEvent({ ...mkF("flood"), t: 0 }, ctx).fired.includes("20"), "freq not yet");
-  assert(fe.evalEvent({ ...mkF("flood"), t: 1 }, ctx).fired.includes("20"), "freq fires at 2nd");
-  const dec = decodeFields("[Thu Mar 09 10:12:32.345678 2023] [error] [client 203.0.113.9] File does not exist: /w/x", "g", 0);
-  assert(dec.decoded_as === "apache-errorlog" && dec.srcip === "203.0.113.9" && /^\[error\]/.test(dec.msg), "apache decode");
-  const win = decodeFields("[2026-01-05T09:00:02.1] 2026-01-05T09:00:02.100000Z Microsoft-Windows-Security-Auditing/4740 9: An account was locked out.", "g", 0);
-  assert(win.decoded_as === "windows_eventchannel" && win["win.system.eventID"] === "4740", "win decode");
-  const data = parseAll(ev.map(e => e[2]).join("\n"), "test.log", null, "", "2024");
-  assert(data.events.length === 3 && data.groups[0] === "8.8.8.8", "parseAll");
-  console.log("selftest ok");
-}
-
-if (typeof document !== "undefined" && location.hash === "#selftest") {
-  try { selftest(); document.body.textContent = "selftest ok"; }
-  catch (e) { document.body.textContent = e.message; }
-}
-</script>
-
-
-<script>
-const $ = id => document.getElementById(id);
-const esc = s => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-const timeFmt = ts => new Date(ts * 1000).toLocaleString();
-const shortTime = ts => new Date(ts * 1000).toLocaleTimeString("en-GB", { hour12: false });
-let logFile = null, logText = null, rulesText = null, DATA = null, hidden = new Set(), ruleSel = new Set();
-const FILES = [
-  "apache-exploitation.log",
-  "auditd-host-compromise.log",
-  "cisco-edge-dos.log",
-  "sshd-bruteforce.log",
-  "web-flood.log",
-  "windows-account-spray.log",
-];
-
-// ponytail: baked from `ls ruleset/rules/*.xml`; regenerate when the ruleset submodule is updated
-const RULESET_FILES = [
-  "0010-rules_config.xml", "0015-ossec_rules.xml", "0016-wazuh_rules.xml", "0020-syslog_rules.xml",
-  "0025-sendmail_rules.xml", "0030-postfix_rules.xml", "0035-spamd_rules.xml", "0040-imapd_rules.xml",
-  "0045-mailscanner_rules.xml", "0050-ms-exchange_rules.xml", "0055-courier_rules.xml", "0060-firewall_rules.xml",
-  "0065-pix_rules.xml", "0070-netscreenfw_rules.xml", "0075-cisco-ios_rules.xml", "0080-sonicwall_rules.xml",
-  "0085-pam_rules.xml", "0090-telnetd_rules.xml", "0095-sshd_rules.xml", "0100-solaris_bsm_rules.xml",
-  "0105-asterisk_rules.xml", "0110-ms_dhcp_rules.xml", "0115-arpwatch_rules.xml", "0120-symantec-av_rules.xml",
-  "0125-symantec-ws_rules.xml", "0130-trend-osce_rules.xml", "0135-hordeimp_rules.xml", "0140-roundcube_rules.xml",
-  "0145-wordpress_rules.xml", "0150-cimserver_rules.xml", "0155-dovecot_rules.xml", "0160-vmpop3d_rules.xml",
-  "0165-vpopmail_rules.xml", "0170-ftpd_rules.xml", "0175-proftpd_rules.xml", "0180-pure-ftpd_rules.xml",
-  "0185-vsftpd_rules.xml", "0190-ms_ftpd_rules.xml", "0195-named_rules.xml", "0200-smbd_rules.xml",
-  "0205-racoon_rules.xml", "0210-vpn_concentrator_rules.xml", "0215-policy_rules.xml", "0220-msauth_rules.xml",
-  "0225-mcafee_av_rules.xml", "0230-ms-se_rules.xml", "0235-vmware_rules.xml", "0240-ids_rules.xml",
-  "0245-web_rules.xml", "0250-apache_rules.xml", "0255-zeus_rules.xml", "0260-nginx_rules.xml",
-  "0265-php_rules.xml", "0270-web_appsec_rules.xml", "0275-squid_rules.xml", "0280-attack_rules.xml",
-  "0285-systemd_rules.xml", "0290-firewalld_rules.xml", "0295-mysql_rules.xml", "0300-postgresql_rules.xml",
-  "0305-dropbear_rules.xml", "0310-openbsd_rules.xml", "0315-apparmor_rules.xml", "0320-clam_av_rules.xml",
-  "0325-opensmtpd_rules.xml", "0330-sysmon_rules.xml", "0335-unbound_rules.xml", "0340-puppet_rules.xml",
-  "0345-netscaler_rules.xml", "0350-amazon_rules.xml", "0360-serv-u_rules.xml", "0365-auditd_rules.xml",
-  "0375-usb_rules.xml", "0380-redis_rules.xml", "0385-oscap_rules.xml", "0390-fortigate_rules.xml",
-  "0395-hp_rules.xml", "0400-openvpn_rules.xml", "0405-rsa-auth-manager_rules.xml", "0410-imperva_rules.xml",
-  "0415-sophos_rules.xml", "0420-freeipa_rules.xml", "0425-cisco-estreamer_rules.xml", "0430-ms_wdefender_rules.xml",
-  "0435-ms_logs_rules.xml", "0440-ms_sqlserver_rules.xml", "0445-identity_guard_rules.xml", "0450-mongodb_rules.xml",
-  "0455-docker_rules.xml", "0460-jenkins_rules.xml", "0470-vshell_rules.xml", "0475-suricata_rules.xml",
-  "0480-qualysguard_rules.xml", "0485-cylance_rules.xml", "0490-virustotal_rules.xml", "0495-proxmox-ve_rules.xml",
-  "0500-owncloud_rules.xml", "0505-vuls_rules.xml", "0510-ciscat_rules.xml", "0515-exim_rules.xml",
-  "0520-vulnerability-detector_rules.xml", "0525-openvas_rules.xml", "0530-mysql_audit_rules.xml", "0535-mariadb_rules.xml",
-  "0540-pfsense_rules.xml", "0545-osquery_rules.xml", "0550-kaspersky_rules.xml", "0555-azure_rules.xml",
-  "0560-docker_integration_rules.xml", "0565-ms_ipsec_rules.xml", "0570-sca_rules.xml", "0575-win-base_rules.xml",
-  "0580-win-security_rules.xml", "0585-win-application_rules.xml", "0590-win-system_rules.xml", "0595-win-sysmon_rules.xml",
-  "0600-win-wdefender_rules.xml", "0601-win-vipre_rules.xml", "0602-win-wfirewall_rules.xml", "0605-win-mcafee_rules.xml",
-  "0610-win-ms_logs_rules.xml", "0615-win-ms-se_rules.xml", "0620-win-generic_rules.xml", "0625-cisco-asa_rules.xml",
-  "0625-mcafee_epo_rules.xml", "0630-nextcloud_rules.xml", "0635-owlh-zeek_rules.xml", "0640-junos_rules.xml",
-  "0675-panda-paps_rules.xml", "0680-checkpoint-smart1_rules.xml", "0685-macos-sshd_rules.xml", "0690-gcp_rules.xml",
-  "0700-paloalto_rules.xml",
-];
-
-// ---- theme (default dark) ----
-function applyTheme(t) {
-  document.documentElement.dataset.theme = t;
-  $("themeBtn").textContent = t === "dark" ? "☀️" : "🌙";
-  localStorage.setItem("theme", t);
-}
-applyTheme(localStorage.getItem("theme") || "dark");
-$("themeBtn").addEventListener("click", () =>
-  applyTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark"));
-
-$("rulesMode").addEventListener("change", () => {
-  $("cols").classList.toggle("with-rules", $("rulesMode").checked);
-  $("rulesCard").hidden = !$("rulesMode").checked;
-});
-
-const readFile = f => new Promise((res, rej) => {
-  const r = new FileReader();
-  r.onload = () => res(r.result);
-  r.onerror = rej;
-  r.readAsText(f);
-});
-
-function setUpDrop(zoneId, inputId, onFile, onLoaded) {
-  const zone = $(zoneId), input = $(inputId);
-  const pick = () => { const f = input.files[0]; if (f) { input.value = ""; onFile(f); } };
-  zone.addEventListener("click", () => input.click());
-  input.addEventListener("change", pick);
-  ["dragenter", "dragover"].forEach(ev => zone.addEventListener(ev, e => {
-    e.preventDefault(); zone.classList.add("over");
-  }));
-  ["dragleave", "drop"].forEach(ev => zone.addEventListener(ev, e => {
-    e.preventDefault(); zone.classList.remove("over");
-  }));
-  zone.addEventListener("drop", e => {
-    const f = e.dataTransfer.files[0];
-    if (f) onFile(f);
+function plotHist(a) {
+  const W = 460, H = 150, base = H - 20, max = Math.max(...a.hist);
+  const bw = (W - 2) / a.hist.length;
+  let s = `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" ${SVG} preserveAspectRatio="none">`;
+  a.hist.forEach((c, i) => {
+    const h = c ? Math.max(1, (c / max) * (base - 6)) : 0;
+    if (h) s += `<rect x="${(i * bw).toFixed(1)}" y="${(base - h).toFixed(1)}" ` +
+      `width="${Math.max(0.5, bw - 0.6).toFixed(1)}" height="${h.toFixed(1)}" fill="var(--accent)" opacity=".85">` +
+      `<title>${esc(when(a.t0 + i * a.bucket))} — ${c} events</title></rect>`;
   });
-  if (onLoaded) {
-    const orig = onFile;
-    onFile = f => { orig(f); onLoaded(f); };
+  s += `<line x1="0" y1="${base}" x2="${W}" y2="${base}" stroke="var(--line)"/>`;
+  for (let i = 0; i < a.hist.length; i += Math.ceil(a.hist.length / 5)) {
+    const t = a.t0 + i * a.bucket;
+    s += `<text x="${(i * bw + 1).toFixed(1)}" y="${H - 6}" font-size="9" fill="var(--muted)">` +
+      `${esc(a.span > 86400 ? new Date(t * 1000).toLocaleDateString("en-GB", { day: "2-digit", month: "short" }) : clock(t))}</text>`;
   }
+  return s + "</svg>";
 }
 
-function markDrop(zone, loaded, msg) {
-  zone.classList.toggle("loaded", loaded);
-  zone.innerHTML = loaded
-    ? msg + '<span class="small">drop another file to replace</span>'
-    : zone.dataset.help;
+// one horizontal-bar renderer, reused by three panels.
+// labels are clipped to the column: at font-size 10 in system-ui a char averages ~5.5px
+// (digits, / and % run wider than letters), and text-anchor=end grows leftward, so an
+// over-long label runs off the viewBox. lbl/W are in user units == rendered pixels
+// because every svg carries an intrinsic width and the css only ever shrinks it.
+const bars = (rows, color, lbl = 130, W = 460) => {
+  const RH = 20, H = rows.length * RH + 6;
+  const max = Math.max(...rows.map(r => r.n), 1);
+  const fit = Math.max(6, Math.floor((lbl - 12) / 5.5));
+  const short = s => s.length > fit ? s.slice(0, fit - 1) + "…" : s;
+  let s = `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" ${SVG}>`;
+  rows.forEach((r, i) => {
+    const y = i * RH + 4, w = Math.max(2, (W - lbl - 40) * r.n / max);
+    const ds = r.src ? ` data-src="${esc(r.src)}"` : "";
+    s += `<text${ds} x="${lbl - 6}" y="${y + 10}" font-size="10" fill="var(--muted)" text-anchor="end">${esc(short(r.label))}</text>` +
+      `<rect${ds} x="${lbl}" y="${y}" width="${w.toFixed(1)}" height="12" rx="3" fill="${color(r)}" opacity=".85">` +
+      `<title>${esc(r.tip || r.label)} — ${r.n}</title></rect>` +
+      `<text x="${(lbl + w + 5).toFixed(1)}" y="${y + 10}" font-size="9" fill="var(--text)">${r.n}</text>`;
+  });
+  return s + "</svg>";
+};
+
+const lvColor = r => r.level >= 10 ? "var(--warn)" : r.level >= 7 ? "var(--accent)" : "var(--muted)";
+const VC = { flood: "var(--warn)", brute: "var(--warn)", scan: "var(--accent)",
+             recurring: "var(--muted)", baseline: "var(--muted)", single: "var(--muted)" };
+
+const plotTop = a => bars(
+  a.sources.slice(0, 10).map(s => ({ label: s.src, src: s.src, n: s.count, tip: `${s.src} — ${VERDICTS[s.verdict].label}` })),
+  lvColor);
+
+function plotClasses(a) {
+  const rows = Object.keys(VERDICTS)
+    .map(k => ({ label: VERDICTS[k].label, n: a.sources.filter(s => s.verdict === k).length, k }))
+    .filter(r => r.n);
+  return bars(rows, r => VC[r.k]);
 }
 
-function showMeta(data, f) {
-  $("logMeta").innerHTML = `<span class="chip ok">${esc(f.name)}</span>` +
-    `<span class="chip">${data.events.length} events</span>` +
-    (data.skipped ? `<span class="chip">${data.skipped} skipped</span>` : "") +
-    `<span class="chip">${data.groups.length} groups</span>`;
-  $("pv").innerHTML = data.events.slice(0, 300).map(e =>
-    `<div class="pv-row"><span class="pv-t">${shortTime(e.t)}</span><span class="pv-g">${esc(e.g)}</span>` +
-    `<span class="pv-l">${esc(e.l)}</span></div>`).join("") ||
-    `<div class="pv-row pv-l">no events</div>`;
+// source x time grid: shows WHEN each actor was active, so a web scan and an SSH
+// brute force in the same window are visibly correlated (or clearly not).
+function plotHeat(a, events) {
+  const rows = a.sources.slice(0, 14);
+  const nb = Math.min(a.hist.length, 48);
+  const W = 900, LBL = 140, TOP = 14, RH = 17;
+  const cw = (W - LBL - 6) / nb, H = rows.length * RH + TOP + 16;
+  const open = `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" ${SVG}>`;
+  const step = a.hist.length / nb;
+  const grid = rows.map(() => new Array(nb).fill(0));
+  const rowOf = new Map(rows.map((r, i) => [r.src, i]));
+  for (const e of events) {
+    const ri = rowOf.get(e.src);
+    if (ri === undefined) continue;
+    grid[ri][Math.min(nb - 1, Math.floor((e.t - a.t0) / a.bucket / step))]++;
+  }
+  const max = Math.max(1, ...grid.flat());
+  let s = open;
+  rows.forEach((r, i) => {
+    const y = TOP + i * RH;
+    s += `<text data-src="${esc(r.src)}" x="${LBL - 6}" y="${y + 12}" font-size="10" fill="var(--muted)" text-anchor="end">${esc(r.src)}</text>`;
+    for (let j = 0; j < nb; j++) {
+      const c = grid[i][j];
+      const o = c ? (0.18 + 0.82 * c / max).toFixed(2) : ".07";
+      s += `<rect x="${(LBL + j * cw).toFixed(1)}" y="${y}" width="${Math.max(1, cw - 1).toFixed(1)}" ` +
+        `height="${RH - 4}" rx="2" fill="${VC[r.verdict]}" opacity="${o}">` +
+        `<title>${esc(r.src)} @ ${esc(when(a.t0 + j * a.bucket * step))} — ${c} events</title></rect>`;
+    }
+  });
+  const every = Math.ceil(nb / 8);
+  for (let j = 0; j < nb; j += every) {
+    const t = a.t0 + j * a.bucket * step;
+    s += `<text x="${(LBL + j * cw).toFixed(1)}" y="${H - 4}" font-size="9" fill="var(--muted)">` +
+      `${esc(a.span > 86400 ? new Date(t * 1000).toLocaleDateString("en-GB", { day: "2-digit", month: "short" }) : clock(t))}</text>`;
+  }
+  return s + "</svg>";
 }
 
-async function loadSample(name) {
+// Gantt: one lane per source, bar spans that source's first->last event, lanes
+// sorted by start time. The heatmap is bucketed, so it can't say how long an actor
+// stayed or whether two actors were working simultaneously; this can.
+function plotGantt(a) {
+  const rows = [...a.sources].slice(0, 14).sort((x, y) => x.t0 - y.t0);
+  const W = 900, LBL = 140, TOP = 16, RH = 20, PAD = 52;
+  const H = rows.length * RH + TOP + 18, span = a.span || 1;
+  const x = t => LBL + (t - a.t0) / span * (W - LBL - PAD);
+  const open = `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" ${SVG}>`;
+  let s = open;
+  rows.forEach((r, i) => {
+    const y = TOP + i * RH;
+    const x0 = x(r.t0), x1 = Math.max(x0 + 2.5, x(r.t1));  // min width: a 1-event source is a sliver
+    s += `<text data-src="${esc(r.src)}" x="${LBL - 6}" y="${y + 12}" font-size="10" fill="var(--muted)" text-anchor="end">${esc(r.src)}</text>` +
+      `<rect data-src="${esc(r.src)}" x="${x0.toFixed(1)}" y="${y + 2}" width="${(x1 - x0).toFixed(1)}" height="12" rx="3" ` +
+      `fill="${VC[r.verdict]}" opacity=".85">` +
+      `<title>${esc(r.src)}\n${esc(when(r.t0))} to ${esc(when(r.t1))}\nactive ${esc(spanTxt(r.span))}, ${r.count} events, ${esc(VERDICTS[r.verdict].label)}</title></rect>` +
+      `<text x="${W - 4}" y="${y + 12}" font-size="9" fill="var(--text)" text-anchor="end">${esc(spanTxt(r.span))}</text>`;
+  });
+  s += `<line x1="${LBL}" y1="${TOP - 4}" x2="${W - PAD}" y2="${TOP - 4}" stroke="var(--line)"/>`;
+  for (let i = 0; i <= 8; i++) {
+    const t = a.t0 + span * i / 8;
+    s += `<text x="${x(t).toFixed(1)}" y="${H - 4}" font-size="9" fill="var(--muted)">` +
+      `${esc(a.span > 86400 ? new Date(t * 1000).toLocaleDateString("en-GB", { day: "2-digit", month: "short" }) : clock(t))}</text>`;
+  }
+  return s + "</svg>";
+}
+
+function plotIocs(a) {
+  let out = "";
+  for (const k of IOC_KINDS) {
+    const top = [...a.iocs[k.key]].filter(([, n]) => n >= k.min).sort((x, y) => y[1] - x[1]).slice(0, 8);
+    if (!top.length) continue;
+    out += `<div class="iocgrp"><h4>${esc(k.label)}</h4>` +
+      bars(top.map(([v, n]) => ({ label: v, n, tip: v })),
+           r => r.n >= 10 ? "var(--warn)" : "var(--accent)", 300, 900) + `</div>`;
+  }
+  return out || `<div style="color:var(--muted);font-size:12px;padding:6px 0">` +
+    `No notable indicators were detected in this log.</div>`;
+}
+
+function renderTable(a) {
+  const row = r => `<tr data-src="${esc(r.src)}"${r.src === FOCUS ? ' class="sel"' : ""}><td class="src">${esc(r.src)}</td><td>${r.count}</td><td>${spanTxt(r.span)}</td>` +
+    `<td>${r.peak}/s</td><td>${r.burst}</td><td>${r.div}</td>` +
+    `<td><span class="lv ${r.level >= 10 ? "hi" : r.level >= 7 ? "mid" : ""}">L${r.level}</span></td>` +
+    `<td class="v ${r.verdict}">${esc(VERDICTS[r.verdict].label)}</td>` +
+    `<td class="msg" title="${esc(r.top[0])}">${esc(r.top[0].slice(0, 70))} &times;${r.top[1]}</td></tr>`;
+  return `<table><thead><tr><th>Source</th><th>Events</th><th>Span</th><th>Peak</th>` +
+    `<th>Burst/60s</th><th>Diversity</th><th>Alert</th><th>Verdict</th><th>Top message</th></tr></thead>` +
+    `<tbody>${a.sources.map(row).join("")}</tbody></table>`;
+}
+
+// ---------------------------------------------------------------------------
+// 5. UI
+// ---------------------------------------------------------------------------
+const $ = id => document.getElementById(id);
+
+// View state. WIN is a [t0,t1] brush over the timeline, FOCUS is a single source.
+// Both are filters over the same event array, and analyze() is pure, so every change is
+// just "filter, re-analyze, repaint" -- no second model of the data to keep in sync.
+let FILE = null, WIN = null, FOCUS = null, A = null;
+
+const inView = e => (!WIN || (e.t >= WIN[0] && e.t <= WIN[1])) && (!FOCUS || e.src === FOCUS);
+
+function ingest(name, text) {
+  $("err").textContent = "";
   try {
-    const res = await fetch(`./samples/${encodeURIComponent(name)}`);
-    if (!res.ok) throw new Error(res.statusText);
-    logText = await res.text();
-  } catch (err) {
-    $("error").textContent = "couldn't reach ./samples/" + name +
-      " — serve the folder over HTTP (or GitHub Pages), not file://";
+    FILE = { name, d: parse(text) };
+    WIN = FOCUS = null;
+  } catch (e) {
+    FILE = null;
+    $("chips").innerHTML = `<span class="chip ok">${esc(name)}</span><span class="chip bad">${esc(e.message.split("\n")[0])}</span>`;
+    $("out").hidden = true;
     return;
   }
-  const f = { name };
-  logFile = f;
-  try {
-    DATA = parseAll(logText, name, rulesText, $("group").value.trim(), $("year").value.trim());
-    markDrop($("dropLog"), true, "<b>Sample loaded:</b> " + esc(name));
-    showMeta(DATA, f);
-    $("build").disabled = false;
-    build();
-  } catch (err) { $("error").textContent = err.message; }
+  view();
 }
 
-$("samplesBtn").addEventListener("click", () => {
-  const panel = $("samplesPanel");
-  panel.hidden = !panel.hidden;
-  if (!panel.dataset.loaded && !panel.hidden) {
-    $("samplesList").innerHTML = FILES.map((n, i) =>
-      `<div class="srow" data-name="${esc(n)}">` +
-      `<span class="sname">${esc(n)}</span>` +
-      `<span class="chip ok" data-load="${i}">load</span>` +
-      `<a class="sdown" href="./samples/${encodeURIComponent(n)}" download>download</a></div>`).join("");
-    panel.dataset.loaded = "1";
-    $("samplesList").querySelectorAll("[data-load]").forEach(el =>
-      el.addEventListener("click", () => loadSample(FILES[+el.dataset.load])));
+// apply the active filters, re-analyse, repaint. Every control funnels through here.
+function view() {
+  if (!FILE) return;
+  const { name, d } = FILE;
+  const ev = d.events.filter(inView);
+  if (!ev.length) {                                   // a brush can land on an empty stretch
+    $("out").hidden = true;
+    $("err").textContent = "no events in the selected range";
+    // still offer the way out, or the selection is a dead end
+    $("chips").innerHTML = `<span class="chip ok">${esc(name)}</span>` +
+      `<span class="chip bad">empty selection</span>` +
+      `<span class="chip filt" id="reset">filtered &mdash; reset</span>`;
+    return;
   }
+  $("err").textContent = "";
+  const a = A = analyze(ev);
+
+  const dom = Object.entries(d.types).sort((x, y) => y[1] - x[1])
+    .map(([k, n]) => `${k} ${n}`).join(" · ");
+  $("chips").innerHTML = `<span class="chip ok">${esc(name)}</span>` +
+    `<span class="chip">${esc(dom)}</span>` +
+    `<span class="chip" id="evcount">${a.sources.reduce((x, s) => x + s.count, 0)} events</span>` +
+    (WIN || FOCUS ? `<span class="chip filt" id="reset">filtered &mdash; reset</span>` : "") +
+    `<span class="chip act" id="export">export md</span>` +
+    (d.skipped ? `<span class="chip">${d.skipped} unparsed</span>` : "");
+
+  const shown = FOCUS ? ev : d.events;
+  $("preview").innerHTML = shown.slice(0, 200).map(e =>
+    `<div${e.src === FOCUS ? ' class="hit"' : ""}><span class="t">${esc(when(e.t))}</span>` +
+    `<span class="g">${esc(e.src)}</span><span class="l">${esc(e.line)}</span></div>`).join("") ||
+    `<div><span class="l">nothing to preview</span></div>` +
+    (shown.length > 200 ? `<div><span class="l">&hellip; ${shown.length - 200} more</span></div>` : "");
+
+  $("sum").innerHTML = a.sum.map(s => `<li${/alert|flood|brute|scan|probe/i.test(s) ? ' class="warn"' : ""}>${s}</li>`).join("");
+  $("hist").innerHTML = plotHist(a);
+  $("cls").innerHTML = plotClasses(a);
+  $("top").innerHTML = plotTop(a);
+  $("heat").innerHTML = plotHeat(a, ev);
+  $("gantt").innerHTML = plotGantt(a);
+  $("ioc").innerHTML = plotIocs(a);
+  $("table").innerHTML = renderTable(a);
+  $("out").hidden = false;
+}
+
+function setFocus(src) {
+  FOCUS = FOCUS === src ? null : src;
+  view();
+}
+
+function reset() {
+  WIN = FOCUS = null;
+  view();
+}
+
+// the UI summary is HTML for emphasis; a markdown report wants plain text. Stripping tags
+// alone leaves "&ge;" and "&mdash;" behind, so decode through the browser's own parser.
+const stripHTML = h => new DOMParser().parseFromString(h, "text/html").documentElement.textContent;
+
+// #3 export. `a` is already a clean object, so a readable report is mostly string joins.
+function report() {
+  const { name } = FILE;
+  const out = [`# Log analysis — ${name}`, ""];
+  out.push(`_${new Date().toISOString().slice(0, 16).replace("T", " ")} UTC_`);
+  if (WIN || FOCUS)
+    out.push(`**Filtered:**${FOCUS ? ` source \`${FOCUS}\`` : ""}` +
+             `${WIN ? ` ${when(WIN[0])} → ${when(WIN[1])}` : ""} (full log re-ingest to widen)`);
+  out.push("");
+  A.sum.forEach(s => out.push(`- ${stripHTML(s)}`));
+  out.push("", "## Sources", "",
+    "| Source | Events | Span | Peak/s | Burst/60s | Div | Level | Verdict | Top message |",
+    "|---|---|---|---|---|---|---|---|---|");
+  for (const r of A.sources)
+    out.push(`| ${r.src} | ${r.count} | ${spanTxt(r.span)} | ${r.peak} | ${r.burst} | ${r.div} | ` +
+      `**${r.level}** | ${VERDICTS[r.verdict].label} | ${r.top[0].replace(/\|/g, "\\|").slice(0, 60)} ×${r.top[1]} |`);
+  for (const k of IOC_KINDS) {
+    const top = [...A.iocs[k.key]].filter(([, n]) => n >= k.min).sort((x, y) => y[1] - x[1]).slice(0, 15);
+    if (top.length) out.push("", `## ${k.label}`, "", ...top.map(([v, n]) => `- \`${v}\` — ${n} hits`));
+  }
+  const blob = new Blob([out.join("\n") + "\n"], { type: "text/markdown" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = name.replace(/\.[^.]+$/, "") + ".analysis.md";
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+
+const drop = $("drop"), input = $("file");
+drop.addEventListener("click", () => input.click());
+input.addEventListener("change", () => { if (input.files[0]) read(input.files[0]); });
+for (const ev of ["dragenter", "dragover"]) drop.addEventListener(ev, e => {
+  e.preventDefault(); drop.classList.add("over");
+});
+for (const ev of ["dragleave", "dragleend", "drop"]) drop.addEventListener(ev, e => {
+  e.preventDefault(); drop.classList.remove("over");
+});
+drop.addEventListener("drop", e => { const f = e.dataTransfer.files[0]; if (f) read(f); });
+// don't let a stray drop anywhere else navigate the page to the log file
+addEventListener("dragover", e => e.preventDefault());
+addEventListener("drop", e => e.preventDefault());
+
+// one delegated click drives drill-down (#1/#4), the reset chip and the export chip (#3)
+document.addEventListener("click", e => {
+  if (e.target.id === "reset") return reset();
+  if (e.target.id === "export") return report();
+  const el = e.target.closest("[data-src]");
+  if (el) setFocus(el.dataset.src);
 });
 
-setUpDrop("dropLog", "logInput", f => {
-  logFile = f;
-  $("pv").innerHTML = "";
-  $("logMeta").innerHTML = "";
-  readFile(f).then(text => {
-    logText = text;
-    try {
-      DATA = parseAll(text, f.name, rulesText, $("group").value.trim(), $("year").value.trim());
-      showMeta(DATA, f);
-      $("build").disabled = false;
-    } catch (err) {
-      $("error").textContent = err.message;
-      $("logMeta").innerHTML = `<span class="chip ok">${esc(f.name)}</span><span class="chip bad">parse failed</span>`;
-    }
-  });
-}, () => markDrop($("dropLog"), true, "<b>Log file loaded.</b> Hit <b>Build timeline</b> to continue."));
-
-document.querySelector("#dropLog").dataset.help = document.querySelector("#dropLog").innerHTML;
-
-setUpDrop("dropRules", "rulesInput", f => {
-  readFile(f).then(text => {
-    rulesText = text;
-    $("rulesMeta").innerHTML = `<span class="chip ok">${esc(f.name)}</span><span class="chip">matches apply on build</span>`;
-    if (DATA) build();
-  });
-}, () => markDrop($("dropRules"), true, "<b>Rules file loaded.</b>"));
-
-document.querySelector("#dropRules").dataset.help = document.querySelector("#dropRules").innerHTML;
-
-$("rulesetSel").innerHTML = `<option value="">— choose a ruleset file —</option>` +
-  `<option value="all">All rules (${RULESET_FILES.length} files)</option>` +
-  RULESET_FILES.map(f => `<option value="${esc(f)}">${esc(f)}</option>`).join("");
-
-$("rulesetLoad").addEventListener("click", async () => {
-  const name = $("rulesetSel").value;
-  if (!name) return;
-  $("rulesetLoad").disabled = true;
-  try {
-    const files = name === "all" ? RULESET_FILES : [name];
-    const texts = await Promise.all(files.map(f => fetch("./ruleset/rules/" + f).then(r => {
-      if (!r.ok) throw new Error(f + ": " + r.status);
-      return r.text();
-    })));
-    rulesText = texts.join("\n");
-    $("rulesMeta").innerHTML = `<span class="chip ok">ruleset: ${esc(name === "all" ? "all " + files.length + " files" : name)}</span>` +
-      `<span class="chip">rules run on every build</span>`;
-    markDrop($("dropRules"), true, "<b>Ruleset loaded:</b> " +
-      esc(name === "all" ? files.length + " files" : name));
-    if (DATA) build();
-  } catch (err) {
-    $("rulesMeta").innerHTML = `<span class="chip bad">${esc(err.message)} — serve over HTTP (or GitHub Pages), not file://</span>`;
-  } finally {
-    $("rulesetLoad").disabled = false;
-  }
+// #2 drag across the timeline to zoom to a window. Re-analysing on every pointermove
+// would mean re-shaping 200k lines per frame, so this only samples a rectangle while
+// dragging and commits once on release.
+let drag = null;
+const histFrac = e => {
+  const svg = $("hist").firstElementChild;
+  if (!svg) return null;                       // chart not rendered yet
+  const r = svg.getBoundingClientRect();
+  if (!r.width) return null;                   // hidden: 0/0 would be NaN, and NaN taints WIN
+  return Math.min(1, Math.max(0, (e.clientX - r.left) / r.width));
+};
+$("hist").addEventListener("pointerdown", e => {
+  const f0 = A && histFrac(e);
+  if (f0 === null) return;
+  const svg = $("hist").firstElementChild;
+  const sel = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+  sel.setAttribute("fill", "var(--accent)");
+  sel.setAttribute("opacity", ".25");
+  sel.setAttribute("y", "0");
+  sel.setAttribute("height", "100%");
+  svg.appendChild(sel);
+  drag = { svg, vw: +svg.getAttribute("viewBox").split(" ")[2], a: f0, b: f0, sel };
+  try { svg.setPointerCapture(e.pointerId); } catch {}   // throws if the id isn't active
+  e.preventDefault();
+});
+$("hist").addEventListener("pointermove", e => {
+  if (!drag) return;
+  const f = histFrac(e);
+  if (f === null) return;
+  drag.b = f;
+  drag.sel.setAttribute("x", Math.min(drag.a, drag.b) * drag.vw);
+  drag.sel.setAttribute("width", Math.max(0.5, Math.abs(drag.b - drag.a) * drag.vw));
+});
+$("hist").addEventListener("pointerup", () => {
+  if (!drag) return;
+  const { a, b, sel } = drag;
+  drag = null;
+  sel.remove();
+  // negated, so a NaN frac fails the test too: a click and a bad rect must both no-op.
+  // negated on purpose: NaN fails >= too, so a dead rect and a plain click both no-op
+  if (!(Math.abs(b - a) >= 0.005)) return;
+  WIN = [A.t0 + a * A.span, A.t0 + b * A.span];
+  view();
 });
 
-// ponytail: load the whole Wazuh ruleset once at boot; failing that (file://) we keep going with heuristic verdicts
-(async () => {
-  try {
-    const texts = await Promise.all(RULESET_FILES.map(f => fetch("./ruleset/rules/" + f).then(r => {
-      if (!r.ok) throw new Error("fetch " + f);
-      return r.text();
-    })));
-    rulesText = texts.join("\n");
-    $("rulesMeta").innerHTML = `<span class="chip ok">ruleset: built-in ${RULESET_FILES.length} files</span>` +
-      `<span class="chip">rules run on every build</span>`;
-    markDrop($("dropRules"), true, "<b>Wazuh ruleset loaded</b> (built-in, applied to every build)");
-    if (DATA) build();
-  } catch (err) {
-    $("rulesMeta").innerHTML = `<span class="chip bad">ruleset not loaded — serve over HTTP, not file:// (drop a rules.xml to override)</span>`;
-  }
-})();
-
-$("build").addEventListener("click", () => {
-  if (!logFile) return;
-  try {
-    DATA = parseAll(logText, logFile.name, rulesText,
-                    $("group").value.trim(), $("year").value.trim());
-    build();
-  } catch (err) { $("error").textContent = err.message; }
-});
-
-function build() {
-  $("stats").textContent = `${DATA.title}  |  ${timeFmt(DATA.t0)} → ${timeFmt(DATA.t1)}  |  ` +
-    `${DATA.events.length} events${DATA.skipped ? ` (${DATA.skipped} lines skipped)` : ""}` +
-    `${DATA.rules.length ? `  |  ${DATA.rules.length} rules matched` : ""}`;
-  $("results").hidden = false;
-  $("results").scrollIntoView({ behavior: "smooth" });
-  renderAnalysis();
-  renderLegend();
-  renderRules();
-  render();
+function read(f) {
+  const fr = new FileReader();
+  fr.onload = () => ingest(f.name, String(fr.result));
+  fr.onerror = () => { $("err").textContent = "could not read " + f.name; };
+  fr.readAsText(f);
 }
 
-function renderLegend() {
-  const counts = {};
-  DATA.events.forEach(e => counts[e.g] = (counts[e.g] || 0) + 1);
-  $("legend").innerHTML = DATA.groups.map((g, i) => {
-    const hue = (i * 47) % 360;
-    return `<label><input type="checkbox" checked data-g="${esc(g)}">` +
-      `<span style="color:hsl(${hue},70%,40%)">■</span> ` +
-      `<span class="legend-g" data-g="${esc(g)}" title="click to filter to this group">${esc(g)}</span> ` +
-      `<b>(${counts[g] || 0})</b></label>`;
-  }).join("");
-  $("legend").querySelectorAll("input[data-g]").forEach(cb =>
-    cb.addEventListener("change", () => {
-      cb.checked ? hidden.delete(cb.dataset.g) : hidden.add(cb.dataset.g);
-      render();
-    }));
-  $("legend").querySelectorAll(".legend-g").forEach(el =>
-    el.addEventListener("click", () => { $("search").value = el.dataset.g; render(); }));
+// ---------------------------------------------------------------------------
+// 6. SELF-CHECK  —  open index.html#selftest
+// ---------------------------------------------------------------------------
+function selftest() {
+  const ok = (c, m) => { if (!c) throw new Error("selftest: " + m); };
+  ok(Math.abs(sniff("type=USER_LOGIN msg=audit(1479982525.380:50): x").t - 1479982525.38) < 1e-3, "auditd epoch");
+  ok(sniff("[Fri Jan 03 08:24:02 2026] [error] x").type === "apache", "apache type");
+  // apache pads single-digit days with a leading space -> "Jan  3". 9 days a month, so this
+  // bit us for real; both the pattern and the field split must tolerate it.
+  const dbl = sniff("[Sat Jan  3 09:00:00.000000 2026] [error] [client 1.2.3.4] x");
+  ok(dbl && dbl.type === "apache" && !isNaN(dbl.t), "apache single-digit day (double space)");
+  ok(dbl && new Date(dbl.t * 1000).getDate() === 3, "apache single-digit day value");
+  ok(actorOf(sniff("Feb 11 02:17:48 web-prod-03 bash[7456]: cmd: id")) === "bash",
+     "host-local line attributes to program, not (unknown)");
+  ok(sniff("Jul 12 03:14:02 webserver sshd[1]: x").type === "syslog", "syslog type");
+  ok(sniff("Sep 01 10:24:00 edge-gw %IPS-4-SIG: x").type === "cisco-ios", "cisco type");
+  ok(sniff('{"ts":"2026-01-03T08:24:02Z","a":1}').type === "jsonl", "jsonl type");
+  ok(sniff("no timestamp at all here") === null, "unparseable line");
+  const A = l => actorOf(sniff(l));
+  ok(A("[Fri Jan 03 08:24:02 2026] [error] [client 1.2.3.4] x") === "1.2.3.4", "apache actor");
+  ok(A("Jul 12 03:14:02 h sshd[1]: from 9.9.9.9 port 1") === "9.9.9.9", "syslog actor");
+  ok(A('{"ts":"2026-01-03T08:24:02Z","srcip":"7.7.7.7"}') === "7.7.7.7", "jsonl actor");
+  ok(maxBurst([0, 1, 2, 30, 31, 90], 10) === 3, "maxBurst");
+  ok(judge({ count: 1, burst: 1, div: 1, rate: 0 }) === "single", "judge single");
+  ok(judge({ count: 50, burst: 45, div: 0.2, rate: 3 }) === "flood", "judge flood");
+  ok(judge({ count: 40, burst: 12, div: 0.3, rate: 0.5 }) === "brute", "judge brute");
+  ok(judge({ count: 20, burst: 3, div: 0.9, rate: 0.2 }) === "scan", "judge scan");
+  ok(judge({ count: 3, burst: 2, div: 0.7, rate: 0.1 }) === "recurring", "judge recurring");
+  ok(judge({ count: 30, burst: 4, div: 0.3, rate: 0.4 }) === "baseline", "judge baseline");
+  ok(shape("a 1.2.3.4 b 5.6.7.8") === "a N b N", "shape");
+  ok(shape("port 50000 pid 1234") === "port N pid N", "shape masks bare numbers");
+  // synthetic sshd bursts: 40 failures, one every 5s (bursty, low diversity)
+  const p = n => String(n).padStart(2, "0");
+  const t0 = new Date(2026, 0, 12, 3, 0, 0).getTime() / 1000;
+  const mk = (n, step, salt) => Array.from({ length: n }, (_, i) => {
+    const d = new Date((t0 + i * step) * 1000);
+    return `Jan 12 ${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())} webserver ` +
+      `sshd[${i}]: Failed password for root from 6.6.6.6 port ${50000 + i}${salt ? salt(i) : ""}`;
+  }).join("\n");
+  const brute = analyze(parse(mk(40, 5)).events).sources[0];
+  ok(brute.src === "6.6.6.6" && brute.verdict === "brute" && brute.level === 10, "brute force end-to-end");
+  ok(brute.burst >= 10 && brute.div < 0.2, "brute metrics");
+  const flood = analyze(parse(mk(200, 1)).events).sources[0];
+  ok(flood.verdict === "flood" && flood.level === 12, "flood end-to-end");
+  // same volume and rate, but every line a distinct path -> enumeration, not brute force.
+  // variation must be non-numeric: shape() masks digits, so a numbered path would collapse.
+  const tag = i => String.fromCharCode(97 + Math.floor(i / 26)) + String.fromCharCode(97 + i % 26);
+  const scan = analyze(parse(mk(40, 5, i => ` GET /${tag(i)}/.php`)).events).sources[0];
+  ok(scan.verdict === "scan" && scan.level === 7, "scan end-to-end");
+  const a = analyze(parse(mk(40, 5)).events);
+  ok(a.hist.reduce((x, y) => x + y, 0) === 40, "histogram totals");
+  ok(a.sum.length >= 2, "summary produced");
+  // IoC extraction
+  const iocLog = parse([
+    "Jan 12 03:00:00 webserver sshd[1]: Failed password for invalid user admin from 6.6.6.6 port 51000",
+    "Jan 12 03:00:05 webserver sshd[2]: Failed password for invalid user root from 6.6.6.6 port 51001",
+    "Jan 12 03:00:09 webserver sshd[3]: Failed password for invalid user oracle from 6.6.6.6 port 51002",
+    "Jan 12 03:00:12 webserver sshd[4]: Failed password for invalid user admin from 6.6.6.6 port 51003",
+  ].join("\n"));
+  const iocs = extractIocs(iocLog.events);
+  ok(iocs.user.get("admin") === 2 && iocs.user.get("root") === 1, "ioc accounts");
+  ok(iocs.port.get("51000") === 1, "ioc ports");
+  ok(!iocs.path.size, "no phantom paths");
+  const apacheIoc = extractIocs(parse(
+    "Jan 03 08:24:02 2026 [error] [client 1.2.3.4] File does not exist: /var/www/.env\n" +
+    "Jan 03 08:24:04 2026 [error] [client 1.2.3.4] File does not exist: /var/www/.env").events);
+  ok(apacheIoc.path.get("/var/www/.env") === 2, "ioc path from apache");
+  ok(!apacheIoc.path.has("/"), "apache noise filtered");
+  ok(extractIocs(parse("Jan 12 03:00:00 h svc[1]: nothing interesting here").events)
+       .user.size === 0, "no iocs in plain line");
+  // every chart must render without throwing
+  const wide = parse(mk(120, 3, i => ` GET /${tag(i)}/.php`)).events;
+  const fa = analyze(wide);
+  for (const [name, svg] of [["hist", plotHist(fa)], ["classes", plotClasses(fa)], ["top", plotTop(fa)],
+                             ["heat", plotHeat(fa, wide)], ["gantt", plotGantt(fa)], ["iocs", plotIocs(fa)]])
+    ok(svg.includes("<svg"), "chart renders: " + name);
+  ok(fa.iocs.path.size > 100, "many distinct paths mined");
+  // bars() must clip labels to the column. An unclipped label is anchored end, so it grows
+  // leftward off the viewBox and gets cut off -- long log paths hit this every time.
+  const overlong = "/var/www/html/" + "a".repeat(70);
+  const btxt = [...bars([{ label: overlong, n: 3 }], () => "red", 130)
+    .matchAll(/text-anchor="end">([^<]*)</g)].map(m => m[1])[0];
+  ok(btxt.length <= 21 && btxt.endsWith("…"), "bars clips an over-long label");
+  ok(overlong.includes(btxt.slice(0, 3)), "clipped label keeps its head, not its tail");
+  // a gantt is defined by one lane per source, ordered in time, with bars of real extent.
+  // mk() above is single-source, so use two overlapping actors that start out of log order.
+  const two = analyze(parse("Jul 12 03:09:00 h a[1]: from 1.1.1.1 port 1\n" +
+                            "Jul 12 03:00:00 h a[2]: from 1.1.1.1 port 2\n" +
+                            "Jul 12 03:11:00 h a[3]: from 2.2.2.2 port 1\n" +
+                            "Jul 12 03:02:00 h a[4]: from 2.2.2.2 port 2\n").events);
+  const gl = [...plotGantt(two).matchAll(/<rect[^>]*\bx="([\d.]+)"[^>]*\bwidth="([\d.]+)"/g)]
+    .map(m => [+m[1], +m[2]]);
+  ok(gl.length === two.sources.length, "gantt drew a lane per source");
+  ok(gl.every(([x, w]) => w >= 2.5 && isFinite(x + w) && x + w > x), "gantt bars have real extent");
+  ok(gl.every(([x], i) => i === 0 || x >= gl[i - 1][0]), "gantt lanes sorted by start time");
+  // filters compose: a time window and a source focus are both just predicates over the
+  // event array, so getting the intersection wrong silently shows the wrong evidence.
+  // both halves start at t0, so every timestamp appears twice and the sort interleaves them.
+  const win = parse(mk(40, 5).replace(/6\.6\.6\.6/g, "1.1.1.1") + "\n" +
+                    mk(40, 5).replace(/6\.6\.6\.6/g, "2.2.2.2")).events;
+  ok(win.length === 80, "two-source fixture");
+  const lo = win[10].t, hi = win[29].t;              // t0+25 .. t0+70 -> 10 timestamps
+  WIN = [lo, hi]; FOCUS = "1.1.1.1";
+  ok(win.filter(inView).length === 10, "focus filters to one source");
+  ok(win.filter(inView).every(e => e.src === "1.1.1.1"), "focus keeps only the focused source");
+  FOCUS = null;
+  ok(win.filter(inView).length === 20, "window filters by time");
+  ok(win.filter(inView).every(e => e.t >= lo && e.t <= hi), "window is inclusive");
+  FOCUS = "2.2.2.2";
+  ok(win.filter(inView).length === 10, "focus and window intersect");
+  FOCUS = "1.1.1.1"; WIN = [win[0].t, lo];
+  ok(win.filter(inView).length === 6, "window edge is inclusive at both ends");
+  WIN = FOCUS = null;
+  ok(win.filter(inView).length === win.length, "cleared filters pass everything");
+  return `selftest ok — brute L${brute.level}, flood L${flood.level}, scan L${scan.level}, ` +
+    `iocs ${[...iocs.user.values()].reduce((x, y) => x + y, 0)}`;
 }
 
-function renderRules() {
-  let html = "";
-  DATA.rules.forEach((r, i) => {
-    html += `<span class="rule ${ruleSel.has(i) ? "on" : ""} ${r.level >= 6 ? "serious" : ""}" data-i="${i}" ` +
-      `title="groups: ${esc(r.groups.join(", ") || "—")}">#${r.id} <b class="lv">L${r.level}</b> ` +
-      `${esc(r.description)} (${r.count})</span>`;
-  });
-const traceHtml = DATA.ruleTrace.map(t =>
-    `<div><code>trying ${t.id} rule</code> ${t.matched ? `<span class="ok">-> <b>Matched</b></span>` : `<span class="ko">-> Discarded</span>`}` +
-    ` <span class="dim">(${t.tried} evaluated)</span>` +
-    (t.matched ? ` <b class="lv">L${t.level}</b> ${esc(t.description)}` +
-               ` <span class="dim">groups: ${esc(t.groups.join(", ") || "—")}</span>` : ``) +
-    `</div>`).join("");
-  const detailsOpen = DATA.ruleTrace.length
-    ? `<details id="ruleTrace"><summary>&#9656; Rule trace: trying each rule per event — ${
-        DATA.ruleTrace.length} evaluated, ${DATA.ruleTrace.filter(t => t.matched).length} matched</summary>` +
-      `<div class="tracebody">${traceHtml}</div></details>`
-    : "";
-$("rules").innerHTML = DATA.rules.length
-    ? `<b>Rules:</b> ${html}${detailsOpen}`
-    : rulesText
-      ? "<b>Rules:</b> no Wazuh rules in the loaded ruleset matched these events" +
-        " (level-0 groupings don't alert; try a ruleset that covers this log type)"
-      : "<b>Rules:</b> ruleset not loaded (serve over HTTP, not file://)";
-    
-  // ponytail: no manual rule picking — every rule is evaluated against every event;
-  // the collapsible below surfaces which rule "found" (matched) them.
+if (location.hash === "#selftest") {
+  let out;
+  try { out = selftest(); }
+  catch (e) { out = "FAILED: " + e.message; }
+  document.body.innerHTML = `<pre style="padding:24px;font:14px/1.6 monospace;white-space:pre-wrap">${esc(out)}</pre>`;
 }
-
-const SVG = 'xmlns="http://www.w3.org/2000/svg"';
-const VCLS = { "ddos/flood-like": "v-flood", "brute-force-like": "v-brute", "scan/exploration": "v-scan",
-               "recurring": "v-rec", single: "v-single", baseline: "v-base" };
-const VSHORT = { "ddos/flood-like": "FLOOD", "brute-force-like": "BRUTE", "scan/exploration": "SCAN",
-                 recurring: "recurring", single: "single", baseline: "baseline" };
-const spanTxt = s => s < 60 ? `${s}s` : s < 3600 ? `${(s / 60).toFixed(0)}m` : `${(s / 3600).toFixed(1)}h`;
-
-function histChart() {
-  const { bucket, counts } = DATA.analysis.hist, t0 = DATA.t0;
-  const W = 690, H = 170, base = H - 24, max = Math.max(...counts, 1);
-  const bar = (W - 6) / counts.length;
-  let s = `<svg width="${W}" height="${H}" ${SVG}>`;
-  for (let i = 0; i < counts.length; i++) {
-    const c = counts[i], h = Math.max(1, (c / max) * (base - 8));
-    s += `<rect x="${3 + i * bar}" y="${base - h}" width="${Math.max(1, bar - 1)}" height="${h}" ` +
-      `fill="var(--accent)" opacity=".85"><title>${esc(timeFmt(t0 + i * bucket))} → ${c} events</title></rect>`;
-  }
-  const span = DATA.t1 - t0;
-  const every = Math.ceil(counts.length / 6);
-  for (let i = 0; i < counts.length; i += every) {
-    const ts = t0 + i * bucket;
-    const lab = span > 86400
-      ? new Date(ts * 1000).toLocaleDateString("en-GB", { day: "2-digit", month: "short" })
-      : new Date(ts * 1000).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", hour12: false });
-    s += `<text x="${3 + i * bar}" y="${base + 13}" font-size="9" fill="var(--muted)">${esc(lab)}</text>`;
-  }
-  return `<div class="chart"><h4>Events over time</h4>${s}</div>`;
-}
-
-function topChart() {
-  const gs = DATA.analysis.groups.slice(0, 12);
-  const H = gs.length * 20 + 18, W = 470, LBL = 158, max = Math.max(...gs.map(g => g.count), 1);
-  let s = `<svg width="${W}" height="${H}" ${SVG}>`;
-  gs.forEach((g, i) => {
-    const y = 14 + i * 20, w = Math.max(4, (W - LBL - 46) * g.count / max);
-    const fill = g.verdict.includes("flood") || g.verdict.includes("brute") ? "var(--warn)"
-               : g.verdict.includes("scan") ? "var(--accent)" : "var(--muted)";
-    s += `<g class="ri" data-ip="${esc(g.g)}">` +
-      `<text x="${LBL - 6}" y="${y + 10}" font-size="10" fill="var(--muted)" text-anchor="end">${esc(g.g)}</text>` +
-      `<rect x="${LBL}" y="${y}" width="${w.toFixed(1)}" height="13" rx="3" fill="${fill}" opacity=".85">` +
-      `<title>${esc(g.g)}: ${g.count} events, ${g.verdict}</title></rect>` +
-      `<text x="${LBL + 5}" y="${y + 10}" font-size="9" fill="#fff" font-weight="600">${g.count}</text></g>`;
-  });
-  return `<div class="chart"><h4>Top sources (${gs.length}) · click to filter</h4>${s}</div>`;
-}
-
-function renderAnalysis() {
-  const a = DATA.analysis;
-  let html = `<ul class="sum">${a.summary.map(x =>
-    `<li class="${/[Ff]lood|[Bb]rute|[Bb]urst/.test(x) ? "warn" : ""}">${esc(x)}</li>`).join("")}</ul>`;
-  html += `<div class="charts">${histChart()}${topChart()}</div>`;
-  html += `<table class="tbl"><thead><tr><th>Source</th><th>Events</th><th>Span</th><th>avg/s</th>` +
-    `<th>Peak burst</th><th>Top message</th>${DATA.rules.length ? `<th>rules</th>` : ``}<th>Verdict</th></tr></thead><tbody>`;
-  a.groups.slice(0, 40).forEach(g => {
-    const t = g.tpl[0] ? g.tpl[0][0] : "—";
-    html += `<tr><td class="ip" data-ip="${esc(g.g)}">${esc(g.g)}</td>` +
-      `<td>${g.count}</td><td>${spanTxt(g.span)}</td><td>${g.rate.toFixed(2)}</td><td>${g.burst}</td>` +
-      `<td class="tpl" title="${esc(t)}">${esc(t)}</td>` +
-      (DATA.rules.length ? `<td title="high-level (L≥6) events: ${g.rule_hi}">${g.rule || "–"}</td>` : ``) +
-      `<td><span class="vchip ${VCLS[g.verdict] || "v-base"}">${VSHORT[g.verdict] || esc(g.verdict)}</span></td></tr>`;
-  });
-  html += `</tbody></table>`;
-  $("analysis").innerHTML = html;
-  $("analysis").querySelectorAll("[data-ip]").forEach(el =>
-    el.addEventListener("click", () => { $("search").value = el.dataset.ip; render(); }));
-}
-
-function ruleMatch(e) {
-  return true;
-}
-
-function render() {
-  const { t0, t1, events } = DATA;
-  const q = $("search").value.trim().toLowerCase();
-  const shown = events.filter(e =>
-    (!q || (e.g + " " + e.l).toLowerCase().includes(q)) &&
-    !hidden.has(e.g) && ruleMatch(e));
-
-  const W = 1400, LABEL = 200, PAD = 40, TOP = 72, LH = 26, PTR = 34;
-  const span = Math.max(t1 - t0, 60), rows = DATA.groups;
-  const maxCnt = Math.max(...rows.map(g => DATA.analysis.groups.find(v => v.g === g)?.count || 0), 1);
-  const H = TOP + rows.length * LH + PTR;
-  const x = t => PAD + LABEL + (t - t0) / span * (W - PAD - LABEL - 40);
-  let s = `<svg width="${W}" height="${H}" xmlns='http://www.w3.org/2000/svg' font-family='monospace'>`;
-  s += `<text x="${PAD}" y="24" font-size="16" font-weight="bold" fill="var(--svg-title)">${esc(DATA.title)}  ` +
-    `|  ${timeFmt(t0)} → ${timeFmt(t1)}  |  ${shown.length}/${events.length} events</text>`;
-  const NT = 5;
-  const tickLab = t => span <= 86400 ? shortTime(t)
-    : span <= 604800 ? new Date(t * 1000).toLocaleDateString("en-GB", { day: "2-digit", month: "2-digit" }) + " " + shortTime(t)
-    : new Date(t * 1000).toLocaleDateString("en-GB", { day: "2-digit", month: "2-digit", year: "2-digit" });
-  for (let i = 0; i <= NT; i++) {
-    const t = t0 + (t1 - t0) * i / NT, v = x(t);
-    s += `<line x1="${v}" y1="38" x2="${v}" y2="${TOP - 8}" stroke="var(--svg-grid)"/>` +
-      `<text x="${v}" y="52" font-size="11" fill="var(--svg-label)" text-anchor="middle">${esc(tickLab(t))}</text>`;
-  }
-  rows.forEach((g, i) => {
-    const hue = (i * 47) % 360, y = TOP + i * LH + LH / 2;
-    const evs = shown.filter(e => e.g === g);
-    s += `<rect x="${PAD}" y="${TOP + i * LH}" width="${W - PAD - 20}" height="${LH}" rx="4" ` +
-      `fill="${evs.length ? "var(--svg-dim)" : "none"}"/>`;
-    s += `<text x="${PAD + LABEL - 6}" y="${y + 4}" font-size="12" fill="var(--svg-label)" text-anchor="end" ` +
-      `opacity="${evs.length ? 1 : 0.35}">${esc(g)}</text>`;
-    if (evs.length) {
-      const xs = evs.map(e => x(e.t));
-      const bh = 6 + 16 * (g.count / maxCnt);
-      s += `<rect x="${Math.min(...xs)}" y="${y - bh / 2}" width="${Math.max(1, Math.max(...xs) - Math.min(...xs))}" ` +
-        `height="${bh.toFixed(1)}" rx="3" fill="hsl(${hue},60%,70%)" opacity="0.5"/>`;
-    }
-    evs.forEach(e => {
-      const hx = x(e.t);
-      const serious = e.r.some(i => DATA.rules[i].level >= 6);
-      s += `<g class="ev" data-i="${shown.indexOf(e)}"><path d="M${hx},${y} l5,5 l-5,5 l-5,-5 z" ` +
-        `fill="hsl(${hue},70%,45%)"${serious ? ' stroke="var(--warn)" stroke-width="1.5"' : ""}>` +
-        `<title>${esc(e.g)} | ${esc(timeFmt(e.t))} | ${e.r.length} rule(s) | ${esc(e.l)}</title></path></g>`;
-    });
-  });
-  s += "</svg>";
-  $("canvas").innerHTML = s;
-  $("canvas").querySelector("svg").addEventListener("click", ev => {
-    const m = ev.target.closest(".ev");
-    if (!m) return;
-    const e = shown[+m.dataset.i];
-    const rules = e.r.map(i => `<div class="mrule">#${DATA.rules[i].id} ` +
-      `<b>L${DATA.rules[i].level}</b> — ${esc(DATA.rules[i].description)}</div>`).join("");
-    $("detail").innerHTML = `<h3><span style="color:hsl(${(rows.indexOf(e.g) * 47) % 360},70%,40%)">■ ${esc(e.g)}</span>` +
-      `<span class="t">${esc(timeFmt(e.t))}</span></h3><pre>${esc(e.l)}</pre>` +
-      (rules || '<div class="mrule">no rules matched</div>');
-  });
-}
-
-["dragover", "drop"].forEach(ev =>
-  document.addEventListener(ev, e => {
-    if (!e.target.closest(".drop")) e.preventDefault();
-  }));
 </script>
 </body>
 </html>

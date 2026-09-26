@@ -1,0 +1,180 @@
+Feb 20 03:00:00 edge-gw-01 %IPS-4-SIGNATURE: Sig:3620 Subsig:1 Sev:4 3620 UDP NTP reflection [53.242.34.109:64556 -> 192.0.2.1:53]
+Feb 20 03:00:02 edge-gw-01 %IPS-4-SIGNATURE: Sig:3074 Subsig:1 Sev:4 3129 UDP memcached amplification [103.190.240.111:60249 -> 192.0.2.1:53]
+Feb 20 03:00:04 edge-gw-01 %IPS-4-SIGNATURE: Sig:3401 Subsig:1 Sev:4 3129 UDP memcached amplification [188.210.197.208:65341 -> 192.0.2.1:53]
+Feb 20 03:00:06 edge-gw-01 %IPS-4-SIGNATURE: Sig:3620 Subsig:1 Sev:4 3129 UDP memcached amplification [129.140.83.52:33398 -> 192.0.2.1:53]
+Feb 20 03:00:06 edge-gw-01 %IPS-4-SIGNATURE: Sig:3620 Subsig:1 Sev:4 3074 UDP DNS amplification [43.72.246.239:24017 -> 192.0.2.1:53]
+Feb 20 03:00:08 edge-gw-01 %IPS-4-SIGNATURE: Sig:3401 Subsig:1 Sev:4 3074 UDP DNS amplification [11.240.235.62:54054 -> 192.0.2.1:53]
+Feb 20 03:00:08 edge-gw-01 %IPS-4-SIGNATURE: Sig:3074 Subsig:1 Sev:4 3129 UDP memcached amplification [50.191.115.100:7957 -> 192.0.2.1:53]
+Feb 20 03:00:09 edge-gw-01 %IPS-4-SIGNATURE: Sig:3129 Subsig:1 Sev:4 3074 UDP DNS amplification [176.154.231.126:44432 -> 192.0.2.1:53]
+Feb 20 03:00:09 edge-gw-01 %IPS-4-SIGNATURE: Sig:3401 Subsig:1 Sev:4 3401 UDP SSDP flood [186.217.197.243:27596 -> 192.0.2.1:53]
+Feb 20 03:00:09 edge-gw-01 %IPS-4-SIGNATURE: Sig:3620 Subsig:1 Sev:4 3620 UDP NTP reflection [85.9.104.89:47818 -> 192.0.2.1:53]
+Feb 20 03:00:10 edge-gw-01 %IPS-4-SIGNATURE: Sig:3129 Subsig:1 Sev:4 3401 UDP SSDP flood [31.49.25.25:51738 -> 192.0.2.1:53]
+Feb 20 03:00:11 edge-gw-01 %IPS-4-SIGNATURE: Sig:3074 Subsig:1 Sev:4 3129 UDP memcached amplification [161.85.134.71:26675 -> 192.0.2.1:53]
+Feb 20 03:00:12 edge-gw-01 %IPS-4-SIGNATURE: Sig:3129 Subsig:1 Sev:4 3401 UDP SSDP flood [30.114.214.183:27136 -> 192.0.2.1:53]
+Feb 20 03:00:14 edge-gw-01 %IPS-4-SIGNATURE: Sig:3074 Subsig:1 Sev:4 3129 UDP memcached amplification [32.229.55.183:31928 -> 192.0.2.1:53]
+Feb 20 03:00:15 edge-gw-01 %IPS-4-SIGNATURE: Sig:3074 Subsig:1 Sev:4 3129 UDP memcached amplification [89.63.8.134:9036 -> 192.0.2.1:53]
+Feb 20 03:00:17 edge-gw-01 %IPS-4-SIGNATURE: Sig:3401 Subsig:1 Sev:4 3620 UDP NTP reflection [178.159.152.170:64133 -> 192.0.2.1:53]
+Feb 20 03:00:18 edge-gw-01 %IPS-4-SIGNATURE: Sig:3620 Subsig:1 Sev:4 3129 UDP memcached amplification [92.101.238.179:10321 -> 192.0.2.1:53]
+Feb 20 03:00:19 edge-gw-01 %IPS-4-SIGNATURE: Sig:3074 Subsig:1 Sev:4 3401 UDP SSDP flood [151.10.14.245:62760 -> 192.0.2.1:53]
+Feb 20 03:00:21 edge-gw-01 %IPS-4-SIGNATURE: Sig:3129 Subsig:1 Sev:4 3074 UDP DNS amplification [180.206.171.184:19869 -> 192.0.2.1:53]
+Feb 20 03:00:23 edge-gw-01 %IPS-4-SIGNATURE: Sig:3620 Subsig:1 Sev:4 3129 UDP memcached amplification [117.253.34.170:42999 -> 192.0.2.1:53]
+Feb 20 03:00:23 edge-gw-01 %IPS-4-SIGNATURE: Sig:3620 Subsig:1 Sev:4 3401 UDP SSDP flood [167.148.162.216:22536 -> 192.0.2.1:53]
+Feb 20 03:00:23 edge-gw-01 %IPS-4-SIGNATURE: Sig:3620 Subsig:1 Sev:4 3129 UDP memcached amplification [218.142.12.237:11960 -> 192.0.2.1:53]
+Feb 20 03:00:23 edge-gw-01 %IPS-4-SIGNATURE: Sig:3620 Subsig:1 Sev:4 3401 UDP SSDP flood [26.224.92.223:14173 -> 192.0.2.1:53]
+Feb 20 03:00:24 edge-gw-01 %IPS-4-SIGNATURE: Sig:3620 Subsig:1 Sev:4 3401 UDP SSDP flood [136.102.31.111:46253 -> 192.0.2.1:53]
+Feb 20 03:00:26 edge-gw-01 %IPS-4-SIGNATURE: Sig:3401 Subsig:1 Sev:4 3074 UDP DNS amplification [209.58.222.168:35401 -> 192.0.2.1:53]
+Feb 20 03:00:28 edge-gw-01 %IPS-4-SIGNATURE: Sig:3401 Subsig:1 Sev:4 3620 UDP NTP reflection [72.165.136.64:39003 -> 192.0.2.1:53]
+Feb 20 03:00:30 edge-gw-01 %IPS-4-SIGNATURE: Sig:3129 Subsig:1 Sev:4 3129 UDP memcached amplification [212.244.153.55:4400 -> 192.0.2.1:53]
+Feb 20 03:00:32 edge-gw-01 %IPS-4-SIGNATURE: Sig:3074 Subsig:1 Sev:4 3129 UDP memcached amplification [22.21.169.98:43965 -> 192.0.2.1:53]
+Feb 20 03:00:34 edge-gw-01 %IPS-4-SIGNATURE: Sig:3074 Subsig:1 Sev:4 3620 UDP NTP reflection [53.208.120.206:30499 -> 192.0.2.1:53]
+Feb 20 03:00:36 edge-gw-01 %IPS-4-SIGNATURE: Sig:3074 Subsig:1 Sev:4 3129 UDP memcached amplification [185.95.229.47:16588 -> 192.0.2.1:53]
+Feb 20 03:00:36 edge-gw-01 %IPS-4-SIGNATURE: Sig:3620 Subsig:1 Sev:4 3620 UDP NTP reflection [127.97.241.59:59156 -> 192.0.2.1:53]
+Feb 20 03:00:36 edge-gw-01 %IPS-4-SIGNATURE: Sig:3074 Subsig:1 Sev:4 3401 UDP SSDP flood [113.171.208.57:23096 -> 192.0.2.1:53]
+Feb 20 03:00:36 edge-gw-01 %IPS-4-SIGNATURE: Sig:3401 Subsig:1 Sev:4 3620 UDP NTP reflection [207.210.91.81:13096 -> 192.0.2.1:53]
+Feb 20 03:00:38 edge-gw-01 %IPS-4-SIGNATURE: Sig:3129 Subsig:1 Sev:4 3620 UDP NTP reflection [193.7.4.122:53502 -> 192.0.2.1:53]
+Feb 20 03:00:40 edge-gw-01 %IPS-4-SIGNATURE: Sig:3401 Subsig:1 Sev:4 3620 UDP NTP reflection [134.158.129.13:18095 -> 192.0.2.1:53]
+Feb 20 03:00:42 edge-gw-01 %IPS-4-SIGNATURE: Sig:3129 Subsig:1 Sev:4 3401 UDP SSDP flood [165.37.102.137:39594 -> 192.0.2.1:53]
+Feb 20 03:00:43 edge-gw-01 %IPS-4-SIGNATURE: Sig:3074 Subsig:1 Sev:4 3074 UDP DNS amplification [31.66.250.3:42869 -> 192.0.2.1:53]
+Feb 20 03:00:43 edge-gw-01 %IPS-4-SIGNATURE: Sig:3074 Subsig:1 Sev:4 3620 UDP NTP reflection [139.202.170.140:50570 -> 192.0.2.1:53]
+Feb 20 03:00:45 edge-gw-01 %IPS-4-SIGNATURE: Sig:3401 Subsig:1 Sev:4 3129 UDP memcached amplification [32.51.57.64:12216 -> 192.0.2.1:53]
+Feb 20 03:00:47 edge-gw-01 %IPS-4-SIGNATURE: Sig:3129 Subsig:1 Sev:4 3074 UDP DNS amplification [149.238.179.127:20133 -> 192.0.2.1:53]
+Feb 20 03:00:48 edge-gw-01 %IPS-4-SIGNATURE: Sig:3620 Subsig:1 Sev:4 3401 UDP SSDP flood [128.89.238.209:60611 -> 192.0.2.1:53]
+Feb 20 03:00:50 edge-gw-01 %IPS-4-SIGNATURE: Sig:3401 Subsig:1 Sev:4 3620 UDP NTP reflection [107.196.222.228:25700 -> 192.0.2.1:53]
+Feb 20 03:00:50 edge-gw-01 %IPS-4-SIGNATURE: Sig:3074 Subsig:1 Sev:4 3401 UDP SSDP flood [70.74.94.90:22895 -> 192.0.2.1:53]
+Feb 20 03:00:51 edge-gw-01 %IPS-4-SIGNATURE: Sig:3074 Subsig:1 Sev:4 3401 UDP SSDP flood [53.198.147.176:64535 -> 192.0.2.1:53]
+Feb 20 03:00:53 edge-gw-01 %IPS-4-SIGNATURE: Sig:3401 Subsig:1 Sev:4 3401 UDP SSDP flood [68.245.248.230:32828 -> 192.0.2.1:53]
+Feb 20 03:00:54 edge-gw-01 %IPS-4-SIGNATURE: Sig:3074 Subsig:1 Sev:4 3401 UDP SSDP flood [67.87.125.238:56355 -> 192.0.2.1:53]
+[Fri Feb 20 03:00:56.000000 2026] [error] [client 198.51.100.77] Invalid URI in request GET /index.php HTTP/1.1
+[Fri Feb 20 03:00:56.000161 2026] [error] [client 198.51.100.77] Invalid URI in request GET /static/img/logo.png HTTP/1.1
+[Fri Feb 20 03:00:56.000398 2026] [error] [client 198.51.100.77] Invalid URI in request GET /index.php HTTP/1.1
+[Fri Feb 20 03:00:57.000932 2026] [error] [client 198.51.100.77] Invalid URI in request GET /api/v1/cart HTTP/1.1
+[Fri Feb 20 03:00:58.000290 2026] [error] [client 198.51.100.77] Invalid URI in request GET /api/v1/search?q=aaaaaaaaaaaaaaaaaaaaaaa HTTP/1.1
+[Fri Feb 20 03:00:59.000947 2026] [error] [client 198.51.100.77] Invalid URI in request GET /api/v1/cart HTTP/1.1
+[Fri Feb 20 03:01:01.000553 2026] [error] [client 198.51.100.77] Invalid URI in request GET /static/img/logo.png HTTP/1.1
+[Fri Feb 20 03:01:01.000725 2026] [error] [client 198.51.100.77] Invalid URI in request GET /api/v1/search?q=aaaaaaaaaaaaaaaaaaaaaaaaaa HTTP/1.1
+[Fri Feb 20 03:01:02.000920 2026] [error] [client 198.51.100.77] Invalid URI in request GET /api/v1/search?q=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa HTTP/1.1
+[Fri Feb 20 03:01:04.000462 2026] [error] [client 198.51.100.77] Invalid URI in request GET /wp-login.php HTTP/1.1
+[Fri Feb 20 03:01:05.000142 2026] [error] [client 198.51.100.77] Invalid URI in request GET /static/img/logo.png HTTP/1.1
+[Fri Feb 20 03:01:06.000078 2026] [error] [client 198.51.100.77] Invalid URI in request GET /api/v1/cart HTTP/1.1
+[Fri Feb 20 03:01:06.000746 2026] [error] [client 198.51.100.77] Invalid URI in request GET /wp-login.php HTTP/1.1
+[Fri Feb 20 03:01:08.000087 2026] [error] [client 198.51.100.77] Invalid URI in request GET /wp-login.php HTTP/1.1
+[Fri Feb 20 03:01:09.000754 2026] [error] [client 198.51.100.77] Invalid URI in request GET /index.php HTTP/1.1
+[Fri Feb 20 03:01:11.000096 2026] [error] [client 198.51.100.77] Invalid URI in request GET /index.php HTTP/1.1
+[Fri Feb 20 03:01:11.000263 2026] [error] [client 198.51.100.77] Invalid URI in request GET /api/v1/search?q=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa HTTP/1.1
+[Fri Feb 20 03:01:13.000008 2026] [error] [client 198.51.100.77] Invalid URI in request GET /static/img/logo.png HTTP/1.1
+[Fri Feb 20 03:01:13.000013 2026] [error] [client 198.51.100.77] Invalid URI in request GET /wp-login.php HTTP/1.1
+[Fri Feb 20 03:01:14.000005 2026] [error] [client 198.51.100.77] Invalid URI in request GET /api/v1/search?q=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa HTTP/1.1
+[Fri Feb 20 03:01:15.000710 2026] [error] [client 198.51.100.77] Invalid URI in request GET /index.php HTTP/1.1
+[Fri Feb 20 03:01:16.000015 2026] [error] [client 198.51.100.77] Invalid URI in request GET /static/img/logo.png HTTP/1.1
+[Fri Feb 20 03:01:16.000132 2026] [error] [client 198.51.100.77] Invalid URI in request GET /api/v1/cart HTTP/1.1
+[Fri Feb 20 03:01:16.000963 2026] [error] [client 198.51.100.77] Invalid URI in request GET /wp-login.php HTTP/1.1
+[Fri Feb 20 03:01:17.000874 2026] [error] [client 198.51.100.77] Invalid URI in request GET /wp-login.php HTTP/1.1
+[Fri Feb 20 03:01:17.000888 2026] [error] [client 198.51.100.77] Invalid URI in request GET /api/v1/cart HTTP/1.1
+[Fri Feb 20 03:01:17.000973 2026] [error] [client 198.51.100.77] Invalid URI in request GET /api/v1/cart HTTP/1.1
+[Fri Feb 20 03:01:18.000808 2026] [error] [client 198.51.100.77] Invalid URI in request GET /api/v1/search?q=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa HTTP/1.1
+[Fri Feb 20 03:01:20.000101 2026] [error] [client 198.51.100.77] Invalid URI in request GET /api/v1/search?q=aaaaaaaaaaaaaaaaaaaaaaaaaaaaa HTTP/1.1
+[Fri Feb 20 03:01:20.000737 2026] [error] [client 198.51.100.77] Invalid URI in request GET /api/v1/search?q=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa HTTP/1.1
+[Fri Feb 20 03:01:21.000978 2026] [error] [client 198.51.100.77] Invalid URI in request GET /wp-login.php HTTP/1.1
+[Fri Feb 20 03:01:23.000936 2026] [error] [client 198.51.100.77] Invalid URI in request GET /wp-login.php HTTP/1.1
+[Fri Feb 20 03:01:24.000018 2026] [error] [client 198.51.100.77] Invalid URI in request GET /static/img/logo.png HTTP/1.1
+[Fri Feb 20 03:01:25.000973 2026] [error] [client 198.51.100.77] Invalid URI in request GET /static/img/logo.png HTTP/1.1
+[Fri Feb 20 03:01:27.000515 2026] [error] [client 198.51.100.77] Invalid URI in request GET /api/v1/cart HTTP/1.1
+[Fri Feb 20 03:01:28.000758 2026] [error] [client 198.51.100.77] Invalid URI in request GET /static/img/logo.png HTTP/1.1
+[Fri Feb 20 03:01:29.000396 2026] [error] [client 198.51.100.77] Invalid URI in request GET /api/v1/search?q=aaaaaaaaaaaaaaaaaaaaaaaaaaaaa HTTP/1.1
+[Fri Feb 20 03:01:30.000938 2026] [error] [client 198.51.100.77] Invalid URI in request GET /static/img/logo.png HTTP/1.1
+[Fri Feb 20 03:01:31.000228 2026] [error] [client 198.51.100.77] Invalid URI in request GET /static/img/logo.png HTTP/1.1
+[Fri Feb 20 03:01:32.000229 2026] [error] [client 198.51.100.77] Invalid URI in request GET /api/v1/search?q=aaaaaaaaaaaaaaaaaaaaaaa HTTP/1.1
+[Fri Feb 20 03:01:33.000601 2026] [error] [client 198.51.100.77] Invalid URI in request GET /static/img/logo.png HTTP/1.1
+[Fri Feb 20 03:01:34.000843 2026] [error] [client 198.51.100.77] Invalid URI in request GET /index.php HTTP/1.1
+[Fri Feb 20 03:01:35.000777 2026] [error] [client 198.51.100.77] Invalid URI in request GET /wp-login.php HTTP/1.1
+[Fri Feb 20 03:01:36.000741 2026] [error] [client 198.51.100.77] Invalid URI in request GET /api/v1/search?q=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa HTTP/1.1
+[Fri Feb 20 03:01:37.000036 2026] [error] [client 198.51.100.77] Invalid URI in request GET /static/img/logo.png HTTP/1.1
+[Fri Feb 20 03:01:38.000833 2026] [error] [client 198.51.100.77] Invalid URI in request GET /api/v1/search?q=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa HTTP/1.1
+[Fri Feb 20 03:01:39.000718 2026] [error] [client 198.51.100.77] Invalid URI in request GET /static/img/logo.png HTTP/1.1
+[Fri Feb 20 03:01:40.000826 2026] [error] [client 198.51.100.77] Invalid URI in request GET /wp-login.php HTTP/1.1
+[Fri Feb 20 03:01:40.000947 2026] [error] [client 198.51.100.77] Invalid URI in request GET /api/v1/search?q=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa HTTP/1.1
+[Fri Feb 20 03:01:41.000659 2026] [error] [client 198.51.100.77] Invalid URI in request GET /static/img/logo.png HTTP/1.1
+[Fri Feb 20 03:01:42.000069 2026] [error] [client 198.51.100.77] Invalid URI in request GET /static/img/logo.png HTTP/1.1
+[Fri Feb 20 03:01:43.000528 2026] [error] [client 198.51.100.77] Invalid URI in request GET /static/img/logo.png HTTP/1.1
+[Fri Feb 20 03:01:45.000212 2026] [error] [client 198.51.100.77] Invalid URI in request GET /api/v1/cart HTTP/1.1
+[Fri Feb 20 03:01:45.000285 2026] [error] [client 198.51.100.77] Invalid URI in request GET /wp-login.php HTTP/1.1
+[Fri Feb 20 03:01:46.000353 2026] [error] [client 198.51.100.77] Invalid URI in request GET /api/v1/cart HTTP/1.1
+[Fri Feb 20 03:01:47.000561 2026] [error] [client 198.51.100.77] Invalid URI in request GET /static/img/logo.png HTTP/1.1
+[Fri Feb 20 03:01:48.000480 2026] [error] [client 198.51.100.77] Invalid URI in request GET /static/img/logo.png HTTP/1.1
+[Fri Feb 20 03:01:49.000470 2026] [error] [client 198.51.100.77] Invalid URI in request GET /static/img/logo.png HTTP/1.1
+[Fri Feb 20 03:01:50.000029 2026] [error] [client 198.51.100.77] Invalid URI in request GET /api/v1/search?q=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa HTTP/1.1
+[Fri Feb 20 03:01:50.000189 2026] [error] [client 198.51.100.77] Invalid URI in request GET /api/v1/cart HTTP/1.1
+[Fri Feb 20 03:01:50.000256 2026] [error] [client 198.51.100.77] Invalid URI in request GET /api/v1/search?q=aaaaaaaaaaaaaaaaaaaaaaaaaaa HTTP/1.1
+[Fri Feb 20 03:01:50.000560 2026] [error] [client 198.51.100.77] Invalid URI in request GET /api/v1/search?q=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa HTTP/1.1
+[Fri Feb 20 03:01:52.000352 2026] [error] [client 198.51.100.77] Invalid URI in request GET /api/v1/search?q=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa HTTP/1.1
+[Fri Feb 20 03:01:53.000377 2026] [error] [client 198.51.100.77] Invalid URI in request GET /index.php HTTP/1.1
+[Fri Feb 20 03:01:54.000331 2026] [error] [client 198.51.100.77] Invalid URI in request GET /api/v1/search?q=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa HTTP/1.1
+[Fri Feb 20 03:01:55.000656 2026] [error] [client 198.51.100.77] Invalid URI in request GET /index.php HTTP/1.1
+[Fri Feb 20 03:01:55.000828 2026] [error] [client 198.51.100.77] Invalid URI in request GET /wp-login.php HTTP/1.1
+[Fri Feb 20 03:01:56.000383 2026] [error] [client 198.51.100.77] Invalid URI in request GET /api/v1/search?q=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa HTTP/1.1
+[Fri Feb 20 03:01:57.000895 2026] [error] [client 198.51.100.77] Invalid URI in request GET /api/v1/search?q=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa HTTP/1.1
+[Fri Feb 20 03:01:59.000493 2026] [error] [client 198.51.100.77] Invalid URI in request GET /api/v1/search?q=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa HTTP/1.1
+[Fri Feb 20 03:01:59.000688 2026] [error] [client 203.0.113.140] client sent HTTP/1.1 request without Host header, client: 203.0.113.140, num_conns 779
+[Fri Feb 20 03:02:09.000568 2026] [error] [client 203.0.113.140] client sent HTTP/1.1 request without Host header, client: 203.0.113.140, num_conns 479
+[Fri Feb 20 03:02:15.000321 2026] [error] [client 203.0.113.140] client sent HTTP/1.1 request without Host header, client: 203.0.113.140, num_conns 493
+[Fri Feb 20 03:02:20.000250 2026] [error] [client 203.0.113.140] client sent HTTP/1.1 request without Host header, client: 203.0.113.140, num_conns 403
+[Fri Feb 20 03:02:28.000376 2026] [error] [client 203.0.113.140] client sent HTTP/1.1 request without Host header, client: 203.0.113.140, num_conns 781
+[Fri Feb 20 03:02:33.000609 2026] [error] [client 203.0.113.140] client sent HTTP/1.1 request without Host header, client: 203.0.113.140, num_conns 471
+[Fri Feb 20 03:02:38.000026 2026] [error] [client 203.0.113.140] client sent HTTP/1.1 request without Host header, client: 203.0.113.140, num_conns 866
+[Fri Feb 20 03:02:44.000642 2026] [error] [client 203.0.113.140] client sent HTTP/1.1 request without Host header, client: 203.0.113.140, num_conns 525
+[Fri Feb 20 03:02:54.000516 2026] [error] [client 203.0.113.140] client sent HTTP/1.1 request without Host header, client: 203.0.113.140, num_conns 614
+[Fri Feb 20 03:03:04.000113 2026] [error] [client 203.0.113.140] client sent HTTP/1.1 request without Host header, client: 203.0.113.140, num_conns 836
+[Fri Feb 20 03:03:11.000342 2026] [error] [client 203.0.113.140] client sent HTTP/1.1 request without Host header, client: 203.0.113.140, num_conns 725
+[Fri Feb 20 03:03:16.000435 2026] [error] [client 203.0.113.140] client sent HTTP/1.1 request without Host header, client: 203.0.113.140, num_conns 516
+[Fri Feb 20 03:03:24.000495 2026] [error] [client 203.0.113.140] client sent HTTP/1.1 request without Host header, client: 203.0.113.140, num_conns 484
+[Fri Feb 20 03:03:31.000347 2026] [error] [client 203.0.113.140] client sent HTTP/1.1 request without Host header, client: 203.0.113.140, num_conns 829
+[Fri Feb 20 03:03:36.000184 2026] [error] [client 185.220.101.7] Invalid URI in request POST /api/v1/login HTTP/1.1 num_conns 221
+[Fri Feb 20 03:03:38.000426 2026] [error] [client 185.220.101.7] Invalid URI in request POST /api/v1/login HTTP/1.1 num_conns 271
+[Fri Feb 20 03:03:40.000195 2026] [error] [client 185.220.101.7] Invalid URI in request POST /api/v1/login HTTP/1.1 num_conns 729
+[Fri Feb 20 03:03:41.000059 2026] [error] [client 185.220.101.7] Invalid URI in request POST /api/v1/login HTTP/1.1 num_conns 204
+[Fri Feb 20 03:03:43.000404 2026] [error] [client 185.220.101.7] Invalid URI in request POST /api/v1/login HTTP/1.1 num_conns 288
+[Fri Feb 20 03:03:44.000857 2026] [error] [client 185.220.101.7] Invalid URI in request POST /api/v1/login HTTP/1.1 num_conns 318
+[Fri Feb 20 03:03:45.000216 2026] [error] [client 185.220.101.7] Invalid URI in request POST /api/v1/login HTTP/1.1 num_conns 708
+[Fri Feb 20 03:03:46.000163 2026] [error] [client 185.220.101.7] Invalid URI in request POST /api/v1/login HTTP/1.1 num_conns 632
+[Fri Feb 20 03:03:46.000265 2026] [error] [client 185.220.101.7] Invalid URI in request POST /api/v1/login HTTP/1.1 num_conns 236
+[Fri Feb 20 03:03:46.000915 2026] [error] [client 185.220.101.7] Invalid URI in request POST /api/v1/login HTTP/1.1 num_conns 376
+[Fri Feb 20 03:03:49.000737 2026] [error] [client 185.220.101.7] Invalid URI in request POST /api/v1/login HTTP/1.1 num_conns 716
+[Fri Feb 20 03:03:49.000862 2026] [error] [client 185.220.101.7] Invalid URI in request POST /api/v1/login HTTP/1.1 num_conns 714
+[Fri Feb 20 03:03:52.000680 2026] [error] [client 185.220.101.7] Invalid URI in request POST /api/v1/login HTTP/1.1 num_conns 471
+[Fri Feb 20 03:03:55.000352 2026] [error] [client 185.220.101.7] Invalid URI in request POST /api/v1/login HTTP/1.1 num_conns 356
+[Fri Feb 20 03:03:56.000022 2026] [error] [client 185.220.101.7] Invalid URI in request POST /api/v1/login HTTP/1.1 num_conns 408
+[Fri Feb 20 03:03:57.000361 2026] [error] [client 185.220.101.7] Invalid URI in request POST /api/v1/login HTTP/1.1 num_conns 411
+[Fri Feb 20 03:03:58.000725 2026] [error] [client 185.220.101.7] Invalid URI in request POST /api/v1/login HTTP/1.1 num_conns 455
+[Fri Feb 20 03:04:01.000375 2026] [error] [client 185.220.101.7] Invalid URI in request POST /api/v1/login HTTP/1.1 num_conns 498
+[Fri Feb 20 03:04:01.000389 2026] [error] [client 185.220.101.7] Invalid URI in request POST /api/v1/login HTTP/1.1 num_conns 738
+[Fri Feb 20 03:04:02.000565 2026] [error] [client 185.220.101.7] Invalid URI in request POST /api/v1/login HTTP/1.1 num_conns 592
+[Fri Feb 20 03:04:04.000860 2026] [error] [client 185.220.101.7] Invalid URI in request POST /api/v1/login HTTP/1.1 num_conns 541
+[Fri Feb 20 03:04:05.000373 2026] [error] [client 185.220.101.7] Invalid URI in request POST /api/v1/login HTTP/1.1 num_conns 251
+[Fri Feb 20 03:04:07.000272 2026] [error] [client 185.220.101.7] Invalid URI in request POST /api/v1/login HTTP/1.1 num_conns 647
+[Fri Feb 20 03:04:09.000686 2026] [error] [client 185.220.101.7] Invalid URI in request POST /api/v1/login HTTP/1.1 num_conns 357
+[Fri Feb 20 03:04:12.000547 2026] [error] [client 185.220.101.7] Invalid URI in request POST /api/v1/login HTTP/1.1 num_conns 629
+[Fri Feb 20 03:04:12.000713 2026] [error] [client 185.220.101.7] Invalid URI in request POST /api/v1/login HTTP/1.1 num_conns 731
+[Fri Feb 20 03:04:12.000914 2026] [error] [client 185.220.101.7] Invalid URI in request POST /api/v1/login HTTP/1.1 num_conns 255
+[Fri Feb 20 03:04:15.000899 2026] [error] [client 185.220.101.7] Invalid URI in request POST /api/v1/login HTTP/1.1 num_conns 752
+[Fri Feb 20 03:04:16.000936 2026] [error] [client 185.220.101.7] Invalid URI in request POST /api/v1/login HTTP/1.1 num_conns 530
+[Fri Feb 20 03:04:17.000882 2026] [error] [client 185.220.101.7] Invalid URI in request POST /api/v1/login HTTP/1.1 num_conns 781
+[Fri Feb 20 03:04:19.000738 2026] [error] [client 185.220.101.7] Invalid URI in request POST /api/v1/login HTTP/1.1 num_conns 429
+[Fri Feb 20 03:04:20.000809 2026] [error] [client 185.220.101.7] Invalid URI in request POST /api/v1/login HTTP/1.1 num_conns 513
+[Fri Feb 20 03:04:23.000474 2026] [error] [client 185.220.101.7] Invalid URI in request POST /api/v1/login HTTP/1.1 num_conns 450
+[Fri Feb 20 03:04:24.000075 2026] [error] [client 185.220.101.7] Invalid URI in request POST /api/v1/login HTTP/1.1 num_conns 665
+[Fri Feb 20 03:04:26.000190 2026] [error] [client 185.220.101.7] Invalid URI in request POST /api/v1/login HTTP/1.1 num_conns 329
+[Fri Feb 20 03:04:27.000642 2026] [error] [client 185.220.101.7] Invalid URI in request POST /api/v1/login HTTP/1.1 num_conns 644
+[Fri Feb 20 03:04:27.000871 2026] [error] [client 185.220.101.7] Invalid URI in request POST /api/v1/login HTTP/1.1 num_conns 784
+[Fri Feb 20 03:04:28.000628 2026] [error] [client 185.220.101.7] Invalid URI in request POST /api/v1/login HTTP/1.1 num_conns 312
+[Fri Feb 20 03:04:29.000703 2026] [error] [client 185.220.101.7] Invalid URI in request POST /api/v1/login HTTP/1.1 num_conns 462
+[Fri Feb 20 03:04:32.000333 2026] [error] [client 185.220.101.7] Invalid URI in request POST /api/v1/login HTTP/1.1 num_conns 401
+Feb 20 03:04:34 edge-gw-01 %IPS-4-SIGNATURE: Sig:2600 Subsig:0 Sev:2 IP denied in 131 packets [198.51.100.77:0 -> 192.0.2.1:80]
+Feb 20 03:04:38 edge-gw-01 %IPS-4-SIGNATURE: Sig:2600 Subsig:0 Sev:2 IP denied in 752 packets [198.51.100.77:0 -> 192.0.2.1:80]
+Feb 20 03:04:41 edge-gw-01 %IPS-4-SIGNATURE: Sig:2600 Subsig:0 Sev:2 IP denied in 438 packets [198.51.100.77:0 -> 192.0.2.1:80]
+Feb 20 03:04:45 edge-gw-01 %IPS-4-SIGNATURE: Sig:2600 Subsig:0 Sev:2 IP denied in 385 packets [198.51.100.77:0 -> 192.0.2.1:80]
+Feb 20 03:04:47 edge-gw-01 %IPS-4-SIGNATURE: Sig:2600 Subsig:0 Sev:2 IP denied in 148 packets [198.51.100.77:0 -> 192.0.2.1:80]
+Feb 20 03:04:50 edge-gw-01 %IPS-4-SIGNATURE: Sig:2600 Subsig:0 Sev:2 IP denied in 642 packets [198.51.100.77:0 -> 192.0.2.1:80]
+Feb 20 03:04:52 edge-gw-01 %IPS-4-SIGNATURE: Sig:2600 Subsig:0 Sev:2 IP denied in 267 packets [198.51.100.77:0 -> 192.0.2.1:80]
+Feb 20 03:04:55 edge-gw-01 %IPS-4-SIGNATURE: Sig:2600 Subsig:0 Sev:2 IP denied in 814 packets [198.51.100.77:0 -> 192.0.2.1:80]
+Feb 20 03:04:57 edge-gw-01 %IPS-4-SIGNATURE: Sig:2600 Subsig:0 Sev:2 IP denied in 839 packets [198.51.100.77:0 -> 192.0.2.1:80]
+Feb 20 03:04:59 edge-gw-01 %IPS-4-SIGNATURE: Sig:2600 Subsig:0 Sev:2 IP denied in 699 packets [198.51.100.77:0 -> 192.0.2.1:80]

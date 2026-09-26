@@ -1,32 +1,34 @@
-# Log timeline — Wazuh-style forensic log analysis, no server needed
+# Wazuh Forensic Workspace
 
-Ever been attacked but didn't have Wazuh standing by?
-A forensic analyst looking for a visual tool to see what actually happened?
+This workspace now contains a lightweight forensic log-analysis project focused on parsing, correlating, and visualizing security events from log files in the browser.
 
-**Log timeline** is it. One HTML file, zero setup. Open it, drop in your logs,
-optionally drop in a custom Wazuh ruleset, and get an instant visual rundown:
-who hammered your box, when, how hard, and what your rules say about it.
+## Contents
+
+- `index.html` — browser-based log timeline and analysis dashboard
+- `samples/` — sample forensic and system log data for testing and demos
+- `README.md` — project overview and usage notes
+
+## Quick start
+
+1. Open `index.html` in a browser.
+2. Drag and drop a log file, or click to browse for one.
+3. Review the generated timeline, source activity, alert summaries, and indicators of compromise.
 
 ## What it does
 
-- **Parses the log formats you actually have** — Apache, syslog, auditd epoch,
-  ISO, plain timestamps — grouped by IP or your own regex.
-- **Matches events against real Wazuh rules XML** — match / regex / srcip /
-  dstip / program_name conditions, highlighted by severity level.
-- **Visually flags suspicious behavior** — brute-force, DDOS/flood, scanning —
-  on timeline and source charts, with per-source verdicts and burst detection.
-- **Click anything** to drill into raw events, matched rules, and message diversity.
+The application is designed to help with rapid log triage by:
 
-## How to use it
+- detecting common log formats such as Apache, syslog, Cisco IOS, Windows, auditd, and JSON lines
+- extracting timestamps and source actors from each event
+- grouping suspicious activity by type and origin
+- plotting event flow over time for easier forensic review
 
-1. Open `index.html` in any browser (double-click, that's it).
-2. Hit **Samples** and click `sshd-bruteforce.log` — instant story of a login
-   brute-force — or drop your own log file on the left.
-3. Flip **Custom rules**, drop a `rules.xml` (like the ones in `ruleset/`),
-   build again to see matches highlighted by severity.
+## Notes
 
-Everything runs locally in your browser — no server to spin up, no data leaves
-your machine. Six curated attack samples live in `samples/` (SSH brute-force,
-web exploitation scan, HTTP flood, auditd host compromise, coordinated Cisco
-DoS, Windows account spray) — each drops into its matching ruleset to light up
-the timeline: hit **Samples** to load or download any of them.
+- There is no build step required; this is a static HTML/JavaScript project.
+- The original Wazuh source checkout has been removed from this workspace.
+- This repository is intended for local analysis, demos, and experimentation.
+
+## License
+
+This project does not currently bundle a separate application license file. Use the contents of this workspace for local research, testing, and forensic analysis only.
