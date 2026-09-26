@@ -51,6 +51,7 @@ ul.sum li b{color:var(--text)}
 .chart{flex:1 1 460px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
 .chart.wide{flex:1 1 100%}
 .chart h3{margin:0 0 6px;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.note{color:var(--muted);font-size:12px;margin:0 0 12px}
 /* max-width, not width:100% -- a viewBox-only svg scales its font-size with the panel
    width, so "font-size:10" was rendering anywhere from 7px to 14px. Intrinsic size wins. */
 svg{display:block;max-width:100%;height:auto}
@@ -94,6 +95,29 @@ tr:hover td{background:var(--panel)}
     <div class="err" id="err"></div>
     <div class="chips" id="chips"></div>
     <div class="scroll" id="preview"></div>
+  </section>
+
+  <section id="rulesets">
+    <h2>Wazuh ruleset explorer</h2>
+    <p class="note">Select the local <b>wazuh/ruleset</b> folder. This workspace contains SCA policy YAML and the MITRE ATT&amp;CK dataset; SCA checks assess host configuration and are not event-alert rules.</p>
+    <div class="drop" id="rules-drop"><b>Select the wazuh/ruleset folder</b> to parse every SCA policy and the ATT&amp;CK bundle
+      <input type="file" id="rules-files" webkitdirectory directory multiple hidden>
+    </div>
+    <div class="err" id="rules-err"></div>
+    <div id="rules-progress" class="note"></div>
+    <div id="rules-out" hidden>
+      <ul class="sum" id="rules-sum"></ul>
+      <div class="charts">
+        <div class="chart wide"><h3>SCA checks by policy — all loaded policies</h3><div id="rules-policies"></div></div>
+        <div class="chart"><h3>Policies by platform / category</h3><div id="rules-categories"></div></div>
+        <div class="chart"><h3>Checks mapped to compliance frameworks</h3><div id="rules-compliance"></div></div>
+        <div class="chart"><h3>MITRE ATT&amp;CK object types</h3><div id="rules-mitre"></div></div>
+        <div class="chart"><h3>SCA checks mapped to MITRE techniques</h3><div id="rules-techniques"></div></div>
+        <div class="chart"><h3>ATT&amp;CK tactics</h3><div id="rules-tactics"></div></div>
+      </div>
+      <h2 style="margin-top:18px">All SCA policies</h2>
+      <div id="rules-table" style="overflow:auto;max-height:420px"></div>
+    </div>
   </section>
 
   <section id="out" hidden>
@@ -148,6 +172,10 @@ const FAMILIES = [
   { name: "cisco-ios", re: /^[A-Z][a-z]{2}\s+\d{1,2} (\d\d:\d\d:\d\d)\s+\S+\s+%\w+-/, time: m => sysT(m[0].slice(0, 15)) },
   { name: "syslog",    re: /^[A-Z][a-z]{2}\s+\d{1,2} (\d\d:\d\d:\d\d)\s/, time: m => sysT(m[0].slice(0, 15)) },
 ];
+// auth.log is usually RFC3164 (covered by syslog above), but exports and journal
+// conversions often use bare ISO/RFC5424 timestamps instead of [ISO] brackets.
+const ISO_PREFIX = /^(?:<\d+>\d\s+)?\[?(\d{4}-\d\d-\d\d[T ]\d\d:\d\d:\d\d(?:[.,]\d+)?(?:Z|[+-]\d\d:?\d\d)?)\]?/;
+const SLASH_DATE_PREFIX = /^(\d{4}\/\d\d\/\d\d[ T]\d\d:\d\d:\d\d(?:\.\d+)?)/;
 const JSON_TS_KEYS = ["ts", "timestamp", "time", "@timestamp", "date", "eventTime", "event_time"];
 const JSON_IP_KEYS = ["srcip", "src_ip", "source", "remote_ip", "client_ip", "ip", "src", "attacker"];
 
@@ -161,6 +189,16 @@ const ACTOR = {
 const IPV4 = /\b\d{1,3}(?:\.\d{1,3}){3}\b/;
 
 function sniff(line) {
+  const iso = ISO_PREFIX.exec(line);
+  if (iso) {
+    const t = Date.parse(iso[1].replace(",", "."));
+    if (!isNaN(t)) return { line, type: "syslog-iso", t: t / 1000, o: null };
+  }
+  const slash = SLASH_DATE_PREFIX.exec(line);
+  if (slash) {
+    const t = Date.parse(slash[1].replace(" ", "T").replaceAll("/", "-"));
+    if (!isNaN(t)) return { line, type: "syslog-iso", t: t / 1000, o: null };
+  }
   for (const f of FAMILIES) {
     const m = f.re.exec(line);
     if (m) return { line, type: f.name, t: f.time(m), o: null };
@@ -208,8 +246,8 @@ function parse(text) {
   }
   if (!events.length)
     throw new Error("no timestamps found.\nTried: auditd epoch, ISO, " +
-      "apache [Day Mon dd HH:MM:SS YYYY], syslog/cisco 'Mon dd HH:MM:SS', " +
-      "json lines with a ts/timestamp/time key.");
+      "apache [Day Mon dd HH:MM:SS YYYY], auth.log/syslog 'Mon dd HH:MM:SS', " +
+      "RFC5424/ISO timestamps, and JSON lines with a ts/timestamp/time key.");
   events.sort((a, b) => a.t - b.t);
   capSources(events);
   return { events, types, skipped };
@@ -518,6 +556,149 @@ function renderTable(a) {
 }
 
 // ---------------------------------------------------------------------------
+// WAZUH RULESET EXPLORER — aggregate the SCA policy YAML and MITRE STIX bundle.
+// SCA checks describe host-state tests (files/commands/processes), not log rules.
+// ---------------------------------------------------------------------------
+function yamlScalar(value) {
+  const v = value.trim();
+  if ((v.startsWith('"') && v.endsWith('"')) || (v.startsWith("'") && v.endsWith("'")))
+    return v.slice(1, -1).replace(/\\\\"/g, '"');
+  return v.replace(/\s+#.*$/, "").trim();
+}
+
+function parseScaPolicy(path, text) {
+  const lines = text.split(/\r?\n/);
+  let inPolicy = false, inChecks = false, check = null, frameworks = new Set(), mitre = false;
+  const result = { path, id: "", name: "", checks: 0, mitreChecks: 0, category: "other" };
+  const frameworkCounts = new Map(), techniqueCounts = new Map();
+  const categoryMatch = /(?:^|\/)sca\/([^/]+)\//i.exec(path);
+  result.category = categoryMatch ? categoryMatch[1] : "other";
+  const flush = () => {
+    if (!check) return;
+    result.checks++;
+    if (check.mitre) result.mitreChecks++;
+    for (const f of check.frameworks) frameworkCounts.set(f, (frameworkCounts.get(f) || 0) + 1);
+    for (const id of check.techniques) techniqueCounts.set(id, (techniqueCounts.get(id) || 0) + 1);
+  };
+  for (const line of lines) {
+    if (/^policy:\s*$/.test(line)) { inPolicy = true; inChecks = false; continue; }
+    if (/^checks:\s*$/.test(line)) { inPolicy = false; inChecks = true; continue; }
+    if (/^[^\s#][^:]*:\s*(?:#.*)?$/.test(line)) { inPolicy = false; inChecks = false; }
+    if (inPolicy) {
+      const m = /^\s{2}(id|name):\s*(.+?)\s*$/.exec(line);
+      if (m) result[m[1]] = yamlScalar(m[2]);
+    }
+    if (!inChecks) continue;
+    const start = /^ {2}- id:\s*(.+?)\s*$/.exec(line);
+    if (start) {
+      flush();
+      check = { frameworks: new Set(), techniques: new Set(), mitre: false };
+      frameworks = check.frameworks; mitre = false;
+      continue;
+    }
+    if (!check) continue;
+    if (/^ {4}compliance:\s*$/.test(line)) { frameworks = check.frameworks; mitre = false; continue; }
+    if (/^ {4}mitre:\s*$/.test(line)) { mitre = check.mitre = true; frameworks = new Set(); continue; }
+    if (/^ {4}(?:condition|rules|name|description|rationale|remediation|impact|references):/.test(line)) {
+      frameworks = new Set(); mitre = false;
+    }
+    if (frameworks === check.frameworks) {
+      const f = /^ {6}([A-Za-z][\w.-]*):/.exec(line);
+      if (f) check.frameworks.add(f[1].toLowerCase());
+    }
+    if (mitre) {
+      const ids = line.match(/\bT\d{4}(?:\.\d{3})?\b/g) || [];
+      for (const id of ids) check.techniques.add(id);
+    }
+  }
+  flush();
+  result.frameworks = frameworkCounts;
+  result.techniques = techniqueCounts;
+  if (!result.name) result.name = result.id || path.split("/").pop();
+  return result;
+}
+
+function parseMitreBundle(text) {
+  const bundle = JSON.parse(text);
+  if (!Array.isArray(bundle.objects)) throw new Error("MITRE JSON has no objects array");
+  const types = new Map(), tactics = new Map(), techniques = new Map();
+  for (const o of bundle.objects) {
+    types.set(o.type || "unknown", (types.get(o.type || "unknown") || 0) + 1);
+    if (o.type === "x-mitre-tactic" && !o.revoked && !o.x_mitre_deprecated)
+      tactics.set(o.name, (tactics.get(o.name) || 0) + 1);
+    if (o.type === "attack-pattern" && !o.revoked && !o.x_mitre_deprecated) {
+      const ref = o.external_references?.find(r => r.source_name === "mitre-attack" && /^T\d{4}/.test(r.external_id || ""));
+      if (ref) techniques.set(ref.external_id, o.name || ref.external_id);
+    }
+  }
+  return { objects: bundle.objects.length, types, tactics, techniques, version: bundle.spec_version || "STIX" };
+}
+
+function renderRuleset(policies, mitre, totalYaml, totalJson) {
+  const allFrameworks = new Map(), allTechniques = new Map(), categories = new Map();
+  for (const p of policies) {
+    categories.set(p.category, (categories.get(p.category) || 0) + 1);
+    for (const [k, v] of p.frameworks) allFrameworks.set(k, (allFrameworks.get(k) || 0) + v);
+    for (const [k, v] of p.techniques) allTechniques.set(k, (allTechniques.get(k) || 0) + v);
+  }
+  const checks = policies.reduce((n, p) => n + p.checks, 0);
+  const sum = [`Parsed <b>${policies.length}</b> SCA policies and <b>${checks.toLocaleString()}</b> checks from ${totalYaml} YAML files.`];
+  if (mitre) sum.push(`Parsed <b>${mitre.objects.toLocaleString()}</b> MITRE ATT&amp;CK STIX objects, including <b>${mitre.techniques.size.toLocaleString()}</b> active technique records and ${mitre.tactics.size} tactics.`);
+  else sum.push("No MITRE ATT&amp;CK bundle was selected; SCA policy analysis is available.");
+  if (totalJson > (mitre ? 1 : 0)) sum.push(`${totalJson - (mitre ? 1 : 0)} additional JSON file(s) were skipped; only enterprise-attack.json is supported.`);
+  $("rules-sum").innerHTML = sum.map(s => `<li>${s}</li>`).join("");
+  $("rules-policies").innerHTML = bars(policies.map(p => ({ label: p.name, n: p.checks, tip: `${p.name} — ${p.path}` })).sort((a, b) => b.n - a.n), () => "var(--accent)", 300, 900);
+  $("rules-categories").innerHTML = bars([...categories].map(([label, n]) => ({ label, n })), () => "var(--accent)");
+  $("rules-compliance").innerHTML = bars([...allFrameworks].map(([label, n]) => ({ label, n })).sort((a, b) => b.n - a.n), () => "var(--ok)");
+  $("rules-mitre").innerHTML = mitre ? bars([...mitre.types].map(([label, n]) => ({ label, n })).sort((a, b) => b.n - a.n), () => "var(--accent)") : "<p class=note>No ATT&amp;CK bundle loaded.</p>";
+  $("rules-techniques").innerHTML = bars([...allTechniques].map(([label, n]) => ({ label, n, tip: `${label} — referenced by ${n} checks` })).sort((a, b) => b.n - a.n).slice(0, 15), () => "var(--warn)");
+  $("rules-tactics").innerHTML = mitre ? bars([...mitre.tactics].map(([label, n]) => ({ label, n })), () => "var(--ok)") : "<p class=note>No ATT&amp;CK bundle loaded.</p>";
+  $("rules-table").innerHTML = `<table><thead><tr><th>Policy</th><th>Category</th><th>Checks</th><th>MITRE-mapped</th><th>File</th></tr></thead><tbody>` +
+    policies.map(p => `<tr><td>${esc(p.name)}</td><td>${esc(p.category)}</td><td>${p.checks}</td><td>${p.mitreChecks}</td><td class="msg" title="${esc(p.path)}">${esc(p.path)}</td></tr>`).join("") + `</tbody></table>`;
+  $("rules-out").hidden = false;
+}
+
+async function loadRuleset(files) {
+  const list = Array.from(files);
+  const yaml = list.filter(f => /\.ya?ml$/i.test(f.name));
+  const mitreFile = list.find(f => /enterprise-attack\.json$/i.test(f.name));
+  const jsonCount = list.filter(f => /\.json$/i.test(f.name)).length;
+  $("rules-err").textContent = "";
+  $("rules-out").hidden = true;
+  if (!yaml.length && !mitreFile) {
+    $("rules-err").textContent = "No SCA YAML policies or enterprise-attack.json found. Select the wazuh/ruleset folder.";
+    return;
+  }
+  const policies = [];
+  try {
+    for (let i = 0; i < yaml.length; i++) {
+      const f = yaml[i];
+      const path = f.webkitRelativePath || f.name;
+      // If a wider folder was selected, keep only policies in its ruleset/sca subtree.
+      if (/\/ruleset\//i.test(path) && !/\/ruleset\/sca\//i.test(path)) continue;
+      if (/^(?:ruleset\/)?sca\//i.test(path) || /\/sca\//i.test(path) || !/\/ruleset\//i.test(path))
+        policies.push(parseScaPolicy(path, await f.text()));
+      if (i % 8 === 0 || i === yaml.length - 1) {
+        $("rules-progress").textContent = `Reading SCA policies: ${i + 1} / ${yaml.length} YAML files…`;
+        await new Promise(resolve => setTimeout(resolve, 0));
+      }
+    }
+    let mitre = null;
+    if (mitreFile) {
+      $("rules-progress").textContent = "Parsing the MITRE ATT&CK bundle…";
+      await new Promise(resolve => setTimeout(resolve, 0));
+      mitre = parseMitreBundle(await mitreFile.text());
+    }
+    if (!policies.length && !mitre) throw new Error("No supported ruleset data was found in the selected folder.");
+    renderRuleset(policies.sort((a, b) => a.path.localeCompare(b.path)), mitre, yaml.length, jsonCount);
+    $("rules-progress").textContent = `Complete: ${policies.length} policies; ${mitre ? "ATT&CK bundle included" : "no ATT&CK bundle"}.`;
+  } catch (e) {
+    $("rules-err").textContent = `Could not parse ruleset: ${e.message}`;
+    $("rules-progress").textContent = "";
+  }
+}
+
+// ---------------------------------------------------------------------------
 // 5. UI
 // ---------------------------------------------------------------------------
 const $ = id => document.getElementById(id);
@@ -630,7 +811,7 @@ function report() {
 }
 
 const drop = $("drop"), input = $("file");
-drop.addEventListener("click", () => input.click());
+drop.addEventListener("click", e => { if (e.target !== input) input.click(); });
 input.addEventListener("change", () => { if (input.files[0]) read(input.files[0]); });
 for (const ev of ["dragenter", "dragover"]) drop.addEventListener(ev, e => {
   e.preventDefault(); drop.classList.add("over");
@@ -703,6 +884,10 @@ function read(f) {
   fr.readAsText(f);
 }
 
+const rulesDrop = $("rules-drop"), rulesInput = $("rules-files");
+rulesDrop.addEventListener("click", e => { if (e.target !== rulesInput) rulesInput.click(); });
+rulesInput.addEventListener("change", () => { if (rulesInput.files.length) loadRuleset(rulesInput.files); });
+
 // ---------------------------------------------------------------------------
 // 6. SELF-CHECK  —  open index.html#selftest
 // ---------------------------------------------------------------------------
@@ -718,9 +903,16 @@ function selftest() {
   ok(actorOf(sniff("Feb 11 02:17:48 web-prod-03 bash[7456]: cmd: id")) === "bash",
      "host-local line attributes to program, not (unknown)");
   ok(sniff("Jul 12 03:14:02 webserver sshd[1]: x").type === "syslog", "syslog type");
+  ok(sniff("Sep 27 12:34:56 host sshd[42]: Failed password for root from 203.0.113.8 port 22 ssh2").type === "syslog", "auth.log RFC3164");
+  ok(sniff("2026-09-27T12:34:56.123Z host sshd[42]: Failed password for root").type === "syslog-iso", "auth.log bare ISO timestamp");
+  ok(sniff("<34>1 2026-09-27T12:34:56Z host sshd 42 - - Failed password").type === "syslog-iso", "RFC5424 timestamp");
   ok(sniff("Sep 01 10:24:00 edge-gw %IPS-4-SIG: x").type === "cisco-ios", "cisco type");
   ok(sniff('{"ts":"2026-01-03T08:24:02Z","a":1}').type === "jsonl", "jsonl type");
   ok(sniff("no timestamp at all here") === null, "unparseable line");
+  const tinyPolicy = parseScaPolicy("sca/linux/tiny.yml", "policy:\n  id: tiny\n  name: Tiny test policy\nchecks:\n  - id: 1\n    name: First\n    compliance:\n      cis: [a]\n    mitre:\n      technique:\n        id: [T1234]\n    condition: all\n    rules:\n      - 'f:/etc/passwd'\n  - id: 2\n    name: Second\n    condition: all\n    rules:\n      - 'p:sshd'");
+  ok(tinyPolicy.id === "tiny" && tinyPolicy.checks === 2, "SCA YAML policy metadata and checks");
+  ok(tinyPolicy.mitreChecks === 1 && tinyPolicy.frameworks.get("cis") === 1, "SCA compliance and MITRE mappings");
+  ok(tinyPolicy.techniques.get("T1234") === 1, "SCA technique ids");
   const A = l => actorOf(sniff(l));
   ok(A("[Fri Jan 03 08:24:02 2026] [error] [client 1.2.3.4] x") === "1.2.3.4", "apache actor");
   ok(A("Jul 12 03:14:02 h sshd[1]: from 9.9.9.9 port 1") === "9.9.9.9", "syslog actor");

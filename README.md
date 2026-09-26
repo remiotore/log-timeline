@@ -19,14 +19,22 @@ This workspace now contains a lightweight forensic log-analysis project focused 
 The application is designed to help with rapid log triage by:
 
 - detecting common log formats such as Apache, syslog, Cisco IOS, Windows, auditd, and JSON lines
+- parsing standard RFC3164 auth.log timestamps and ISO/RFC5424 timestamped exports
 - extracting timestamps and source actors from each event
 - grouping suspicious activity by type and origin
 - plotting event flow over time for easier forensic review
+- importing the local `wazuh/ruleset` folder to summarize every SCA YAML policy and the MITRE ATT&CK bundle
+
+## Wazuh ruleset analysis
+
+Use **Select the wazuh/ruleset folder** and choose the `ruleset` directory inside the Wazuh checkout. The dashboard parses all SCA policy YAML files and `mitre/enterprise-attack.json`, then plots checks by policy/category, compliance mappings, MITRE technique references, and ATT&CK object/tactic counts. The policy table includes every imported SCA file.
+
+The checked-out `wazuh/ruleset` content is SCA policies and MITRE ATT&CK data; these are not Wazuh event-decoder/alert-rule XML definitions. SCA checks describe local system configuration tests and cannot be evaluated against auth.log text alone.
 
 ## Notes
 
 - There is no build step required; this is a static HTML/JavaScript project.
-- The original Wazuh source checkout has been removed from this workspace.
+- The Wazuh source checkout is included under `wazuh/` for local ruleset analysis.
 - This repository is intended for local analysis, demos, and experimentation.
 
 ## License
